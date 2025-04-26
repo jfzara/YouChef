@@ -16,7 +16,7 @@ const Accueil = () => {
         <Link to="/inscription">
           <button className={styles.bouton}>Commencer</button>
         </Link>
-        <Link to="/inscription">
+        <Link to="/recettes">
           <button className={styles.boutonSecondaire}>
             Parcourir les recettes
           </button>
