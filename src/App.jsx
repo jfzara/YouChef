@@ -27,3 +27,5 @@ const App = () => {
 };
 
 export default App;
+
+// Simulated commit 1: Init du projet React avec Vite
