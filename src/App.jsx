@@ -29,3 +29,4 @@ const App = () => {
 export default App;
 
 // Simulated commit 1: Init du projet React avec Vite
+// Simulated commit 2: Ajout des composants de base pour affichage des recettes
