@@ -1,31 +1,44 @@
 .container {
-    padding: 2rem;
-    background-color: #fefcf3;
-  }
-  
-  .titre {
-    font-size: 2.5rem;
-    text-align: center;
-    color: #e67e22;
-    margin-bottom: 2rem;
-  }
-  
-  .liste {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-  }
-  
-  .carte {
-    background-color: white;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 250px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-  }
-  
-  .carte:hover {
-    transform: translateY(-5px);
-  }
+  padding: 2rem;
+  background-color: #fefcf3;
+  color: #333333;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.titre {
+  font-size: 2.5rem;
+  text-align: center;
+  color: #e67e22;
+  margin-bottom: 2rem;
+}
+
+.liste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+
+.carte {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 250px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.3s;
+  color: #333333;
+}
+
+.carte:hover {
+  transform: translateY(-5px);
+  /* box-shadow sera remplacé dynamiquement par React inline style */
+}
+
+.carte h4 {
+  margin-bottom: 0.5rem;
+}
+
+.carte p {
+  color: #555555;
+}

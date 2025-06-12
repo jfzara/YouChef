@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Accueil from './pages/Accueil';
 import Connexion from './pages/Connexion';
 import Inscription from './pages/Inscription';
-import Recettes from './pages/DetailRecette';
+import Recettes from './pages/Recettes';
 import DetailRecette from './pages/DetailRecette';
 import Dashboard from './pages/Dashboard';
 
@@ -16,7 +16,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Accueil />} />
-        <Route path="/login" element={<Connexion />} />
+        <Route path="/connexion" element={<Connexion />} />
         <Route path="/inscription" element={<Inscription />} />
         <Route path="/recettes" element={<Recettes />} />
         <Route path="/recettes/:id" element={<DetailRecette />} />

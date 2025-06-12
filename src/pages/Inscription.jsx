@@ -4,6 +4,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+
 
 // Styled components
 const Container = styled.div`
