@@ -28,8 +28,3 @@ const App = () => {
 
 export default App;
 
-// Simulated commit 1: Init du projet React avec Vite
-// Simulated commit 2: Ajout des composants de base pour affichage des recettes
-// Simulated commit 3: Mise en page des recettes avec Framer Motion
-// Simulated commit 4: Ajout du style dynamique selon les catégories
-// Simulated commit 5: Préparation du frontend pour intégration du CRUD

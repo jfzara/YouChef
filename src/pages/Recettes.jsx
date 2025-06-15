@@ -60,13 +60,13 @@ const cardVariants = {
 
 // Couleurs principales par catégorie
 const categoryColors = {
-  Soupes: "#d35400",    // orange brûlé, chaleureux
-  Salades: "#27ae60",   // vert frais
-  Plats: "#2980b9",     // bleu intense
-  Desserts: "#8e44ad",  // violet gourmand
+  Soupes: "#d35400",
+  Salades: "#27ae60",
+  Plats: "#2980b9",
+  Desserts: "#8e44ad",
 };
 
-// Variantes de couleurs par catégorie (claires et foncées) pour sous-catégories
+// Variantes de couleurs par catégorie pour sous-catégories
 const sousCategorieVariants = {
   Soupes: ["#e67e22", "#d35400", "#ba4a00"],
   Salades: ["#2ecc71", "#27ae60", "#229954"],
@@ -76,7 +76,7 @@ const sousCategorieVariants = {
 
 const Recettes = () => {
   return (
-    <motion.div
+    <_motion.div
       className={styles.container}
       variants={containerVariants}
       initial="hidden"
@@ -103,7 +103,6 @@ const Recettes = () => {
 
             {Object.entries(sousCategories).map(([sousCategorie, listeRecettes], i) => {
               const variantColors = sousCategorieVariants[categorie] || ["#999"];
-              // Choisir la couleur de sous-catégorie selon l’index modulo variantes disponibles
               const sousCatColor = variantColors[i % variantColors.length];
 
               return (
@@ -129,19 +128,19 @@ const Recettes = () => {
                   </h3>
                   <div className={styles.liste}>
                     {listeRecettes.map((recette, index) => (
-                      <motion.article
+                      <_motion.article
                         key={index}
                         className={styles.carte}
                         variants={cardVariants}
                         whileHover={{
                           scale: 1.05,
-                          boxShadow: `0 10px 20px ${sousCatColor}66`, // couleur avec transparence
+                          boxShadow: `0 10px 20px ${sousCatColor}66`,
                         }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
                         <h4 style={{ color: catColor }}>{recette.nom}</h4>
                         <p>{recette.description}</p>
-                      </motion.article>
+                      </_motion.article>
                     ))}
                   </div>
                 </article>
@@ -150,7 +149,7 @@ const Recettes = () => {
           </section>
         );
       })}
-    </motion.div>
+    </_motion.div>
   );
 };
 
