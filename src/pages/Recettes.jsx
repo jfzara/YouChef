@@ -1,5 +1,6 @@
 import React from "react";
 import { motion as _motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import styles from "../styles/Recettes.module.css";
 
 const recettes = {
@@ -76,6 +77,15 @@ const sousCategorieVariants = {
 
 const Recettes = () => {
   return (
+<>
+ <nav style={{ padding: '1rem', backgroundColor: '#eee' }}>
+        <Link to="/" style={{ marginRight: '1rem' }}>Accueil</Link>
+        <Link to="/connexion" style={{ marginRight: '1rem' }}>Connexion</Link>
+        <Link to="/inscription" style={{ marginRight: '1rem' }}>Inscription</Link>
+        <Link to="/dashboard" style={{ marginRight: '1rem' }}>Dashboard</Link>
+        <Link to="/recettes" style={{ marginRight: '1rem' }}>Recettes</Link>
+      </nav>
+
     <_motion.div
       className={styles.container}
       variants={containerVariants}
@@ -150,6 +160,7 @@ const Recettes = () => {
         );
       })}
     </_motion.div>
+    </>
   );
 };
 
