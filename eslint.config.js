@@ -4,16 +4,20 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { ignores: ['dist'] },
+  // Ignorer les fichiers buildés
+  { ignores: ['dist', 'node_modules'] },
+
+  // ✅ FRONTEND REACT : JSX, navigateur
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['src/**/*.{js,jsx}'], // uniquement dans le frontend
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       parserOptions: {
-        ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
-        sourceType: 'module',
+      },
+      globals: {
+        ...globals.browser,
       },
     },
     plugins: {
@@ -24,10 +28,24 @@ export default [
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
+  },
+
+  // ✅ BACKEND NODE.JS : Express, Mongo, etc.
+  {
+    files: ['backend/**/*.{js,cjs,mjs}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.node, // inclut process, __dirname, etc.
+      },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      'no-unused-vars': ['warn'],
+      'no-undef': 'error',
     },
   },
 ]
