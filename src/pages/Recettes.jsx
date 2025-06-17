@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { motion as _motion } from 'framer-motion';
+import { _motion } from 'framer-motion'; // Changé ici
 import { Link } from 'react-router-dom';
 import styles from "../styles/Recettes.module.css";
 import Navbar from "../components/Navbar";
@@ -35,33 +35,85 @@ const sousCategorieVariants = {
 
 const Recettes = () => {
   const [recettes, setRecettes] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchRecettes = async () => {
       try {
+        console.log("🔄 Chargement des recettes...");
         const res = await axios.get("/recettes");
-        setRecettes(res.data); // Doit renvoyer une structure { [catégorie]: { [sousCat]: [{...}] } }
-      } catch {
+        console.log("✅ Données reçues:", res.data);
+        setRecettes(res.data);
+      } catch (err) {
+        console.error("❌ Erreur lors du chargement:", err);
+        setError(err.message);
         toast.error("Erreur de chargement des recettes");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchRecettes();
   }, []);
 
+  // Debug: affichage de l'état
+  console.log("État actuel:", { loading, error, recettes, nbCategories: Object.keys(recettes).length });
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <p>Chargement des recettes...</p>
+        </div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <div style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>
+          <p>Erreur: {error}</p>
+        </div>
+      </>
+    );
+  }
+
+  if (Object.keys(recettes).length === 0) {
+    return (
+      <>
+        <Navbar />
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <p>Aucune recette trouvée</p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Navbar />
-      <_motion.div
+      <motion.div
         className={styles.container}
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         <h1 className={styles.titre}>Toutes les recettes</h1>
+        
+        {/* Debug info */}
+        <div style={{ background: '#f0f0f0', padding: '1rem', margin: '1rem 0', borderRadius: '5px' }}>
+          <p><strong>Debug:</strong> {Object.keys(recettes).length} catégories trouvées</p>
+          <p><strong>Catégories:</strong> {Object.keys(recettes).join(', ')}</p>
+        </div>
 
         {Object.entries(recettes).map(([categorie, sousCategories]) => {
           const catColor = categoryColors[categorie] || "#333";
+          
+          console.log(`📂 Catégorie: ${categorie}`, sousCategories);
 
           return (
             <section key={categorie} style={{ marginTop: "2rem" }}>
@@ -80,6 +132,8 @@ const Recettes = () => {
               {Object.entries(sousCategories).map(([sousCategorie, listeRecettes], i) => {
                 const variantColors = sousCategorieVariants[categorie] || ["#999"];
                 const sousCatColor = variantColors[i % variantColors.length];
+                
+                console.log(`📁 Sous-catégorie: ${sousCategorie}`, listeRecettes);
 
                 return (
                   <article
@@ -100,11 +154,11 @@ const Recettes = () => {
                         fontWeight: "600",
                       }}
                     >
-                      {sousCategorie}
+                      {sousCategorie} ({listeRecettes.length} recettes)
                     </h3>
                     <div className={styles.liste}>
                       {listeRecettes.map((recette, index) => (
-                        <_motion.article
+                        <motion.article
                           key={index}
                           className={styles.carte}
                           variants={cardVariants}
@@ -116,7 +170,7 @@ const Recettes = () => {
                         >
                           <h4 style={{ color: catColor }}>{recette.nom}</h4>
                           <p>{recette.description}</p>
-                        </_motion.article>
+                        </motion.article>
                       ))}
                     </div>
                   </article>
@@ -125,7 +179,7 @@ const Recettes = () => {
             </section>
           );
         })}
-      </_motion.div>
+      </motion.div>
     </>
   );
 };
