@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { _motion } from 'framer-motion'; // Changé ici
 import { Link } from 'react-router-dom';
 import styles from "../styles/Recettes.module.css";
 import Navbar from "../components/Navbar";
@@ -24,6 +23,8 @@ const categoryColors = {
   Salades: "#27ae60",
   Plats: "#2980b9",
   Desserts: "#8e44ad",
+  Entrées: "#16a085",
+  Autres: "#7f8c8d",
 };
 
 const sousCategorieVariants = {
@@ -31,6 +32,7 @@ const sousCategorieVariants = {
   Salades: ["#2ecc71", "#27ae60", "#229954"],
   Plats: ["#3498db", "#2980b9", "#2471a3"],
   Desserts: ["#9b59b6", "#8e44ad", "#7d3c98"],
+  Entrées: ["#1abc9c", "#16a085", "#148f77"],
 };
 
 const Recettes = () => {
@@ -43,8 +45,24 @@ const Recettes = () => {
       try {
         console.log("🔄 Chargement des recettes...");
         const res = await axios.get("/recettes");
-        console.log("✅ Données reçues:", res.data);
-        setRecettes(res.data);
+        const data = res.data;
+
+        console.log("✅ Données reçues:", data);
+
+        // Regrouper par catégorie et sous-catégorie
+        const regroupées = {};
+        data.forEach(recette => {
+          const cat = recette.categorie?.trim() || "Autres";
+          const sousCat = recette.sousCategorie?.trim() || "Divers";
+
+          if (!regroupées[cat]) regroupées[cat] = {};
+          if (!regroupées[cat][sousCat]) regroupées[cat][sousCat] = [];
+
+          regroupées[cat][sousCat].push(recette);
+        });
+
+        console.log("📚 Données restructurées:", regroupées);
+        setRecettes(regroupées);
       } catch (err) {
         console.error("❌ Erreur lors du chargement:", err);
         setError(err.message);
@@ -56,9 +74,6 @@ const Recettes = () => {
 
     fetchRecettes();
   }, []);
-
-  // Debug: affichage de l'état
-  console.log("État actuel:", { loading, error, recettes, nbCategories: Object.keys(recettes).length });
 
   if (loading) {
     return (
@@ -96,14 +111,14 @@ const Recettes = () => {
   return (
     <>
       <Navbar />
-      <motion.div
+      <div
         className={styles.container}
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         <h1 className={styles.titre}>Toutes les recettes</h1>
-        
+
         {/* Debug info */}
         <div style={{ background: '#f0f0f0', padding: '1rem', margin: '1rem 0', borderRadius: '5px' }}>
           <p><strong>Debug:</strong> {Object.keys(recettes).length} catégories trouvées</p>
@@ -112,8 +127,6 @@ const Recettes = () => {
 
         {Object.entries(recettes).map(([categorie, sousCategories]) => {
           const catColor = categoryColors[categorie] || "#333";
-          
-          console.log(`📂 Catégorie: ${categorie}`, sousCategories);
 
           return (
             <section key={categorie} style={{ marginTop: "2rem" }}>
@@ -132,8 +145,6 @@ const Recettes = () => {
               {Object.entries(sousCategories).map(([sousCategorie, listeRecettes], i) => {
                 const variantColors = sousCategorieVariants[categorie] || ["#999"];
                 const sousCatColor = variantColors[i % variantColors.length];
-                
-                console.log(`📁 Sous-catégorie: ${sousCategorie}`, listeRecettes);
 
                 return (
                   <article
@@ -158,7 +169,7 @@ const Recettes = () => {
                     </h3>
                     <div className={styles.liste}>
                       {listeRecettes.map((recette, index) => (
-                        <motion.article
+                        <article
                           key={index}
                           className={styles.carte}
                           variants={cardVariants}
@@ -170,7 +181,7 @@ const Recettes = () => {
                         >
                           <h4 style={{ color: catColor }}>{recette.nom}</h4>
                           <p>{recette.description}</p>
-                        </motion.article>
+                        </article>
                       ))}
                     </div>
                   </article>
@@ -179,7 +190,7 @@ const Recettes = () => {
             </section>
           );
         })}
-      </motion.div>
+      </div>
     </>
   );
 };
