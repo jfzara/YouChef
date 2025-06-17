@@ -1,7 +1,5 @@
-// src/App.js
-
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Import des pages
 import Accueil from './pages/Accueil';
@@ -11,7 +9,12 @@ import Recettes from './pages/Recettes';
 import DetailRecette from './pages/DetailRecette';
 import Dashboard from './pages/Dashboard';
 
+// Auth context
+import { useAuth } from './contexts/AuthContext';
+
 const App = () => {
+  const { token } = useAuth(); // On récupère le token pour protéger les routes
+
   return (
     <Router>
       <Routes>
@@ -20,7 +23,10 @@ const App = () => {
         <Route path="/inscription" element={<Inscription />} />
         <Route path="/recettes" element={<Recettes />} />
         <Route path="/recettes/:id" element={<DetailRecette />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={token ? <Dashboard /> : <Navigate to="/connexion" />}
+        />
       </Routes>
     </Router>
   );

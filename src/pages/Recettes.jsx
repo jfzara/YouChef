@@ -1,51 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion as _motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import styles from "../styles/Recettes.module.css";
 import Navbar from "../components/Navbar";
-
-const recettes = {
-  Soupes: {
-    "Soupes chaudes": [
-      { nom: "Soupe à la courge", description: "Douce et réconfortante." },
-      { nom: "Velouté de champignons", description: "Crémeux et parfumé." },
-    ],
-    "Soupes froides": [
-      { nom: "Gaspacho", description: "Frais et plein de saveurs." },
-      { nom: "Soupe concombre menthe", description: "Léger et rafraîchissant." },
-    ],
-  },
-  Salades: {
-    "Salades composées": [
-      { nom: "Salade César", description: "Fraîche, croquante et délicieuse." },
-      { nom: "Salade grecque", description: "Tomates, feta, olives et concombre." },
-    ],
-    "Salades vertes": [
-      { nom: "Mesclun aux noix", description: "Simple et croquant." },
-      { nom: "Roquette et parmesan", description: "Poivrée et savoureuse." },
-    ],
-  },
-  Plats: {
-    Pâtes: [
-      { nom: "Spaghetti bolognaise", description: "Un classique italien savoureux." },
-      { nom: "Pâtes au pesto", description: "Parfumé et rapide." },
-    ],
-    Viandes: [
-      { nom: "Poulet rôti", description: "Tendre et croustillant." },
-      { nom: "Boeuf bourguignon", description: "Riche et mijoté." },
-    ],
-  },
-  Desserts: {
-    Gâteaux: [
-      { nom: "Cookies au chocolat", description: "Moelleux et fondants à souhait." },
-      { nom: "Tarte aux pommes", description: "Classique et croustillante." },
-    ],
-    Glaces: [
-      { nom: "Sorbet citron", description: "Acidulé et léger." },
-      { nom: "Glace vanille maison", description: "Crémeuse et douce." },
-    ],
-  },
-};
+import axios from "../api/axiosInstance";
+import { toast } from "react-toastify";
 
 const containerVariants = {
   visible: {
@@ -60,7 +19,6 @@ const cardVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-// Couleurs principales par catégorie
 const categoryColors = {
   Soupes: "#d35400",
   Salades: "#27ae60",
@@ -68,7 +26,6 @@ const categoryColors = {
   Desserts: "#8e44ad",
 };
 
-// Variantes de couleurs par catégorie pour sous-catégories
 const sousCategorieVariants = {
   Soupes: ["#e67e22", "#d35400", "#ba4a00"],
   Salades: ["#2ecc71", "#27ae60", "#229954"],
@@ -77,84 +34,98 @@ const sousCategorieVariants = {
 };
 
 const Recettes = () => {
+  const [recettes, setRecettes] = useState({});
+
+  useEffect(() => {
+    const fetchRecettes = async () => {
+      try {
+        const res = await axios.get("/recettes");
+        setRecettes(res.data); // Doit renvoyer une structure { [catégorie]: { [sousCat]: [{...}] } }
+      } catch {
+        toast.error("Erreur de chargement des recettes");
+      }
+    };
+
+    fetchRecettes();
+  }, []);
+
   return (
-<>
-
+    <>
       <Navbar />
-    <_motion.div
-      className={styles.container}
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <h1 className={styles.titre}>Toutes les recettes</h1>
+      <_motion.div
+        className={styles.container}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <h1 className={styles.titre}>Toutes les recettes</h1>
 
-      {Object.entries(recettes).map(([categorie, sousCategories]) => {
-        const catColor = categoryColors[categorie] || "#333";
+        {Object.entries(recettes).map(([categorie, sousCategories]) => {
+          const catColor = categoryColors[categorie] || "#333";
 
-        return (
-          <section key={categorie} style={{ marginTop: "2rem" }}>
-            <h2
-              style={{
-                color: catColor,
-                borderBottom: `3px solid ${catColor}`,
-                paddingBottom: "0.25rem",
-                textTransform: "uppercase",
-                letterSpacing: "1px",
-              }}
-            >
-              {categorie}
-            </h2>
+          return (
+            <section key={categorie} style={{ marginTop: "2rem" }}>
+              <h2
+                style={{
+                  color: catColor,
+                  borderBottom: `3px solid ${catColor}`,
+                  paddingBottom: "0.25rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "1px",
+                }}
+              >
+                {categorie}
+              </h2>
 
-            {Object.entries(sousCategories).map(([sousCategorie, listeRecettes], i) => {
-              const variantColors = sousCategorieVariants[categorie] || ["#999"];
-              const sousCatColor = variantColors[i % variantColors.length];
+              {Object.entries(sousCategories).map(([sousCategorie, listeRecettes], i) => {
+                const variantColors = sousCategorieVariants[categorie] || ["#999"];
+                const sousCatColor = variantColors[i % variantColors.length];
 
-              return (
-                <article
-                  key={sousCategorie}
-                  style={{
-                    marginLeft: "1rem",
-                    marginTop: "1.5rem",
-                    borderLeft: `5px solid ${sousCatColor}`,
-                    paddingLeft: "1rem",
-                    borderRadius: "4px",
-                    backgroundColor: "#fff8f0",
-                  }}
-                >
-                  <h3
+                return (
+                  <article
+                    key={sousCategorie}
                     style={{
-                      color: sousCatColor,
-                      marginBottom: "1rem",
-                      fontWeight: "600",
+                      marginLeft: "1rem",
+                      marginTop: "1.5rem",
+                      borderLeft: `5px solid ${sousCatColor}`,
+                      paddingLeft: "1rem",
+                      borderRadius: "4px",
+                      backgroundColor: "#fff8f0",
                     }}
                   >
-                    {sousCategorie}
-                  </h3>
-                  <div className={styles.liste}>
-                    {listeRecettes.map((recette, index) => (
-                      <_motion.article
-                        key={index}
-                        className={styles.carte}
-                        variants={cardVariants}
-                        whileHover={{
-                          scale: 1.05,
-                          boxShadow: `0 10px 20px ${sousCatColor}66`,
-                        }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        <h4 style={{ color: catColor }}>{recette.nom}</h4>
-                        <p>{recette.description}</p>
-                      </_motion.article>
-                    ))}
-                  </div>
-                </article>
-              );
-            })}
-          </section>
-        );
-      })}
-    </_motion.div>
+                    <h3
+                      style={{
+                        color: sousCatColor,
+                        marginBottom: "1rem",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {sousCategorie}
+                    </h3>
+                    <div className={styles.liste}>
+                      {listeRecettes.map((recette, index) => (
+                        <_motion.article
+                          key={index}
+                          className={styles.carte}
+                          variants={cardVariants}
+                          whileHover={{
+                            scale: 1.05,
+                            boxShadow: `0 10px 20px ${sousCatColor}66`,
+                          }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <h4 style={{ color: catColor }}>{recette.nom}</h4>
+                          <p>{recette.description}</p>
+                        </_motion.article>
+                      ))}
+                    </div>
+                  </article>
+                );
+              })}
+            </section>
+          );
+        })}
+      </_motion.div>
     </>
   );
 };

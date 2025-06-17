@@ -4,8 +4,10 @@ import { useForm } from 'react-hook-form';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useAuth } from "../contexts/AuthContext";
+import axios from "../api/axiosInstance"; // ✅ Assure-toi que ce fichier existe et est bien configuré
 
-
+// 💅 STYLED COMPONENTS
 const Container = styled.div`
   max-width: 400px;
   margin: auto;
@@ -46,33 +48,40 @@ const Button = styled.button`
   }
 `;
 
+// ✅ COMPOSANT PRINCIPAL
 const Connexion = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit } = useForm(); // 👈 utilisé pour les inputs
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const onSubmit = (data) => {
-    console.log("Connexion réussie !", data);
-    toast.success("Connexion réussie !");
-    navigate('/dashboard');
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post("/users/login", data);
+      login(response.data.token); // Authentifie l’utilisateur
+      toast.success("Connexion réussie !");
+      navigate("/dashboard");
+    } catch  {
+      toast.error("Erreur à la connexion");
+    }
   };
 
   return (
-    <Container>
-      <Title>Connexion</Title>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Label>Identifiant :</Label>
-        <Input {...register("identifiant", { required: "Identifiant requis" })} />
-        {errors.identifiant && <p style={{ color: "red" }}>{errors.identifiant.message}</p>}
+    <>
+      <Navbar />
+      <Container>
+        <Title>Connexion</Title>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Label htmlFor="email">Email</Label>
+          <Input type="email" {...register("email")} required />
 
-        <Label>Mot de passe :</Label>
-        <Input type="password" {...register("motDePasse", { required: "Mot de passe requis" })} />
-        {errors.motDePasse && <p style={{ color: "red" }}>{errors.motDePasse.message}</p>}
+          <Label htmlFor="password">Mot de passe</Label>
+          <Input type="password" {...register("password")} required />
 
-        <Button type="submit">Se connecter</Button>
-      </form>
-
-      <ToastContainer position="top-right" autoClose={3000} />
-    </Container>
+          <Button type="submit">Se connecter</Button>
+        </form>
+        <ToastContainer />
+      </Container>
+    </>
   );
 };
 

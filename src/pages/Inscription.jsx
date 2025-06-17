@@ -1,11 +1,11 @@
 import React from 'react';
+import axios from "../api/axiosInstance";
 import { useForm } from 'react-hook-form';
 import { toast, ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-
 
 // Styled components
 const Container = styled.div`
@@ -14,7 +14,6 @@ const Container = styled.div`
   padding: 2rem;
   background: #f7f7f7;
   border-radius: 10px;
-  cursor: pointer;
 `;
 
 const Title = styled.h2`
@@ -25,7 +24,6 @@ const Title = styled.h2`
 const Label = styled.label`
   display: block;
   margin: 10px 0 5px;
-
   color: black;
 `;
 
@@ -79,72 +77,75 @@ const Inscription = () => {
   const motDePasse = watch("motDePasse");
   const confirmation = watch("confirmation");
 
-  const onSubmit = (data) => {
-    if (data.motDePasse !== data.confirmation) {
-      toast.error("Les mots de passe ne correspondent pas !");
-      return;
+  const onSubmit = async (data) => {
+    try {
+      await axios.post("/users/register", data);
+      toast.success("Inscription réussie !");
+    } catch (error) {
+      console.error(error); // Utile en dev
+      toast.error("Erreur à l'inscription");
     }
-
-    // Logique d'inscription à venir (API etc.)
-    console.log("Inscription réussie !", data);
-    toast.success("Inscription réussie !");
   };
 
   return (
-    <Container>
-      <Title>Créer un compte</Title>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Label>Identifiant :</Label>
-        <Input
-          {...register("identifiant", { required: "Identifiant requis" })}
-        />
-        {errors.identifiant && <ErrorText>{errors.identifiant.message}</ErrorText>}
+    <>
+      <Navbar />
+      <Container>
+        <Title>Créer un compte</Title>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Label>Identifiant :</Label>
+          <Input
+            {...register("identifiant", { required: "Identifiant requis" })}
+          />
+          {errors.identifiant && <ErrorText>{errors.identifiant.message}</ErrorText>}
 
-        <Label>Courriel :</Label>
-        <Input
-          type="email"
-          {...register("email", {
-            required: "Courriel requis",
-            pattern: {
-              value: /^\S+@\S+$/i,
-              message: "Adresse courriel invalide"
-            }
-          })}
-        />
-        {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
+          <Label>Courriel :</Label>
+          <Input
+            type="email"
+            {...register("email", {
+              required: "Courriel requis",
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: "Adresse courriel invalide"
+              }
+            })}
+          />
+          {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
 
-        <Label>Mot de passe :</Label>
-        <Input
-          type="password"
-          {...register("motDePasse", {
-            required: "Mot de passe requis",
-            minLength: {
-              value: 6,
-              message: "6 caractères minimum"
-            }
-          })}
-        />
-        {errors.motDePasse && <ErrorText>{errors.motDePasse.message}</ErrorText>}
+          <Label>Mot de passe :</Label>
+          <Input
+            type="password"
+            {...register("motDePasse", {
+              required: "Mot de passe requis",
+              minLength: {
+                value: 6,
+                message: "6 caractères minimum"
+              }
+            })}
+          />
+          {errors.motDePasse && <ErrorText>{errors.motDePasse.message}</ErrorText>}
 
-        <Label>Confirmer le mot de passe :</Label>
-        <Input
-          type="password"
-          {...register("confirmation", { required: "Confirmation requise" })}
-        />
-        {errors.confirmation && <ErrorText>{errors.confirmation.message}</ErrorText>}
+          <Label>Confirmer le mot de passe :</Label>
+          <Input
+            type="password"
+            {...register("confirmation", {
+              required: "Confirmation requise"
+            })}
+          />
+          {errors.confirmation && <ErrorText>{errors.confirmation.message}</ErrorText>}
 
-        {/* Vérification en temps réel */}
-        {confirmation && motDePasse !== confirmation && (
-          <ErrorText>Les mots de passe ne correspondent pas</ErrorText>
-        )}
+          {confirmation && motDePasse !== confirmation && (
+            <ErrorText>Les mots de passe ne correspondent pas</ErrorText>
+          )}
 
-        <Button type="submit">Créer un compte</Button>
-      </form>
+          <Button type="submit">Créer un compte</Button>
+        </form>
 
-      <StyledLink to="/connexion">Déjà inscrit ? Connectez-vous ici</StyledLink>
+        <StyledLink to="/connexion">Déjà inscrit ? Connectez-vous ici</StyledLink>
 
-      <ToastContainer position="top-right" autoClose={3000} />
-    </Container>
+        <ToastContainer position="top-right" autoClose={3000} />
+      </Container>
+    </>
   );
 };
 
