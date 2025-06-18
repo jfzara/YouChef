@@ -11,17 +11,31 @@ import { useAuth } from '../contexts/AuthContext'; // Pour gérer le lien de dé
 // Nous allons le positionner en absolu ou fixe pour qu'il "flotte"
 // et laisser le contenu de la page s'écouler en dessous.
 const StyledNavContainer = styled(motion.nav)`
-  position: absolute; /* Permet un positionnement libre sans affecter le flux du document */
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100%; /* Pour couvrir la largeur et pouvoir positionner les éléments à l'intérieur */
-  height: 100vh; /* Pour couvrir la hauteur et avoir de l'espace pour disperser les liens */
-  pointer-events: none; /* Par défaut, les événements de souris passent à travers */
-  z-index: 1000; /* Assure que la navbar est au-dessus des autres contenus */
-  display: flex; /* Utilisation de flexbox pour la disposition des liens (même si dispersés) */
-  justify-content: space-between; /* Aide à la dispersion */
-  align-items: flex-start; /* Aligne les éléments en haut */
-  padding: var(--space-4); /* Un peu de padding global pour l'aération */
+  width: 100%;
+  height: 100vh; /* Pour desktop, permet la dispersion */
+  pointer-events: none;
+  z-index: 1000;
+  padding: var(--space-4);
+
+  @media (max-width: 768px) { /* Pour les écrans plus petits que 768px (tablettes et mobiles) */
+    height: auto; /* La hauteur s'adapte au contenu */
+    position: fixed; /* La navbar reste visible en scrollant */
+    bottom: 0;      /* Positionner en bas pour un accès facile au pouce */
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: flex; /* Utiliser flexbox pour arranger les éléments */
+    justify-content: space-around; /* Distribuer les liens horizontalement */
+    align-items: center;
+    padding: var(--space-3) var(--space-2); /* Moins de padding sur mobile */
+    background-color: rgba(255, 255, 255, 0.9); /* Un fond semi-transparent pour le bandeau mobile */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05); /* Une ombre subtile vers le haut */
+    border-top-left-radius: var(--radius-lg); /* Coins arrondis pour le bandeau du bas */
+    border-top-right-radius: var(--radius-lg);
+  }
 `;
 
 // Style de chaque lien de navigation. C'est un motion.div pour les animations.
