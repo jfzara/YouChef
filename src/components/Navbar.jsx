@@ -1,44 +1,40 @@
-Absolument ! Voici le code de votre Navbar.jsx avec toutes les modifications que nous avons discutées pour le responsive design, incluant la correction pour l'avertissement no-unused-vars et les ajustements de styles pour mobile.
-
-J'ai intégré les media queries directement dans les styled components StyledNavContainer et NavItem pour une adaptation fluide.
-
-JavaScript
-
 // src/components/Navbar.jsx
-import React from 'react';
+import React, { useState } from 'react'; // Importer useState
 import { motion } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuth } from '../contexts/AuthContext'; // Pour gérer le lien de déconnexion
+import { useAuth } from '../contexts/AuthContext';
 
-// --- Styled Components pour les éléments de la Navbar ---
+// --- Styled Components (restent globalement les mêmes) ---
+// Vos StyledNavContainer et NavItem restent comme précédemment pour le responsive.
+// Les modifications spécifiques au comportement viendront des props de Framer Motion.
 
 const StyledNavContainer = styled(motion.nav)`
-  position: absolute; /* Par défaut, positionnement absolu pour le desktop */
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh; /* Permet la dispersion des liens sur toute la hauteur du viewport */
-  pointer-events: none; /* Les événements de souris passent à travers le conteneur */
+  height: 100vh;
+  pointer-events: none;
   z-index: 1000;
-  padding: var(--space-4); /* Espacement général */
+  padding: var(--space-4);
 
   @media (max-width: 768px) {
-    height: auto; /* La hauteur s'adapte au contenu sur mobile */
-    position: fixed; /* La navbar reste en bas de l'écran lors du défilement */
+    height: auto;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     width: 100%;
-    display: flex; /* Utilise flexbox pour une disposition horizontale */
-    justify-content: space-around; /* Distribue les liens horizontalement */
+    display: flex;
+    justify-content: space-around;
     align-items: center;
-    padding: var(--space-3) var(--space-2); /* Padding réduit pour mobile */
-    background-color: rgba(255, 255, 255, 0.9); /* Fond semi-transparent pour le bandeau */
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.05); /* Ombre subtile vers le haut */
-    border-top-left-radius: var(--radius-lg); /* Coins arrondis en haut */
+    padding: var(--space-3) var(--space-2);
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    border-top-left-radius: var(--radius-lg);
     border-top-right-radius: var(--radius-lg);
-    pointer-events: auto; /* Réactive les événements de souris pour le conteneur mobile */
+    pointer-events: auto; /* Réactive les événements sur le conteneur mobile */
   }
 `;
 
@@ -50,8 +46,8 @@ const NavItem = styled(motion.div)`
   border-radius: var(--radius-full);
   background-color: var(--neutral-100);
   cursor: pointer;
-  pointer-events: auto; /* Réactive les événements de souris pour les liens individuels */
-  white-space: nowrap; /* Empêche le texte de se casser sur plusieurs lignes */
+  pointer-events: auto;
+  white-space: nowrap;
   transition: background-color var(--transition-fast), color var(--transition-fast);
 
   &:hover {
@@ -65,24 +61,26 @@ const NavItem = styled(motion.div)`
   }
 
   @media (max-width: 768px) {
-    position: static !important; /* Force le positionnement statique sur mobile, annulant l'inline style */
-    top: auto !important;         /* Annule les propriétés top/left/right/bottom */
+    position: static !important;
+    top: auto !important;
     left: auto !important;
     right: auto !important;
     bottom: auto !important;
-    transform: none !important;   /* Annule toute transformation (comme le whileHover) pour la disposition fixe */
-    font-size: var(--text-base); /* Taille de police plus petite */
-    padding: var(--space-2);     /* Padding réduit */
-    text-align: center;          /* Centrer le texte dans chaque NavItem */
-    flex: 1;                     /* Permet aux éléments de prendre une largeur égale dans le flexbox parent */
-    min-width: 0;                /* Permet aux éléments de rétrécir si le contenu est long */
+    transform: none !important;
+    font-size: var(--text-base);
+    padding: var(--space-2);
+    text-align: center;
+    flex: 1;
+    min-width: 0;
   }
 `;
 
 // --- Composant Navbar ---
 
 const Navbar = () => {
-  const { token, logout } = useAuth(); // Récupère le token et la fonction de déconnexion
+  const { token, logout } = useAuth();
+  // État pour suivre l'élément survolé/focus
+  const [hoveredItem, setHoveredItem] = useState(null);
 
   // Variantes d'animation pour Framer Motion
   const navVariants = {
@@ -90,40 +88,85 @@ const Navbar = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1, // Les enfants apparaissent un par un
-        delayChildren: 0.5,    // Délai avant que les enfants commencent à apparaître
+        staggerChildren: 0.1,
+        delayChildren: 0.5,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { y: -20, opacity: 0 },
-    visible: { y: 0, opacity: 1 },
-    // Animation au survol pour l'effet de "rapprochement" / fantaisie
-    hover: (custom) => ({
-      scale: 1.1,
+    // État initial (quand rien n'est survolé)
+    idle: (custom) => ({
+      y: custom.initialY, // Position verticale de base avec un petit décalage aléatoire
+      x: custom.initialX, // Position horizontale de base avec un petit décalage aléatoire
+      opacity: 0.8,       // Légèrement estompé au repos
+      scale: 1,
       rotate: custom.rotate,
-      x: custom.xOffset,
+      transition: {
+        duration: 2 + Math.random() * 2, // Durée aléatoire pour un mouvement "nuageux"
+        repeat: Infinity,
+        repeatType: "reverse",
+        ease: "easeInOut",
+        delay: Math.random() * 0.5 // Petit délai initial aléatoire
+      }
+    }),
+    // État d'apparition (une fois au chargement)
+    hidden: { y: -20, opacity: 0 },
+    visible: (custom) => ({
+      y: custom.initialY,
+      x: custom.initialX,
+      opacity: 0.8, // Apparaît à 0.8
+      scale: 1,
+      transition: {
+        type: "spring", stiffness: 100, damping: 20, // Douce animation d'apparition
+        duration: 0.8,
+        delay: custom.delay // Utilise le delay défini par staggerChildren
+      }
+    }),
+    // État au survol/focus
+    hoverFocus: (custom) => ({
+      scale: 1.2, // Agrandissement un peu plus prononcé
+      rotate: custom.rotate * 1.5, // Rotation accentuée
+      x: custom.xOffset,     // Décalage personnalisé (sort de sa position de base)
       y: custom.yOffset,
-      transition: { type: "spring", stiffness: 300, damping: 10 }
+      opacity: 1, // Devient pleinement opaque
+      transition: { type: "spring", stiffness: 300, damping: 15 } // Animation vive
+    }),
+    // État des éléments non survolés quand un autre est survolé
+    otherHovered: (custom) => ({
+      opacity: 0.1, // Devient très translucide
+      scale: 0.95, // Rétrécit légèrement
+      x: custom.initialX * 0.9, // Recule un peu sur l'axe X
+      y: custom.initialY * 0.9, // Recule un peu sur l'axe Y
+      transition: { duration: 0.4, ease: "easeOut" } // Transition douce mais vive
     }),
   };
 
-  // Configuration des liens avec des positions et des animations personnalisées
   const navLinks = [
-    { name: "Accueil", path: "/", x: "5%", y: "5%", rotate: -2, xOffset: 20, yOffset: 10 },
-    { name: "Recettes", path: "/recettes", x: "85%", y: "10%", rotate: 3, xOffset: -20, yOffset: 15 },
-    // Le Dashboard n'apparaît que si l'utilisateur est connecté
-    ...(token ? [{ name: "Dashboard", path: "/dashboard", x: "5%", y: "90%", rotate: 0, xOffset: 15, yOffset: -10 }] : []),
-    ...(token ? // Si connecté, un bouton de déconnexion
-        [{ name: "Déconnexion", path: "#", onClick: logout, x: "80%", y: "90%", rotate: 5, xOffset: -10, yOffset: -15 }]
-        : // Si non connecté, les liens de connexion/inscription
+    // Nous ajoutons 'id' pour identifier les liens, c'est plus robuste que le nom pour key et hover
+    { id: 'accueil', name: "Accueil", path: "/", x: "15%", y: "15%", rotate: -2, initialX: 0, initialY: 0, xOffset: 30, yOffset: 15 },
+    { id: 'recettes', name: "Recettes", path: "/recettes", x: "75%", y: "20%", rotate: 3, initialX: 0, initialY: 0, xOffset: -30, yOffset: 20 },
+    ...(token ? [{ id: 'dashboard', name: "Dashboard", path: "/dashboard", x: "10%", y: "80%", rotate: 0, initialX: 0, initialY: 0, xOffset: 25, yOffset: -15 }] : []),
+    ...(token ?
+        [{ id: 'deconnexion', name: "Déconnexion", path: "#", onClick: logout, x: "70%", y: "85%", rotate: 5, initialX: 0, initialY: 0, xOffset: -25, yOffset: -20 }]
+        :
         [
-          { name: "Connexion", path: "/connexion", x: "70%", y: "2%", rotate: -5, xOffset: -20, yOffset: 5 },
-          { name: "Inscription", path: "/inscription", x: "50%", y: "95%", rotate: 8, xOffset: 20, yOffset: -5 }
+          { id: 'connexion', name: "Connexion", path: "/connexion", x: "60%", y: "5%", rotate: -5, initialX: 0, initialY: 0, xOffset: -20, yOffset: 10 },
+          { id: 'inscription', name: "Inscription", path: "/inscription", x: "40%", y: "90%", rotate: 8, initialX: 0, initialY: 0, xOffset: 25, yOffset: -10 }
         ]
     ),
   ];
+
+  // Randomiser les positions initiales pour l'effet de "nuage"
+  // et les petites variations de mouvement au repos.
+  // Pour éviter des débordements, on garde les x/y d'origine pour le style absolu.
+  // Les initialX/initialY sont des décalages pour le mouvement "idle".
+  const processedNavLinks = navLinks.map(link => ({
+    ...link,
+    initialX: (Math.random() - 0.5) * 10, // Petit décalage aléatoire entre -5 et 5px
+    initialY: (Math.random() - 0.5) * 10, // Petit décalage aléatoire entre -5 et 5px
+  }));
+
 
   return (
     <StyledNavContainer
@@ -132,19 +175,22 @@ const Navbar = () => {
       animate="visible"
     >
       {/* eslint-disable-next-line no-unused-vars */}
-      {navLinks.map((link, index) => ( // 'index' est laissé pour le contexte, mais non utilisé
+      {processedNavLinks.map((link, index) => (
         <NavLink
-          key={link.name} // Utiliser link.name comme clé est OK si les noms sont uniques
+          key={link.id} // Utilisez l'ID unique pour la clé
           to={link.path}
           onClick={link.onClick}
-          // Le style de positionnement absolu est appliqué ici.
-          // Il sera overridden par `position: static !important` sur mobile via le media query dans NavItem.
+          // Appliquer le style de positionnement absolu pour desktop
           style={{ position: 'absolute', top: link.y, left: link.x }}
+          onMouseEnter={() => setHoveredItem(link.id)} // Quand la souris entre
+          onMouseLeave={() => setHoveredItem(null)}   // Quand la souris sort
+          onFocus={() => setHoveredItem(link.id)}     // Pour l'accessibilité clavier
+          onBlur={() => setHoveredItem(null)}         // Pour l'accessibilité clavier
         >
           <NavItem
             variants={itemVariants}
-            custom={{ rotate: link.rotate, xOffset: link.xOffset, yOffset: link.yOffset }}
-            whileHover="hover"
+            custom={link} // Passer toutes les propriétés 'link' comme custom prop
+            animate={hoveredItem === link.id ? "hoverFocus" : (hoveredItem !== null ? "otherHovered" : "idle")}
           >
             {link.name}
           </NavItem>
