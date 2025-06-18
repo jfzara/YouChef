@@ -119,6 +119,9 @@ html {
 }
 
 body {
+   height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: 1.6;
