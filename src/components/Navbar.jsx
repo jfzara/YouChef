@@ -1,140 +1,128 @@
+// src/components/Navbar.jsx
+import React from 'react';
+import { motion } from 'framer-motion';
+import { NavLink } from 'react-router-dom'; // Utilisez NavLink pour le style actif si besoin
+import styled from 'styled-components';
+import { useAuth } from '../contexts/AuthContext'; // Pour gérer le lien de déconnexion
 
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import styles from '../styles/Navbar.module.css';
-import { useAuth } from '../contexts/AuthContext';
-import toast from 'react-hot-toast';
+// --- Styled Components pour les éléments de la Navbar ---
+
+// Le conteneur principal de la navbar.
+// Nous allons le positionner en absolu ou fixe pour qu'il "flotte"
+// et laisser le contenu de la page s'écouler en dessous.
+const StyledNavContainer = styled(motion.nav)`
+  position: absolute; /* Permet un positionnement libre sans affecter le flux du document */
+  top: 0;
+  left: 0;
+  width: 100%; /* Pour couvrir la largeur et pouvoir positionner les éléments à l'intérieur */
+  height: 100vh; /* Pour couvrir la hauteur et avoir de l'espace pour disperser les liens */
+  pointer-events: none; /* Par défaut, les événements de souris passent à travers */
+  z-index: 1000; /* Assure que la navbar est au-dessus des autres contenus */
+  display: flex; /* Utilisation de flexbox pour la disposition des liens (même si dispersés) */
+  justify-content: space-between; /* Aide à la dispersion */
+  align-items: flex-start; /* Aligne les éléments en haut */
+  padding: var(--space-4); /* Un peu de padding global pour l'aération */
+`;
+
+// Style de chaque lien de navigation. C'est un motion.div pour les animations.
+// Chaque lien est un élément interactif.
+const NavItem = styled(motion.div)`
+  font-family: var(--font-display); /* Utilise notre police fantaisiste */
+  font-size: var(--text-2xl); /* Grande taille pour la visibilité des éléments dispersés */
+  color: var(--neutral-800); /* Couleur de texte douce */
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full); /* Pour un aspect doux et organique, comme des bulles */
+  background-color: var(--neutral-100); /* Un fond léger pour que les liens "ressortent" */
+  cursor: pointer;
+  pointer-events: auto; /* Réactive les événements de souris pour les liens individuels */
+  white-space: nowrap; /* Empêche le texte de se casser sur plusieurs lignes */
+  transition: background-color var(--transition-fast); /* Transition douce pour le fond */
+
+  &:hover {
+    background-color: var(--soft-green-100); /* Changement de couleur au survol pour feedback */
+    color: var(--soft-green-800);
+  }
+
+  /* Styles spécifiques pour le lien actif de NavLink si désiré */
+  &.active {
+    background-color: var(--soft-blue-200); /* Exemple pour le lien actif */
+    color: var(--soft-blue-900);
+  }
+`;
+
+// --- Composant Navbar ---
 
 const Navbar = () => {
-  const { logout, isAuthenticated, user } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { token, logout } = useAuth(); // Récupère le token et la fonction de déconnexion
 
-  const handleLogout = () => {
-    logout();
-    toast.success('Déconnexion réussie');
-    navigate('/');
-    setIsMobileMenuOpen(false);
+  // Variantes d'animation pour Framer Motion
+  const navVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1, // Les enfants apparaissent un par un
+        delayChildren: 0.5,    // Délai avant que les enfants commencent à apparaître
+      },
+    },
   };
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+  const itemVariants = {
+    hidden: { y: -20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+    // Animation au survol pour l'effet de "rapprochement" / fantaisie
+    // Nous allons utiliser 'position' pour simuler le "rapprochement"
+    // Les valeurs de x et y seront ajustées pour chaque élément.
+    hover: (custom) => ({
+      scale: 1.1,
+      rotate: custom.rotate, // Chaque item peut avoir une légère rotation différente
+      x: custom.xOffset,     // Décalage personnalisé pour simuler le rapprochement
+      y: custom.yOffset,
+      transition: { type: "spring", stiffness: 300, damping: 10 }
+    }),
   };
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  const isActiveLink = (path) => {
-    return location.pathname === path;
-  };
+  // Configuration des liens avec des positions et des animations personnalisées
+  const navLinks = [
+    { name: "Accueil", path: "/", x: "5%", y: "5%", rotate: -2, xOffset: 20, yOffset: 10 },
+    { name: "Recettes", path: "/recettes", x: "85%", y: "10%", rotate: 3, xOffset: -20, yOffset: 15 },
+    // Le Dashboard n'apparaît que si l'utilisateur est connecté
+    ...(token ? [{ name: "Dashboard", path: "/dashboard", x: "5%", y: "90%", rotate: 0, xOffset: 15, yOffset: -10 }] : []),
+    ...(token ? // Si connecté, un bouton de déconnexion
+        [{ name: "Déconnexion", path: "#", onClick: logout, x: "80%", y: "90%", rotate: 5, xOffset: -10, yOffset: -15 }]
+        : // Si non connecté, les liens de connexion/inscription
+        [
+          { name: "Connexion", path: "/connexion", x: "70%", y: "2%", rotate: -5, xOffset: -20, yOffset: 5 },
+          { name: "Inscription", path: "/inscription", x: "50%", y: "95%", rotate: 8, xOffset: 20, yOffset: -5 }
+        ]
+    ),
+  ];
 
   return (
-    <nav className={styles.navbar}>
-      <div className={styles.navContainer}>
-        {/* Brand/Logo */}
-        <Link to="/" className={styles.brand} onClick={closeMobileMenu}>
-          <div className={styles.brandIcon}>
-            🍽️
-          </div>
-          RecetteApp
-        </Link>
-
-        {/* Mobile menu toggle */}
-        <button 
-          className={`${styles.menuToggle} ${isMobileMenuOpen ? styles.active : ''}`}
-          onClick={toggleMobileMenu}
-          aria-label="Toggle navigation menu"
+    <StyledNavContainer
+      variants={navVariants}
+      initial="hidden"
+      animate="visible"
+    >
+       {/* eslint-disable-next-line no-unused-vars */} {/* <-- Ajoutez cette ligne ici */}
+      {navLinks.map((link, _index) => (
+        <NavLink
+          key={link.name}
+          to={link.path}
+          onClick={link.onClick}
+          // Les styles de positionnement sont appliqués directement ici
+          style={{ position: 'absolute', top: link.y, left: link.x }}
         >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        {/* Navigation Links */}
-        <ul className={`${styles.navLinks} ${isMobileMenuOpen ? styles.active : ''}`}>
-          <li>
-            <Link 
-              to="/" 
-              className={`${styles.navLink} ${isActiveLink('/') ? styles.activeLink : ''}`}
-              onClick={closeMobileMenu}
-            >
-              Accueil
-            </Link>
-          </li>
-          
-          <li>
-            <Link 
-              to="/recettes" 
-              className={`${styles.navLink} ${isActiveLink('/recettes') ? styles.activeLink : ''}`}
-              onClick={closeMobileMenu}
-            >
-              Recettes
-            </Link>
-          </li>
-          
-          {isAuthenticated && (
-            <li>
-              <Link 
-                to="/dashboard" 
-                className={`${styles.navLink} ${isActiveLink('/dashboard') ? styles.activeLink : ''}`}
-                onClick={closeMobileMenu}
-              >
-                Dashboard
-              </Link>
-            </li>
-          )}
-
-          {!isAuthenticated ? (
-            <>
-              <li>
-                <Link 
-                  to="/connexion" 
-                  className={`${styles.navLink} ${isActiveLink('/connexion') ? styles.activeLink : ''}`}
-                  onClick={closeMobileMenu}
-                >
-                  Connexion
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/inscription" 
-                  className={`${styles.navLink} ${isActiveLink('/inscription') ? styles.activeLink : ''}`}
-                  onClick={closeMobileMenu}
-                >
-                  Inscription
-                </Link>
-              </li>
-            </>
-          ) : (
-            <>
-              {user && (
-                <li>
-                  <span className={styles.navLink} style={{ cursor: 'default' }}>
-                    👋 {user.identifiant}
-                  </span>
-                </li>
-              )}
-              <li>
-                <button 
-                  onClick={handleLogout} 
-                  className={styles.navLink}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    font: 'inherit'
-                  }}
-                >
-                  Déconnexion
-                </button>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
-    </nav>
+          <NavItem
+            variants={itemVariants}
+            custom={{ rotate: link.rotate, xOffset: link.xOffset, yOffset: link.yOffset }}
+            whileHover="hover"
+          >
+            {link.name}
+          </NavItem>
+        </NavLink>
+      ))}
+    </StyledNavContainer>
   );
 };
 
