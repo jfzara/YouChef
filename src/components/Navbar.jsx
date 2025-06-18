@@ -1,66 +1,81 @@
+Absolument ! Voici le code de votre Navbar.jsx avec toutes les modifications que nous avons discutées pour le responsive design, incluant la correction pour l'avertissement no-unused-vars et les ajustements de styles pour mobile.
+
+J'ai intégré les media queries directement dans les styled components StyledNavContainer et NavItem pour une adaptation fluide.
+
+JavaScript
+
 // src/components/Navbar.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import { NavLink } from 'react-router-dom'; // Utilisez NavLink pour le style actif si besoin
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext'; // Pour gérer le lien de déconnexion
 
 // --- Styled Components pour les éléments de la Navbar ---
 
-// Le conteneur principal de la navbar.
-// Nous allons le positionner en absolu ou fixe pour qu'il "flotte"
-// et laisser le contenu de la page s'écouler en dessous.
 const StyledNavContainer = styled(motion.nav)`
-  position: absolute;
+  position: absolute; /* Par défaut, positionnement absolu pour le desktop */
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh; /* Pour desktop, permet la dispersion */
-  pointer-events: none;
+  height: 100vh; /* Permet la dispersion des liens sur toute la hauteur du viewport */
+  pointer-events: none; /* Les événements de souris passent à travers le conteneur */
   z-index: 1000;
-  padding: var(--space-4);
+  padding: var(--space-4); /* Espacement général */
 
-  @media (max-width: 768px) { /* Pour les écrans plus petits que 768px (tablettes et mobiles) */
-    height: auto; /* La hauteur s'adapte au contenu */
-    position: fixed; /* La navbar reste visible en scrollant */
-    bottom: 0;      /* Positionner en bas pour un accès facile au pouce */
+  @media (max-width: 768px) {
+    height: auto; /* La hauteur s'adapte au contenu sur mobile */
+    position: fixed; /* La navbar reste en bas de l'écran lors du défilement */
+    bottom: 0;
     left: 0;
     right: 0;
     width: 100%;
-    display: flex; /* Utiliser flexbox pour arranger les éléments */
-    justify-content: space-around; /* Distribuer les liens horizontalement */
+    display: flex; /* Utilise flexbox pour une disposition horizontale */
+    justify-content: space-around; /* Distribue les liens horizontalement */
     align-items: center;
-    padding: var(--space-3) var(--space-2); /* Moins de padding sur mobile */
-    background-color: rgba(255, 255, 255, 0.9); /* Un fond semi-transparent pour le bandeau mobile */
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.05); /* Une ombre subtile vers le haut */
-    border-top-left-radius: var(--radius-lg); /* Coins arrondis pour le bandeau du bas */
+    padding: var(--space-3) var(--space-2); /* Padding réduit pour mobile */
+    background-color: rgba(255, 255, 255, 0.9); /* Fond semi-transparent pour le bandeau */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05); /* Ombre subtile vers le haut */
+    border-top-left-radius: var(--radius-lg); /* Coins arrondis en haut */
     border-top-right-radius: var(--radius-lg);
+    pointer-events: auto; /* Réactive les événements de souris pour le conteneur mobile */
   }
 `;
 
-// Style de chaque lien de navigation. C'est un motion.div pour les animations.
-// Chaque lien est un élément interactif.
 const NavItem = styled(motion.div)`
-  font-family: var(--font-display); /* Utilise notre police fantaisiste */
-  font-size: var(--text-2xl); /* Grande taille pour la visibilité des éléments dispersés */
-  color: var(--neutral-800); /* Couleur de texte douce */
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--neutral-800);
   padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-full); /* Pour un aspect doux et organique, comme des bulles */
-  background-color: var(--neutral-100); /* Un fond léger pour que les liens "ressortent" */
+  border-radius: var(--radius-full);
+  background-color: var(--neutral-100);
   cursor: pointer;
   pointer-events: auto; /* Réactive les événements de souris pour les liens individuels */
   white-space: nowrap; /* Empêche le texte de se casser sur plusieurs lignes */
-  transition: background-color var(--transition-fast); /* Transition douce pour le fond */
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 
   &:hover {
-    background-color: var(--soft-green-100); /* Changement de couleur au survol pour feedback */
+    background-color: var(--soft-green-100);
     color: var(--soft-green-800);
   }
 
-  /* Styles spécifiques pour le lien actif de NavLink si désiré */
   &.active {
-    background-color: var(--soft-blue-200); /* Exemple pour le lien actif */
+    background-color: var(--soft-blue-200);
     color: var(--soft-blue-900);
+  }
+
+  @media (max-width: 768px) {
+    position: static !important; /* Force le positionnement statique sur mobile, annulant l'inline style */
+    top: auto !important;         /* Annule les propriétés top/left/right/bottom */
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;   /* Annule toute transformation (comme le whileHover) pour la disposition fixe */
+    font-size: var(--text-base); /* Taille de police plus petite */
+    padding: var(--space-2);     /* Padding réduit */
+    text-align: center;          /* Centrer le texte dans chaque NavItem */
+    flex: 1;                     /* Permet aux éléments de prendre une largeur égale dans le flexbox parent */
+    min-width: 0;                /* Permet aux éléments de rétrécir si le contenu est long */
   }
 `;
 
@@ -85,12 +100,10 @@ const Navbar = () => {
     hidden: { y: -20, opacity: 0 },
     visible: { y: 0, opacity: 1 },
     // Animation au survol pour l'effet de "rapprochement" / fantaisie
-    // Nous allons utiliser 'position' pour simuler le "rapprochement"
-    // Les valeurs de x et y seront ajustées pour chaque élément.
     hover: (custom) => ({
       scale: 1.1,
-      rotate: custom.rotate, // Chaque item peut avoir une légère rotation différente
-      x: custom.xOffset,     // Décalage personnalisé pour simuler le rapprochement
+      rotate: custom.rotate,
+      x: custom.xOffset,
       y: custom.yOffset,
       transition: { type: "spring", stiffness: 300, damping: 10 }
     }),
@@ -118,13 +131,14 @@ const Navbar = () => {
       initial="hidden"
       animate="visible"
     >
-       {/* eslint-disable-next-line no-unused-vars */} {/* <-- Ajoutez cette ligne ici */}
-      {navLinks.map((link, _index) => (
+      {/* eslint-disable-next-line no-unused-vars */}
+      {navLinks.map((link, index) => ( // 'index' est laissé pour le contexte, mais non utilisé
         <NavLink
-          key={link.name}
+          key={link.name} // Utiliser link.name comme clé est OK si les noms sont uniques
           to={link.path}
           onClick={link.onClick}
-          // Les styles de positionnement sont appliqués directement ici
+          // Le style de positionnement absolu est appliqué ici.
+          // Il sera overridden par `position: static !important` sur mobile via le media query dans NavItem.
           style={{ position: 'absolute', top: link.y, left: link.x }}
         >
           <NavItem
