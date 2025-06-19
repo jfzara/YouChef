@@ -3,6 +3,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
+// Importez l'image que vous souhaitez utiliser comme fond
+// Assurez-vous que le chemin d'accès est correct par rapport à ce fichier
+import VegetablesBackground from '../assets/images/Vegetables.jpg'; // <-- Nouvelle importation
+
 // --- Styled Components pour la Page d'Accueil ---
 
 const AccueilContainer = styled(motion.div)`
@@ -12,13 +16,27 @@ const AccueilContainer = styled(motion.div)`
   justify-content: center; /* Centre le contenu verticalement */
   align-items: center; /* Centre le contenu horizontalement */
   padding: var(--space-8) var(--space-4); /* Padding global */
-  background: linear-gradient(135deg, var(--soft-green-50), var(--soft-blue-50)); /* Un fond dégradé très doux */
+
+  /* Mise à jour du fond pour inclure l'image */
+  background-image: url(${VegetablesBackground}); /* Utilise l'image importée comme fond */
+  background-size: cover; /* L'image couvre toute la zone, quitte à être coupée */
+  background-position: center center; /* Centre l'image de fond */
+  background-repeat: no-repeat; /* Empêche l'image de se répéter */
+  background-attachment: fixed; /* L'image reste fixe lors du défilement */
+  
+  /* Ajout d'une superposition de couleur douce pour harmoniser et assurer la lisibilité */
+  background-color: rgba(var(--soft-green-50-rgb), 0.7); /* Une couleur semi-transparente */
+  background-blend-mode: overlay; /* Mode de fusion pour mélanger la couleur et l'image */
+
   color: var(--neutral-800); /* Couleur de texte par défaut */
   text-align: center; /* Centre le texte */
 
   /* Ajustement pour les écrans plus petits pour tenir compte de la navbar en bas */
   @media (max-width: 768px) {
     padding-bottom: calc(var(--space-8) + 70px); /* Ajoute de l'espace pour la navbar fixe du bas (70px de hauteur) */
+    background-size: contain; /* Sur mobile, s'assurer que l'image est entièrement visible */
+    background-position: bottom center; /* Positionner en bas pour ne pas cacher le contenu */
+    background-color: rgba(var(--soft-green-50-rgb), 0.9); /* Plus opaque sur mobile pour le texte */
   }
 `;
 
