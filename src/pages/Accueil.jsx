@@ -1,95 +1,70 @@
-D'accord, allons-y avec l'option du flou (blur()) sur l'image existante. C'est une solution rapide pour masquer la pixellisation et obtenir un effet plus abstrait, tout en utilisant une de vos images actuelles.
 
-Nous allons appliquer le filtre blur() directement à l'image de fond via la propriété CSS filter. Il faudra probablement un blur assez prononcé pour effacer les détails des légumes.
-
-Application du Filtre blur() à l'Image de Fond
-Voici le code mis à jour pour votre page d'accueil (src/pages/Accueil.jsx). J'ai ciblé l'image Vegetables.jpg et ajouté la propriété filter: blur(). J'ai également ajusté légèrement le background-size pour compenser le flou, mais vous pourrez le modifier si besoin.
-
-JavaScript
 
 // src/pages/Accueil.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
-// Importez l'image que vous souhaitez utiliser comme fond
-import VegetablesBackground from '../assets/images/Vegetables.jpg';
+// Importez la nouvelle image de fond
+import WhiteBackground from '../assets/images/WhiteBackground.jpg'; // <-- Nouvelle image importée
 
 // --- Styled Components pour la Page d'Accueil ---
 
 const AccueilContainer = styled(motion.div)`
-  min-height: 100vh;
+  min-height: 100vh; /* S'assure que le conteneur prend au moins toute la hauteur du viewport */
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: var(--space-8) var(--space-4);
+  justify-content: center; /* Centre le contenu verticalement */
+  align-items: center; /* Centre le contenu horizontalement */
+  padding: var(--space-8) var(--space-4); /* Padding global */
+  position: relative; /* Maintenu pour la flexibilité future, mais pas strict pour cette version */
+  overflow: hidden; /* Au cas où l'image dépasse légèrement */
 
-  /* Mise à jour du fond pour inclure l'image et le filtre blur */
-  background-image: url(${VegetablesBackground});
-  background-size: 180%; /* Légèrement moins zoomé pour voir plus de l'effet flou */
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  /* Styles de la nouvelle image de fond */
+  background-image: url(${WhiteBackground}); /* Utilise la nouvelle image importée */
+  background-size: cover; /* L'image couvre toute la zone, quitte à être coupée */
+  background-position: center center; /* Centre l'image de fond */
+  background-repeat: no-repeat; /* Empêche l'image de se répéter */
+  background-attachment: fixed; /* L'image reste fixe lors du défilement */
   
-  /* Applique le filtre de flou à l'image de fond */
-  filter: blur(10px); /* <-- Applique un flou de 10 pixels */
-  transform: scale(1.02); /* Compensateur de l'effet de rétrécissement du blur */
+  /* Retrait de la superposition de couleur et du blend-mode */
+  /* background-color: rgba(var(--soft-green-50-rgb), 0.7); */ 
+  /* background-blend-mode: overlay; */
 
-  /* Superposition de couleur pour la lisibilité et l'harmonisation */
-  background-color: rgba(var(--soft-green-50-rgb), 0.7);
-  background-blend-mode: overlay;
+  /* Retrait du masque translucide (pseudo-élément ::before) et de ses z-index */
+  /* &::before { ... } */
+  /* & > * { ... } */
 
-  /* Important: Le contenu doit être au-dessus du flou */
-  /* Pour que le texte et les autres éléments ne soient pas flous, */
-  /* nous devons les positionner au-dessus ou utiliser un pseudo-élément pour le fond. */
-  /* Pour l'instant, le flou s'applique à tout le conteneur. */
-  /* Si le texte devient flou, nous devrons restructurer AccueilContainer. */
-
-  color: var(--neutral-800);
+  color: var(--neutral-800); /* Couleur de texte par défaut. Peut-être ajustée si l'image est très claire. */
   text-align: center;
 
+  /* Ajustement pour les écrans plus petits pour tenir compte de la navbar en bas */
   @media (max-width: 768px) {
-    padding-bottom: calc(var(--space-8) + 70px);
-    background-size: 220%; /* Plus grand sur mobile */
-    background-position: center bottom;
-    background-color: rgba(var(--soft-green-50-rgb), 0.9);
-    filter: blur(8px); /* Ajuster le flou pour mobile si nécessaire */
+    padding-bottom: calc(var(--space-8) + 70px); /* Ajoute de l'espace pour la navbar fixe du bas (70px de hauteur) */
+    background-size: contain; /* Sur mobile, s'assurer que l'image est entièrement visible */
+    background-position: bottom center; /* Positionner en bas pour ne pas cacher le contenu */
+    /* background-color: rgba(var(--soft-green-50-rgb), 0.9); */ /* Retrait du fond sur mobile aussi */
   }
 `;
 
-// IMPORTANT : Pour que le contenu (titre, sous-titre, bouton) ne soit PAS flou,
-// nous devons créer un conteneur interne qui sera positionné AU-DESSUS du fond flou.
-// Sinon, appliquer le filtre blur à AccueilContainer rendra TOUT flou.
-
-const ContentWrapper = styled(motion.div)`
-  position: relative; /* Pour s'assurer qu'il est au-dessus de l'arrière-plan flou */
-  z-index: 1; /* Le place au-dessus du fond flou */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  /* Assurez-vous que ce wrapper n'a pas son propre fond opaque */
-`;
-
 const MainTitle = styled(motion.h1)`
-  font-family: var(--font-display);
-  font-size: var(--text-5xl);
-  color: var(--soft-green-800);
+  font-family: var(--font-display); /* Notre police fantaisiste */
+  font-size: var(--text-5xl); /* Très grande taille pour le titre */
+  color: var(--soft-green-800); /* Couleur d'accent pour le titre */
   margin-bottom: var(--space-4);
-  line-height: 1.1;
+  line-height: 1.1; /* Réduit l'espace entre les lignes */
 
   @media (max-width: 768px) {
-    font-size: var(--text-4xl);
+    font-size: var(--text-4xl); /* Plus petit sur mobile */
   }
 `;
 
 const Subtitle = styled(motion.p)`
-  font-family: var(--font-body);
+  font-family: var(--font-body); /* Police de corps pour la lisibilité */
   font-size: var(--text-xl);
-  color: var(--neutral-700);
+  color: var(--neutral-700); /* Couleur par défaut, à vérifier avec la nouvelle image */
   margin-bottom: var(--space-6);
-  max-width: 800px;
+  max-width: 800px; /* Limite la largeur du texte pour une meilleure lecture */
 
   @media (max-width: 768px) {
     font-size: var(--text-lg);
@@ -97,39 +72,40 @@ const Subtitle = styled(motion.p)`
 `;
 
 const CallToActionButton = styled(motion.button)`
-  background-color: var(--soft-blue-500);
-  color: var(--neutral-0);
+  background-color: var(--soft-blue-500); /* Couleur vive pour le CTA */
+  color: var(--neutral-0); /* Texte blanc */
   font-family: var(--font-body);
   font-size: var(--text-xl);
   padding: var(--space-3) var(--space-6);
   border: none;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-full); /* Bouton en forme de pilule */
   cursor: pointer;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md); /* Ombre douce */
   transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 
   &:hover {
-    background-color: var(--soft-blue-600);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
+    background-color: var(--soft-blue-600); /* Couleur plus foncée au survol */
+    transform: translateY(-3px); /* Effet de léger soulèvement */
+    box-shadow: var(--shadow-lg); /* Ombre plus prononcée */
   }
 
   &:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow-sm);
+    transform: translateY(0); /* Retourne à la position initiale au clic */
+    box-shadow: var(--shadow-sm); /* Ombre plus légère au clic */
   }
 `;
 
 // --- Composant Page d'Accueil ---
 
 const Accueil = () => {
+  // Variantes d'animation pour l'apparition des éléments
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.5
+        staggerChildren: 0.3, // Les enfants apparaissent un par un
+        delayChildren: 0.5    // Délai avant que les enfants commencent à apparaître
       }
     }
   };
@@ -148,29 +124,26 @@ const Accueil = () => {
   };
 
   return (
-    <AccueilContainer> {/* Retirons les variants ici car le flou s'applique à tout */}
-      {/* Nous animerons le ContentWrapper à la place */}
-      <ContentWrapper
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <MainTitle variants={itemVariants}>
-          Cuisinez avec Joie,<br />Partagez avec Amour.
-        </MainTitle>
-        <Subtitle variants={itemVariants}>
-          Des recettes simples et délicieuses pour inspirer vos aventures culinaires quotidiennes.
-        </Subtitle>
-        <motion.div variants={itemVariants}>
-          <CallToActionButton
-            onClick={() => { /* Logique pour naviguer vers les recettes ou une autre section */ }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Découvrir les Recettes
-          </CallToActionButton>
-        </motion.div>
-      </ContentWrapper>
+    <AccueilContainer
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <MainTitle variants={itemVariants}>
+        Cuisinez avec Joie,<br />Partagez avec Amour.
+      </MainTitle>
+      <Subtitle variants={itemVariants}>
+        Des recettes simples et délicieuses pour inspirer vos aventures culinaires quotidiennes.
+      </Subtitle>
+      <motion.div variants={itemVariants}>
+        <CallToActionButton
+          onClick={() => { /* Logique pour naviguer vers les recettes ou une autre section */ }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Découvrir les Recettes
+        </CallToActionButton>
+      </motion.div>
     </AccueilContainer>
   );
 };
