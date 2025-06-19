@@ -159,15 +159,19 @@ const Navbar = () => {
     }
   };
 
-  // Liste des liens de navigation avec leurs propriétés
+  // Liste des liens de navigation avec leurs propriétés.
+  // La logique d'affichage conditionnel est implémentée ici.
   const navLinks = [
     { name: "Accueil", path: "/" },
     { name: "Recettes", path: "/recettes" },
-    // Affiche "Dashboard" si l'utilisateur est connecté
-    ...(token ? [{ name: "Dashboard", path: "/dashboard" }] : []),
-    // Affiche "Déconnexion" si connecté, sinon "Connexion" et "Inscription"
+    // Utilise l'opérateur spread (...) avec une expression ternaire.
+    // Si 'token' existe (utilisateur connecté), ajoute les liens 'Dashboard' et 'Déconnexion'.
+    // Sinon (pas de token), ajoute les liens 'Connexion' et 'Inscription'.
     ...(token ?
-        [{ name: "Déconnexion", path: "#", onClick: logout }]
+        [
+          { name: "Dashboard", path: "/dashboard" },
+          { name: "Déconnexion", path: "#", onClick: logout }
+        ]
         :
         [
           { name: "Connexion", path: "/connexion" },
@@ -189,7 +193,7 @@ const Navbar = () => {
       {navLinks.map((link) => (
         // Utilisation de NavLink de react-router-dom pour gérer l'état actif et la navigation
         <NavLink
-          key={link.name} /* key est crucial pour React, link.name doit être unique */
+          key={link.name} /* 'key' est crucial pour React, link.name doit être unique */
           to={link.path}
           onClick={link.onClick}
         >
@@ -201,7 +205,7 @@ const Navbar = () => {
             // Choisir la variante de survol en fonction de la taille de l'écran
             whileHover={isMobile ? "mobileHover" : "hover"}
             whileTap={isMobile ? "mobileHover" : "hover"} // Un léger feedback au tap sur mobile
-            custom={link} // Passer des props personnalisées si besoin dans les variantes (non utilisé ici directement, mais bonne pratique)
+            custom={link} // Passe des props personnalisées si besoin dans les variantes (non utilisé directement ici)
           >
             {link.name}
           </NavItem>
