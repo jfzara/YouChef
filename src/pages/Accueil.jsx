@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
 // Importez l'image que vous souhaitez utiliser comme fond
-// Assurez-vous que le chemin d'accès est correct par rapport à ce fichier
-import VegetablesBackground from '../assets/images/Vegetables.jpg'; // <-- Nouvelle importation
+import VegetablesBackground from '../assets/images/Vegetables.jpg'; // Nous continuons avec celle-ci
 
 // --- Styled Components pour la Page d'Accueil ---
 
@@ -17,9 +16,9 @@ const AccueilContainer = styled(motion.div)`
   align-items: center; /* Centre le contenu horizontalement */
   padding: var(--space-8) var(--space-4); /* Padding global */
 
-  /* Mise à jour du fond pour inclure l'image */
+  /* Mise à jour du fond pour inclure l'image agrandie */
   background-image: url(${VegetablesBackground}); /* Utilise l'image importée comme fond */
-  background-size: cover; /* L'image couvre toute la zone, quitte à être coupée */
+  background-size: 200%; /* <-- Agrandit l'image à 200% de la taille du conteneur */
   background-position: center center; /* Centre l'image de fond */
   background-repeat: no-repeat; /* Empêche l'image de se répéter */
   background-attachment: fixed; /* L'image reste fixe lors du défilement */
@@ -34,30 +33,30 @@ const AccueilContainer = styled(motion.div)`
   /* Ajustement pour les écrans plus petits pour tenir compte de la navbar en bas */
   @media (max-width: 768px) {
     padding-bottom: calc(var(--space-8) + 70px); /* Ajoute de l'espace pour la navbar fixe du bas (70px de hauteur) */
-    background-size: contain; /* Sur mobile, s'assurer que l'image est entièrement visible */
-    background-position: bottom center; /* Positionner en bas pour ne pas cacher le contenu */
+    background-size: 250%; /* Encore plus grand sur mobile pour un effet plus abstrait */
+    background-position: center bottom; /* Peut-être centrer l'image verticalement mais la faire partir du bas sur mobile */
     background-color: rgba(var(--soft-green-50-rgb), 0.9); /* Plus opaque sur mobile pour le texte */
   }
 `;
 
 const MainTitle = styled(motion.h1)`
-  font-family: var(--font-display); /* Notre police fantaisiste */
-  font-size: var(--text-5xl); /* Très grande taille pour le titre */
-  color: var(--soft-green-800); /* Couleur d'accent pour le titre */
+  font-family: var(--font-display);
+  font-size: var(--text-5xl);
+  color: var(--soft-green-800);
   margin-bottom: var(--space-4);
-  line-height: 1.1; /* Réduit l'espace entre les lignes */
+  line-height: 1.1;
 
   @media (max-width: 768px) {
-    font-size: var(--text-4xl); /* Plus petit sur mobile */
+    font-size: var(--text-4xl);
   }
 `;
 
 const Subtitle = styled(motion.p)`
-  font-family: var(--font-body); /* Police de corps pour la lisibilité */
+  font-family: var(--font-body);
   font-size: var(--text-xl);
   color: var(--neutral-700);
   margin-bottom: var(--space-6);
-  max-width: 800px; /* Limite la largeur du texte pour une meilleure lecture */
+  max-width: 800px;
 
   @media (max-width: 768px) {
     font-size: var(--text-lg);
@@ -65,40 +64,39 @@ const Subtitle = styled(motion.p)`
 `;
 
 const CallToActionButton = styled(motion.button)`
-  background-color: var(--soft-blue-500); /* Couleur vive pour le CTA */
-  color: var(--neutral-0); /* Texte blanc */
+  background-color: var(--soft-blue-500);
+  color: var(--neutral-0);
   font-family: var(--font-body);
   font-size: var(--text-xl);
   padding: var(--space-3) var(--space-6);
   border: none;
-  border-radius: var(--radius-full); /* Bouton en forme de pilule */
+  border-radius: var(--radius-full);
   cursor: pointer;
-  box-shadow: var(--shadow-md); /* Ombre douce */
+  box-shadow: var(--shadow-md);
   transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 
   &:hover {
-    background-color: var(--soft-blue-600); /* Couleur plus foncée au survol */
-    transform: translateY(-3px); /* Effet de léger soulèvement */
-    box-shadow: var(--shadow-lg); /* Ombre plus prononcée */
+    background-color: var(--soft-blue-600);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
   }
 
   &:active {
-    transform: translateY(0); /* Retourne à la position initiale au clic */
-    box-shadow: var(--shadow-sm); /* Ombre plus légère au clic */
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
   }
 `;
 
-// --- Composant Page d'Accueil ---
+// --- Composant Page d'Accueil (Aucun changement ici) ---
 
 const Accueil = () => {
-  // Variantes d'animation pour l'apparition des éléments
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3, // Les enfants apparaissent un par un
-        delayChildren: 0.5    // Délai avant que les enfants commencent à apparaître
+        staggerChildren: 0.3,
+        delayChildren: 0.5
       }
     }
   };
