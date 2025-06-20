@@ -1,34 +1,39 @@
 import React, { useEffect, useState } from "react";
 import styled from 'styled-components';
-import { motion } from 'framer-motion'; // Réactiver l'import de motion
+import { motion } from 'framer-motion';
 import Navbar from "../components/Navbar";
 import axios from "../api/axiosInstance";
 import { toast } from "react-toastify";
 
 // --- Styled Components pour la Page Recettes ---
 
-// Réactiver motion pour tous les styled-components qui utiliseront des props Framer Motion
 const RecettesContainer = styled(motion.div)` 
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--neutral-50, #F9FAFB);
-  color: var(--neutral-800, #333333);
+  background-color: var(--neutral-50); 
+  color: var(--neutral-800); 
 
-  padding-top: calc(var(--space-8) + 60px);
-  padding-left: calc(var(--space-4) + 200px); 
+  padding-top: calc(var(--space-8) + 60px); // Laissez ceci pour l'espace supérieur (si votre Navbar est aussi en haut)
+
+
+position: absolute;
+right: 0;
   padding-right: var(--space-4);
-  width: 100%;
+  max-width: 94%;
   box-sizing: border-box;
   overflow-y: auto;
 
+ 
+
+
   @media (max-width: 768px) {
     padding-top: calc(var(--space-6) + 60px);
-    padding-left: var(--space-2);
+    padding-left: var(--space-2); // Réduisez pour les petits écrans si la Navbar disparaît ou change
     padding-right: var(--space-2);
     padding-bottom: calc(var(--space-8) + 70px);
-    align-items: center;
-    text-align: center;
+    align-items: center; 
+    text-align: center; 
   }
 `;
 
@@ -39,14 +44,8 @@ const PageTitle = styled(motion.h1)`
   margin-bottom: var(--space-6);
   width: 100%;
   text-align: center;
-  /* Ces opacités et transforms sont gérées par Framer Motion, mais les laisser en fallback n'est pas un problème */
-  opacity: 1; 
-  transform: translateY(0);
 
-  @media (max-width: 768px) {
-    font-size: var(--text-3xl);
-    margin-bottom: var(--space-4);
-  }
+
 `;
 
 const CategorySection = styled(motion.section)` 
@@ -57,11 +56,15 @@ const CategorySection = styled(motion.section)`
   box-sizing: border-box;
   text-align: left;
   margin-bottom: var(--space-8);
-  opacity: 1;
-  transform: translateY(0);
+
 
   &:first-of-type {
     margin-top: var(--space-4);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 var(--space-2); 
+    text-align: center; 
   }
 `;
 
@@ -76,12 +79,17 @@ const CategoryTitle = styled(motion.h2)`
   margin-bottom: var(--space-6);
   position: relative; 
   z-index: 1; 
-  opacity: 1;
-  transform: translateY(0);
+
+  /* === DEBUG STYLE === */
+  background-color: rgba(255, 255, 0, 0.2) !important; /* Jaune transparent */
+  border: 1px solid blue !important; /* Bordure pour le titre de catégorie */
+  color: black !important; /* Force le texte à être noir pour la visibilité */
+  /* === FIN DEBUG STYLE === */
 
   @media (max-width: 768px) {
     font-size: var(--text-2xl);
     margin-bottom: var(--space-4);
+    text-align: center; 
   }
 `;
 
@@ -91,18 +99,18 @@ const SubCategoryArticle = styled(motion.article)`
   border-left: 5px solid ${props => props.$color || 'var(--soft-blue-500)'};
   padding-left: var(--space-6);
   border-radius: var(--radius-md);
-  background-color: var(--soft-green-50, #F0FFF0);
-  box-shadow: var(--shadow-sm);
+  background-color: var(--soft-green-50); 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
   padding-top: var(--space-4);
   padding-bottom: var(--space-4);
   margin-bottom: var(--space-6);
   position: relative;
-  z-index: 1;
-  opacity: 1;
-  transform: translateY(0);
+  z-index: 1; 
+
+
 
   @media (max-width: 768px) {
-    margin-left: var(--space-2);
+    margin-left: var(--space-0); 
     padding-left: var(--space-4);
     margin-top: var(--space-4);
   }
@@ -115,9 +123,8 @@ const SubCategoryTitle = styled(motion.h3)`
   font-size: var(--text-xl);
   position: relative;
   z-index: 1;
-  opacity: 1;
-  transform: translateY(0);
 
+ 
   @media (max-width: 768px) {
     font-size: var(--text-lg);
   }
@@ -130,16 +137,16 @@ const RecipeGrid = styled(motion.div)`
   margin-top: var(--space-4);
   position: relative;
   z-index: 1;
-  opacity: 1;
-  transform: translateY(0);
+
+
 `;
 
 const RecipeCard = styled(motion.article)` 
-  background-color: rgba(var(--soft-green-100-rgb, 220, 255, 220), 0.95);
+  background-color: var(--soft-green-100); 
   padding: var(--space-6);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--soft-green-300, #ADD8E6);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--soft-green-300); 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -148,11 +155,11 @@ const RecipeCard = styled(motion.article)`
   overflow: hidden;
   min-height: 180px;
   z-index: 1; 
-  opacity: 1;
-  transform: translateY(0);
+
+
 
   &:hover {
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15); 
   }
 `;
 
@@ -160,6 +167,7 @@ const RecipeName = styled.h4`
   color: var(--soft-green-700);
   margin: 0 0 var(--space-2) 0;
   font-size: var(--text-xl);
+
 `;
 
 const RecipeDescription = styled.p`
@@ -167,11 +175,12 @@ const RecipeDescription = styled.p`
   margin: 0;
   font-size: var(--text-base);
   line-height: 1.5;
+ 
 `;
 
 const Tag = styled(motion.span)` 
   background-color: ${props => props.$isCategory ? 'var(--soft-green-500)' : 'var(--soft-blue-500)'};
-  color: var(--neutral-0);
+  color: var(--neutral-50); 
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
   font-size: var(--text-sm);
@@ -180,8 +189,8 @@ const Tag = styled(motion.span)`
   display: inline-block;
   margin-right: var(--space-2);
   margin-bottom: var(--space-2);
-  opacity: 1;
-  transform: translateY(0);
+
+  
 `;
 
 // --- Composant Recettes ---
@@ -192,30 +201,29 @@ const Recettes = () => {
   const [error, setError] = useState(null);
 
   const categoryColors = {
-    'Entrées': 'var(--soft-green-700, #2E8B57)',
-    'Plats principaux': 'var(--soft-blue-700, #3A6690)',
-    'Desserts': 'var(--red-500, #D32F2F)',
-    'Boissons': 'var(--purple-500, #8A2BE2)',
-    'Apéritifs': 'var(--orange-500, #FF7F50)',
+    'Entrées': 'var(--soft-green-700)',
+    'Plats principaux': 'var(--soft-blue-700)',
+    'Desserts': 'var(--accent-red)', 
+    'Boissons': 'var(--purple-500, #8A2BE2)', 
+    'Apéritifs': 'var(--accent-orange)', 
     'Salades': 'var(--green-500, #4CAF50)',
     'Soupes': 'var(--brown-500, #A0522D)',
     'Pâtisseries': 'var(--pink-500, #FF69B4)',
-    'Autres': 'var(--neutral-600, #757575)',
+    'Autres': 'var(--neutral-600)',
   };
 
   const sousCategoryColors = {
-    'Végétarien': 'var(--soft-green-600, #4CAF50)',
-    'Végétalien': 'var(--soft-green-500, #66BB6A)',
-    'Sans gluten': 'var(--soft-blue-400, #64B5F6)',
+    'Végétarien': 'var(--soft-green-600)',
+    'Végétalien': 'var(--soft-green-500)',
+    'Sans gluten': 'var(--soft-blue-400)',
     'Rapide': 'var(--orange-400, #FFA726)',
     'Facile': 'var(--yellow-400, #FFCA28)',
     'Difficile': 'var(--red-600, #D32F2F)',
     'Traditionnel': 'var(--brown-400, #D2B48C)',
     'Moderne': 'var(--purple-400, #9575CD)',
-    'Divers': 'var(--neutral-500, #9E9E9E)',
+    'Divers': 'var(--neutral-500)',
   };
 
-  // Réactiver les variantes
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -236,7 +244,7 @@ const Recettes = () => {
       transition: {
         type: "spring",
         stiffness: 120, 
-        damping: 18,   
+        damping: 18, 
         duration: 0.6, 
       },
     },
@@ -248,7 +256,7 @@ const Recettes = () => {
       transition: {
         type: "spring",
         stiffness: 150, 
-        damping: 20,   
+        damping: 20, 
         duration: 0.7, 
       }
     },
@@ -263,8 +271,9 @@ const Recettes = () => {
         console.log("✅ Données reçues:", data);
         const regroupées = {};
         data.forEach(recette => {
-          const cat = recette.categorie?.trim() || "Autres";
-          const sousCat = recette.sousCategorie?.trim() || "Divers";
+          const cat = recette.categorie?.trim() || "Autres"; 
+          const sousCat = recette.sousCategorie?.trim() || "Divers"; 
+
           if (!regroupées[cat]) regroupées[cat] = {};
           if (!regroupées[cat][sousCat]) regroupées[cat][sousCat] = [];
           regroupées[cat][sousCat].push(recette);
@@ -273,7 +282,13 @@ const Recettes = () => {
         setRecettes(regroupées);
       } catch (err) {
         console.error("❌ Erreur lors du chargement:", err);
-        setError(err.message);
+        if (err.response) {
+            setError(`Erreur du serveur: ${err.response.status} - ${err.response.data.message || 'Quelque chose s\'est mal passé'}`);
+        } else if (err.request) {
+            setError('Impossible de se connecter au serveur. Vérifiez votre connexion internet ou que le backend est démarré.');
+        } else {
+            setError(`Erreur inattendue: ${err.message}`);
+        }
         toast.error("Erreur de chargement des recettes");
       } finally {
         setLoading(false);
@@ -298,7 +313,7 @@ const Recettes = () => {
       <>
         <Navbar />
         <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <p style={{ color: 'var(--red-500, red)' }}>Erreur: {error}</p>
+          <p style={{ color: 'var(--accent-red)' }}>Erreur: {error}</p> 
         </RecettesContainer>
       </>
     );
@@ -318,59 +333,63 @@ const Recettes = () => {
   return (
     <>
       <Navbar />
-      <RecettesContainer
-        variants={containerVariants} // Réactivé
-        initial="hidden"            // Réactivé
-        animate="visible"           // Réactivé
-      >
-        <PageTitle variants={itemVariants}>Toutes les Recettes</PageTitle> {/* Réactivé */}
+     <RecettesContainer
+  variants={containerVariants}
+  initial="hidden"
+  animate="visible"
+>
+  {/* Commentez variants={itemVariants} pour le débogage */}
+  <PageTitle variants={itemVariants} >Toutes les Recettes</PageTitle>
 
-        {Object.entries(recettes).map(([categorie, sousCategoriesMap]) => {
-          const catColor = categoryColors[categorie] || categoryColors['Autres'];
+  {Object.entries(recettes).map(([categorie, sousCategoriesMap]) => {
+    const catColor = categoryColors[categorie] || categoryColors['Autres'];
+
+    return (
+      // === DÉBUG : Commentez aussi variants={itemVariants} ici ===
+      <CategorySection key={categorie} /* variants={itemVariants} */> 
+        <CategoryTitle $color={catColor}>{categorie}</CategoryTitle>
+
+        {Object.entries(sousCategoriesMap).map(([sousCategorie, listeRecettes]) => {
+          const sousCatColor = sousCategoryColors[sousCategorie] || sousCategoryColors['Divers'];
 
           return (
-            <CategorySection key={categorie} variants={itemVariants}> {/* Réactivé */}
-              <CategoryTitle $color={catColor}>{categorie}</CategoryTitle>
-
-              {Object.entries(sousCategoriesMap).map(([sousCategorie, listeRecettes]) => {
-                const sousCatColor = sousCategoryColors[sousCategorie] || sousCategoryColors['Divers'];
-
-                return (
-                  <SubCategoryArticle
-                    key={sousCategorie}
-                    $color={sousCatColor}
-                    variants={itemVariants} // Réactivé
+            // === DÉBUG : Commentez aussi variants={itemVariants} ici ===
+            <SubCategoryArticle
+              key={sousCategorie}
+              $color={sousCatColor}
+              /* variants={itemVariants} */ 
+            >
+              <SubCategoryTitle $color={sousCatColor}>
+                {sousCategorie} ({listeRecettes.length} recettes)
+              </SubCategoryTitle>
+              {/* Laissez variants={containerVariants} sur RecipeGrid pour le stagger des cartes */}
+              <RecipeGrid variants={containerVariants}> 
+                {listeRecettes.map((recette) => (
+                  <RecipeCard
+                    key={recette._id}
+                    variants={cardVariants} // Laissez ceci actif pour voir si les cartes s'animent
+                    whileHover={{
+                      y: -5,
+                      boxShadow: `0 8px 16px ${sousCatColor.replace('var(', '').replace(')', '').split(',')[0]}33`,
+                    }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    <SubCategoryTitle $color={sousCatColor}>
-                      {sousCategorie} ({listeRecettes.length} recettes)
-                    </SubCategoryTitle>
-                    <RecipeGrid variants={containerVariants}> {/* Réactivé pour staggerChildren */}
-                      {listeRecettes.map((recette) => (
-                        <RecipeCard
-                          key={recette._id}
-                          variants={cardVariants} // Réactivé
-                          whileHover={{
-                            y: -5,
-                            boxShadow: `0 8px 16px ${sousCatColor}33`,
-                          }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <RecipeName>{recette.nom}</RecipeName>
-                          <div style={{ marginBottom: 'var(--space-2)' }}>
-                            {recette.categorie && <Tag $isCategory>{recette.categorie}</Tag>}
-                            {recette.sousCategorie && <Tag>{recette.sousCategorie}</Tag>}
-                          </div>
-                          {recette.description && <RecipeDescription>{recette.description}</RecipeDescription>}
-                        </RecipeCard>
-                      ))}
-                    </RecipeGrid>
-                  </SubCategoryArticle>
-                );
-              })}
-            </CategorySection>
+                    <RecipeName>{recette.nom}</RecipeName>
+                    <div style={{ marginBottom: 'var(--space-2)' }}>
+                      {recette.categorie && <Tag $isCategory>{recette.categorie}</Tag>}
+                      {recette.sousCategorie && <Tag>{recette.sousCategorie}</Tag>}
+                    </div>
+                    {recette.description && <RecipeDescription>{recette.description}</RecipeDescription>}
+                  </RecipeCard>
+                ))}
+              </RecipeGrid>
+            </SubCategoryArticle>
           );
         })}
-      </RecettesContainer>
+      </CategorySection>
+    );
+  })}
+</RecettesContainer>
     </>
   );
 };

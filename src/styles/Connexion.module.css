@@ -8,7 +8,8 @@
     min-height: calc(100vh - var(--navbar-height, 60px)); /* Ajustez si votre Navbar a une hauteur fixe */
     padding: var(--space-8);
     background: linear-gradient(135deg, var(--soft-blue-50) 0%, var(--soft-green-50) 100%); /* Inverser le dégradé pour une légère différence, ou gardez le même */
-    animation: fadeIn 0.8s ease-out; /* Animation d'apparition de la page */
+    background-size: 200% 200%; /* Important pour l'animation de fond */
+    animation: fadeIn 0.8s ease-out, backgroundPan 15s linear infinite alternate; /* Ajout de backgroundPan */
 }
 
 .card {
@@ -76,17 +77,19 @@
     border-color: var(--soft-blue-500); /* Bordure bleue au focus */
     box-shadow: 0 0 0 3px rgba(66, 152, 208, 0.2); /* Ombre douce au focus */
     background-color: var(--neutral-50); /* Blanc au focus */
+    transform: translateY(-1px); /* Léger déplacement vers le haut */
 }
 
 .input.error {
     border-color: var(--accent-red); /* Bordure rouge en cas d'erreur */
+    animation: shake 0.5s ease-in-out; /* Animation "secouer" sur erreur */
 }
 
 .errorMessage {
     color: var(--accent-red);
     font-size: var(--text-xs); /* Plus petit pour les messages d'erreur */
     margin-top: var(--space-1);
-    animation: fadeIn 0.3s ease-out; /* Animation d'apparition des erreurs */
+    animation: fadeIn 0.3s ease-out, slideDown 0.3s ease-out; /* Animation d'apparition des erreurs */
 }
 
 .bouton {
@@ -101,6 +104,9 @@
     text-transform: uppercase; /* Texte en majuscules */
     letter-spacing: 0.05em; /* Espacement entre les lettres */
     box-shadow: 0 4px 15px rgba(66, 152, 208, 0.3); /* Ombre douce pour le bouton */
+    display: flex; /* Permet d'aligner le spinner et le texte */
+    align-items: center;
+    justify-content: center;
 }
 
 .bouton:hover:not(:disabled) {
@@ -109,10 +115,27 @@
     box-shadow: 0 6px 20px rgba(66, 152, 208, 0.4);
 }
 
+.bouton:active:not(:disabled) {
+    transform: translateY(1px) scale(0.98); /* Effet "pressé" au clic */
+    box-shadow: 0 2px 8px rgba(66, 152, 208, 0.2);
+}
+
 .bouton:disabled {
     background: var(--neutral-400); /* Gris désactivé */
     cursor: not-allowed;
     box-shadow: none;
+}
+
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid var(--neutral-50); /* La couleur du spinner lui-même */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: var(--space-2);
 }
 
 .linkContainer {
@@ -127,11 +150,26 @@
     text-decoration: none;
     font-weight: 600;
     transition: color var(--transition-fast);
+    position: relative;
+    display: inline-block; /* Nécessaire pour le pseudo-élément */
+    padding-bottom: 2px; /* Espace pour le soulignement */
 }
 
-.link:hover {
-    color: var(--soft-blue-700); /* Changer la couleur au survol pour un bleu */
-    text-decoration: underline;
+.link::after { /* Pseudo-élément pour le soulignement animé */
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--soft-blue-700); /* Couleur du soulignement au survol */
+    transform: scaleX(0); /* Cache le soulignement par défaut */
+    transform-origin: bottom left;
+    transition: transform var(--transition-fast) ease-out;
+}
+
+.link:hover::after {
+    transform: scaleX(1); /* Fait apparaître le soulignement */
 }
 
 .networkError {

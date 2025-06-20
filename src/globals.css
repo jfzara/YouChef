@@ -45,6 +45,25 @@
   --accent-amber: #f5c46b;  /* Ambre plus doux */
   --accent-red: #ef7777;    /* Rouge plus doux */
 
+ /* Couleurs d'accent (douces, pour les notifications par exemple) */
+  --accent-orange: #f9a460;
+  --accent-amber: #f5c46b;
+  --accent-red: #ef7777;
+
+  /* AJOUTEZ CES VARIABLES POUR LES COULEURS MANQUANTES DANS categoryColors / sousCategoryColors */
+  --purple-500: #8A2BE2; /* Bleu-violet */
+  --brown-500: #A0522D; /* Marron */
+  --pink-500: #FF69B4;  /* Rose */
+  --yellow-400: #FFCA28; /* Jaune */
+  --orange-400: #FFA726; /* Orange */
+  --green-500: #4CAF50; /* Vert matériau */
+  --red-600: #D32F2F; /* Rouge matériau */
+
+  /* AJOUTEZ CES DEFINITIONS RGB SI VOUS VOULEZ UTILISER RGBA DANS STYLED COMPONENTS */
+  --soft-green-100-rgb: 208, 244, 217; /* RGB de #d0f4d9 */
+  --soft-blue-100-rgb: 214, 232, 244; /* RGB de #d6e8f4 */
+
+
   /* === FONTS === */
   /* Utilisation des polices fantaisistes choisies: Amatic SC et Quicksand */
   --font-display: 'Amatic SC', cursive;
@@ -76,6 +95,8 @@
 
   /* === OMBRES === */
   --shadow-none: none; /* Confirmant l'absence d'ombres pour le design 2D plat */
+
+
 
   /* === TRANSITIONS === */
   --transition-fast: 150ms ease;
@@ -258,4 +279,44 @@ button {
 ::selection {
   background: var(--soft-green-200);
   color: var(--neutral-900);
+}
+
+
+/* === ANIMATIONS SUPPLÉMENTAIRES POUR MICRO-INTERACTIONS === */
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+    50% { transform: scale(1.02); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); }
+    100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+}
+
+/* Pour le spinner (si vous l'ajoutez) */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Pour le soulignement animé des liens */
+@keyframes underlineGrow {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* Animation subtile pour le background du container */
+@keyframes backgroundPan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }

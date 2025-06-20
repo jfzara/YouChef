@@ -17,6 +17,7 @@ const StyledNavContainer = styled(motion.nav)`
   width: 100px; /* Largeur fixe de la bande sur desktop */
   background: linear-gradient(180deg, var(--soft-green-100), var(--soft-blue-100)); /* Dégradé doux vertical */
   padding: var(--space-4) var(--space-2); /* Padding interne */
+
   display: flex;
   flex-direction: column; /* Les liens s'empilent verticalement sur desktop */
   align-items: center; /* Centre les éléments horizontalement dans la bande */

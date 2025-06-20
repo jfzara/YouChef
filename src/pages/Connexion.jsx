@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import axiosInstance from '../api/axiosInstance';
 import toast from 'react-hot-toast';
-import styles from '../styles/Connexion.module.css'; // Assurez-vous que ce chemin est correct
+import styles from '../styles/Connexion.module.css';
 
 const Connexion = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -124,7 +124,14 @@ const Connexion = () => {
               disabled={isLoading}
               className={styles.bouton}
             >
-              {isLoading ? 'Connexion en cours...' : 'Se connecter'}
+              {isLoading ? (
+                <>
+                  <span className={styles.spinner}></span>
+                  <span>Connexion en cours...</span> 
+                </>
+              ) : (
+                'Se connecter'
+              )}
             </button>
           </form>
 

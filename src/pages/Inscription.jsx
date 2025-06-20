@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axiosInstance from '../api/axiosInstance';
 import toast from 'react-hot-toast';
-import styles from '../styles/Inscription.module.css'; // Assurez-vous que ce chemin est correct
+import styles from '../styles/Inscription.module.css';
 
 const Inscription = () => {
   const { register, handleSubmit, formState: { errors }, watch } = useForm();
@@ -171,7 +171,14 @@ const Inscription = () => {
               disabled={isLoading}
               className={styles.bouton}
             >
-              {isLoading ? 'Inscription en cours...' : 'Créer mon compte'}
+              {isLoading ? (
+                <>
+                  <span className={styles.spinner}></span>
+                  <span>Inscription en cours...</span> 
+                </>
+              ) : (
+                'Créer mon compte'
+              )}
             </button>
           </form>
 
