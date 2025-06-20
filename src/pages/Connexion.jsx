@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import axiosInstance from '../api/axiosInstance';
 import toast from 'react-hot-toast';
-import styles from '../styles/Connexion.module.css';
+import styles from '../styles/Connexion.module.css'; // Assurez-vous que ce chemin est correct
 
 const Connexion = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -25,7 +25,6 @@ const Connexion = () => {
       
       console.log('✅ Connexion réussie:', response.data);
       
-      // Connexion de l'utilisateur avec le token et les données
       login(response.data.token, response.data.user);
       
       toast.success(`Bienvenue ${response.data.user.identifiant} !`);
@@ -52,112 +51,96 @@ const Connexion = () => {
       <Navbar />
       
       <div className={styles.container}>
-        <h2 className={styles.titre}>Connexion</h2>
-        <p style={{ textAlign: 'center', marginBottom: '2rem', color: '#666' }}>
-          Accédez à votre espace personnel
-        </p>
-
-        {/* Alerte erreur réseau */}
-        {networkError && (
-          <div style={{ 
-            marginBottom: '1.5rem', 
-            padding: '1rem', 
-            backgroundColor: '#fee', 
-            border: '1px solid #fcc',
-            borderRadius: '5px',
-            color: '#c33'
-          }}>
-            <h3 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-              Erreur de connexion
-            </h3>
-            <p style={{ fontSize: '0.85rem' }}>{networkError}</p>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-          {/* Email */}
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#333' }}>
-              Adresse e-mail
-            </label>
-            <input
-              type="email"
-              {...register('email', { 
-                required: 'L\'email est requis',
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: 'Format d\'email invalide'
-                }
-              })}
-              style={{
-                border: errors.email ? '2px solid #e74c3c' : '1px solid #ccc',
-                borderRadius: '5px'
-              }}
-              placeholder="votre@email.com"
-            />
-            {errors.email && (
-              <p style={{ color: '#e74c3c', fontSize: '0.85rem', marginTop: '0.25rem' }}>
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-
-          {/* Mot de passe */}
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#333' }}>
-              Mot de passe
-            </label>
-            <input
-              type="password"
-              {...register('motDePasse', { 
-                required: 'Le mot de passe est requis'
-              })}
-              style={{
-                border: errors.motDePasse ? '2px solid #e74c3c' : '1px solid #ccc',
-                borderRadius: '5px'
-              }}
-              placeholder="Votre mot de passe"
-            />
-            {errors.motDePasse && (
-              <p style={{ color: '#e74c3c', fontSize: '0.85rem', marginTop: '0.25rem' }}>
-                {errors.motDePasse.message}
-              </p>
-            )}
-          </div>
-
-          {/* Bouton de soumission */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={styles.bouton}
-            style={{
-              opacity: isLoading ? 0.6 : 1,
-              cursor: isLoading ? 'not-allowed' : 'pointer'
-            }}
-          >
-            {isLoading ? 'Connexion en cours...' : 'Se connecter'}
-          </button>
-        </form>
-
-        {/* Lien vers inscription */}
-        <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-          <p style={{ fontSize: '0.9rem', color: '#666' }}>
-            Vous n'avez pas encore de compte ?{' '}
-            <Link 
-              to="/inscription" 
-              style={{ 
-                color: '#e67e22', 
-                textDecoration: 'none', 
-                fontWeight: '500',
-                transition: 'color 0.3s'
-              }}
-              onMouseEnter={(e) => e.target.style.color = '#cf711f'}
-              onMouseLeave={(e) => e.target.style.color = '#e67e22'}
-            >
-              S'inscrire
-            </Link>
+        <div className={styles.card}> {/* Ajout d'une carte pour encadrer le formulaire */}
+          <h2 className={styles.titre}>Connexion</h2>
+          <p className={styles.subtitle}>
+            Accédez à votre espace personnel
           </p>
-        </div>
+
+          {/* Alerte erreur réseau */}
+          {networkError && (
+            <div className={styles.networkError}>
+              <h3>Erreur de connexion</h3>
+              <p>{networkError}</p>
+              <div>
+                <p>Solutions possibles :</p>
+                <ul>
+                  <li>Démarrer le serveur backend : <code>npm start</code></li>
+                  <li>Vérifier que le serveur fonctionne sur le port 5000</li>
+                  <li>Vérifier la configuration de l'URL dans axiosInstance.js</li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+            {/* Email */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Adresse e-mail
+              </label>
+              <input
+                type="email"
+                {...register('email', { 
+                  required: 'L\'email est requis',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Format d\'email invalide'
+                  }
+                })}
+                className={`${styles.input} ${errors.email ? styles.error : ''}`}
+                placeholder="votre@email.com"
+              />
+              {errors.email && (
+                <p className={styles.errorMessage}>
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            {/* Mot de passe */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Mot de passe
+              </label>
+              <input
+                type="password"
+                {...register('motDePasse', { 
+                  required: 'Le mot de passe est requis'
+                })}
+                className={`${styles.input} ${errors.motDePasse ? styles.error : ''}`}
+                placeholder="Votre mot de passe"
+              />
+              {errors.motDePasse && (
+                <p className={styles.errorMessage}>
+                  {errors.motDePasse.message}
+                </p>
+              )}
+            </div>
+
+            {/* Bouton de soumission */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={styles.bouton}
+            >
+              {isLoading ? 'Connexion en cours...' : 'Se connecter'}
+            </button>
+          </form>
+
+          {/* Lien vers inscription */}
+          <div className={styles.linkContainer}>
+            <p>
+              Vous n'avez pas encore de compte ?{' '}
+              <Link 
+                to="/inscription" 
+                className={styles.link}
+              >
+                S'inscrire
+              </Link>
+            </p>
+          </div>
+        </div> {/* Fin de .card */}
       </div>
     </div>
   );
