@@ -49,6 +49,7 @@ const cardBackgroundImages = [
   WhiteBackground4, WhiteBackground5, WhiteBackground6, WhiteBackground7, WhiteBackground8
 ];
 
+// --- Styled Components ---
 
 const RecettesContainer = styled(motion.div)`
   min-height: 100vh;
@@ -184,7 +185,7 @@ const RecipeGrid = styled(motion.div)`
 `;
 
 const RecipeCard = styled(motion.article)`
-  background-color: var(--soft-green-100);
+  background-color: white; /* Card background is white by default */
   padding: var(--space-6);
   border-radius: var(--radius-lg);
   border: 1px solid var(--soft-green-300);
@@ -210,22 +211,42 @@ const RecipeCardBackground = styled(motion.div)`
   left: 0;
   width: 100%;
   height: 100%;
+  
+  /* The background image is completely invisible by default */
   background-image: url(${props => props.$imageUrl});
   background-size: cover;
   background-position: center;
-  opacity: 0.1; 
-  z-index: 1; 
-  transition: opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease; /* Ajoutez filter ici */
-  filter: brightness(1) hue-rotate(0deg); /* État initial du filtre */
+  opacity: 0; /* The image is invisible by default */
+  
+  z-index: 1; /* Image is beneath card content */
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Transitions for the image */
+  
+  /* The GREEN mask that appears on hover */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--soft-green-500); /* The desired green color */
+    opacity: 0; /* Totally transparent by default (the white comes from RecipeCard) */
+    z-index: 2; /* Above the image (z-index 1) and below the content (z-index 2 on content) */
+    transition: opacity 0.3s ease; /* Transition for its appearance */
+  }
 
+  /* On card hover, the image and green mask appear */
   ${RecipeCard}:hover & {
-    opacity: 0.2; 
-    transform: scale(1.05); 
-    /* Applique un filtre au survol */
-    filter: brightness(0.8) hue-rotate(30deg); /* Ajustez les valeurs pour l'effet désiré */
+    /* Background image appears */
+    opacity: 0.4; /* Adjust image opacity on hover if needed */
+    transform: scale(1.05); /* Image continues to zoom slightly */
+
+    /* Green mask appears on top of the image */
+    &::before {
+      opacity: 0.6; /* Adjust this opacity for the intensity of the green veil */
+    }
   }
 `;
-
 
 const RecipeName = styled.h4`
   color: var(--soft-green-700);
@@ -265,14 +286,60 @@ const BlobBackground = styled(motion.img)`
   pointer-events: none;
   transform: translate(-50%, -50%) rotate(0deg);
 `;
-
+const hoverAnimations = [
+  // Animation 1: "Rebond Joyeux" (Bouncy Joy)
+  {
+    y: -15, // Plus d'élévation
+    scale: 1.05, // Zoom un peu plus grand
+    rotate: 3, // Rotation plus prononcée
+    boxShadow: `0 20px 30px -10px rgba(0,0,0,0.35)`, // Ombre très marquée
+    transition: { type: "spring", stiffness: 200, damping: 8, mass: 1, duration: 0.7 } // Plus de rebond, plus lent
+  },
+  // Animation 2: "Glissade Amusante" (Funny Glide)
+  {
+    y: -10,
+    x: 8, // Glisse sur le côté
+    scale: 1.03,
+    rotate: -4, // Rotation plus nette
+    boxShadow: `0 18px 25px -8px rgba(0,0,0,0.3)`,
+    transition: { type: "spring", stiffness: 180, damping: 10, mass: 0.8, duration: 0.75 } // Doux rebond latéral
+  },
+  // Animation 3: "Chute et Rebond" (Fall and Bounce)
+  {
+    y: -20, // Montée plus haute
+    scale: 1.06, // Zoom encore plus grand
+    rotate: 1,
+    boxShadow: `0 22px 35px -12px rgba(0,0,0,0.4)`,
+    transition: { type: "spring", stiffness: 150, damping: 7, mass: 1.5, duration: 0.8 } // Très rebondissant, plus lourd
+  },
+  // Animation 4: "Petite Danse" (Little Dance)
+  {
+    y: -12,
+    rotate: [0, 2, -2, 0], // Séquence de rotation
+    scale: 1.04,
+    boxShadow: `0 15px 22px -7px rgba(0,0,0,0.32)`,
+    transition: { 
+      y: { type: "spring", stiffness: 220, damping: 12, duration: 0.6 },
+      rotate: { duration: 0.5, ease: "easeInOut" }, // Rotation plus rapide
+      scale: { type: "spring", stiffness: 200, damping: 10, duration: 0.6 }
+    }
+  },
+  // Animation 5: "L'Émerveillement" (The Wow) - Plus de zoom, plus de 'pop'
+  {
+    y: -8,
+    scale: 1.08, // Très grand zoom
+    rotate: 0,
+    boxShadow: `0 25px 40px -15px rgba(0,0,0,0.45)`, // Ombre très prononcée
+    transition: { type: "spring", stiffness: 250, damping: 10, mass: 0.7, duration: 0.6 } // Rapide et percutant
+  }
+];
+// --- Main Recettes Component ---
 
 const Recettes = () => {
   const [recettes, setRecettes] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Utilisez useAnimation pour un contrôle explicite de l'animation du conteneur principal
   const controls = useAnimation();
 
   const categoryColors = {
@@ -299,22 +366,66 @@ const Recettes = () => {
     'Divers': 'var(--neutral-500)',
   };
 
-  // NOUVEAU: Variants pour le conteneur principal (RecettesContainer)
-  // Simplifié pour déboguer l'opacité
+  // NOUVEAU: Préréglages d'animations de survol pour les cartes
+  const hoverAnimations = [
+    // Animation 1: Léger zoom et rotation avec une ombre marquée
+    {
+      y: -5,
+      scale: 1.02,
+      rotate: 1,
+      boxShadow: `0 12px 20px -5px rgba(0,0,0,0.25)`, // Plus d'ombre
+      transition: { type: "spring", stiffness: 300, damping: 25, duration: 0.6 } // Durée plus longue
+    },
+    // Animation 2: Zoom un peu plus prononcé avec une rotation opposée et une ombre différente
+    {
+      y: -7,
+      scale: 1.03,
+      rotate: -2,
+      boxShadow: `0 15px 25px -7px rgba(0,0,0,0.3)`, // Encore plus d'ombre
+      transition: { type: "spring", stiffness: 280, damping: 22, duration: 0.65 } // Légèrement différente
+    },
+    // Animation 3: Glisse légèrement vers le haut avec un effet d'inclinaison subtil
+    {
+      y: -10,
+      x: 2,
+      rotate: 0.5,
+      scale: 1.01,
+      boxShadow: `0 10px 18px -4px rgba(0,0,0,0.2)`,
+      transition: { type: "spring", stiffness: 320, damping: 28, duration: 0.55 }
+    },
+    // Animation 4: Léger rebond vers le haut sans rotation, avec un zoom rapide
+    {
+      y: -8,
+      scale: 1.03,
+      rotate: 0,
+      boxShadow: `0 14px 22px -6px rgba(0,0,0,0.28)`,
+      transition: { type: "spring", stiffness: 350, damping: 20, duration: 0.5 }
+    },
+    // Animation 5: Simple élévation et zoom, mais avec une transition élastique
+    {
+        y: -12,
+        scale: 1.04,
+        rotate: 0,
+        boxShadow: `0 16px 25px -8px rgba(0,0,0,0.35)`,
+        transition: { type: "spring", stiffness: 250, damping: 15, mass: 1.2, duration: 0.7 }
+    },
+  ];
+
+  // Variants pour le conteneur principal (RecettesContainer)
   const mainContainerVariants = {
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1, 
       transition: { 
-        duration: 0.8, // Durée un peu plus longue pour voir l'effet
+        duration: 0.8,
         ease: "easeOut"
       } 
     },
   };
 
-  // NOUVEAU: Variants pour chaque CategorySection (avec staggerChildren pour ses sous-articles)
+  // Variants pour chaque CategorySection (avec staggerChildren pour ses sous-articles)
   const categorySectionVariants = {
-    hidden: { y: 30, opacity: 0 }, // Animation d'entrée pour la section
+    hidden: { y: 30, opacity: 0 },
     visible: { 
       y: 0, 
       opacity: 1, 
@@ -323,14 +434,14 @@ const Recettes = () => {
         stiffness: 100, 
         damping: 15,
         when: "beforeChildren", 
-        staggerChildren: 0.15 // Délai pour chaque SubCategoryArticle
+        staggerChildren: 0.15
       } 
     },
   };
 
-  // NOUVEAU: Variants pour chaque SubCategoryArticle (avec staggerChildren pour les RecipeCard)
+  // Variants pour chaque SubCategoryArticle (avec staggerChildren pour les RecipeCard)
   const subCategoryArticleVariants = {
-    hidden: { x: -30, opacity: 0 }, // Animation d'entrée pour l'article
+    hidden: { x: -30, opacity: 0 },
     visible: { 
       x: 0, 
       opacity: 1, 
@@ -339,7 +450,7 @@ const Recettes = () => {
         stiffness: 120, 
         damping: 18,
         when: "beforeChildren", 
-        staggerChildren: 0.05 // Délai pour chaque RecipeCard
+        staggerChildren: 0.05
       } 
     },
   };
@@ -389,7 +500,7 @@ const Recettes = () => {
         console.log("📚 Données restructurées:", regroupées);
         setRecettes(regroupées);
         
-        // Une fois les données chargées, déclencher l'animation du conteneur principal
+        // Once data is loaded, trigger the main container animation
         controls.start("visible");
 
       } catch (err) {
@@ -407,7 +518,7 @@ const Recettes = () => {
       }
     };
     fetchRecettes();
-  }, [controls]); // Ajouter controls comme dépendance de useEffect
+  }, [controls]);
 
   if (loading) {
     return (
@@ -448,7 +559,6 @@ const Recettes = () => {
       <RecettesContainer
         variants={mainContainerVariants}
         initial="hidden"
-        // Utilisez controls pour démarrer l'animation explicitement
         animate={controls} 
       >
         <BlobBackground
@@ -467,8 +577,6 @@ const Recettes = () => {
             <CategorySection 
               key={categorie} 
               variants={categorySectionVariants} 
-              // Initial et animate ne sont pas nécessaires ici si le parent gère le staggerChildren
-              // Mais pour le débogage, on peut les ajouter temporairement si la section ne s'affiche pas
               initial="hidden" 
               animate="visible"
             > 
@@ -482,36 +590,30 @@ const Recettes = () => {
                     key={sousCategorie} 
                     $color={sousCatColor}
                     variants={subCategoryArticleVariants} 
-                    // Idem pour subCategoryArticle
                     initial="hidden"
                     animate="visible"
                     whileHover={{ 
-                        scale: 1.01, 
-                        boxShadow: `0 8px 15px -3px ${sousCatColor.replace('var(', '').replace(')', '').split(',')[0]}30`,
-                        transition: { type: "spring", stiffness: 300, damping: 20 }
+                      scale: 1.01, 
+                      boxShadow: `0 8px 15px -3px ${sousCatColor.replace('var(', '').replace(')', '').split(',')[0]}30`,
+                      transition: { type: "spring", stiffness: 300, damping: 20 }
                     }}
                   > 
                     <SubCategoryTitle $color={sousCatColor}>
                       {sousCategorie} ({listeRecettes.length} recettes)
                     </SubCategoryTitle>
-                    {/* RecipeGrid n'a pas de variants d'opacité, juste sa structure de colonnes */}
                     <RecipeGrid> 
                       {listeRecettes.map((recette) => {
                         const randomImage = cardBackgroundImages[Math.floor(Math.random() * cardBackgroundImages.length)];
+                        // Select a random hover animation for this card
+                        const randomHoverAnimation = hoverAnimations[Math.floor(Math.random() * hoverAnimations.length)];
 
                         return (
                           <RecipeCard
                             key={recette._id}
                             variants={cardVariants} 
-                            initial="hidden" // Chaque carte commence cachée
-                            animate="visible" // Et s'anime pour devenir visible
-                            whileHover={{
-                              y: -5,
-                              scale: 1.02,
-                              rotate: 1,
-                              boxShadow: `0 12px 20px -5px ${sousCatColor.replace('var(', '').replace(')', '').split(',')[0]}40`,
-                              transition: { type: "spring", stiffness: 300, damping: 25 }
-                            }}
+                            initial="hidden"
+                            animate="visible"
+                            whileHover={randomHoverAnimation} // Use the random hover animation here
                             whileTap={{ scale: 0.98 }}
                           >
                             <RecipeCardBackground $imageUrl={randomImage} />
