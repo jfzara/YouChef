@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useHover } from '../../contexts/HoverContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 import {
   StyledNavbar,
@@ -13,14 +14,21 @@ import {
   MenuToggle,
   ToggleSpan,
   NotificationBadge,
+  LogoutButton
 } from './Navbar.styles';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { setIsNavbarHovered } = useHover();
+  const { token, logout } = useAuth();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
   };
 
   return (
@@ -67,35 +75,68 @@ const Navbar = () => {
               index={1}
               onMouseEnter={() => setIsNavbarHovered(true)}
               onMouseLeave={() => setIsNavbarHovered(false)}
-              // NOUVEAU: Ajout de cette prop ici
-              hasNotificationBadge={true} 
+              hasNotificationBadge={true}
             >
               <span>Recettes</span>
               <NotificationBadge />
             </StyledNavLink>
           </li>
-          <li>
-            <StyledNavLink
-              to="/ajouter"
-              className={({ isActive }) => isActive ? "activeLink" : undefined}
-              onClick={() => setIsOpen(false)}
-              index={2}
-              onMouseEnter={() => setIsNavbarHovered(true)}
-              onMouseLeave={() => setIsNavbarHovered(false)}
-            >
-              <span>Dashboard</span>
-            </StyledNavLink>
-          </li>
-          <li>
-            <StyledNavLink
-              to="/contact"
-              $hasIllustration={true}
-              onMouseEnter={() => setIsNavbarHovered(true)}
-              onMouseLeave={() => setIsNavbarHovered(false)}
-            >
-              <span>Contact</span>
-            </StyledNavLink>
-          </li>
+          {token ? (
+            <>
+              <li>
+                <StyledNavLink
+                  to="/dashboard"
+                  className={({ isActive }) => isActive ? "activeLink" : undefined}
+                  onClick={() => setIsOpen(false)}
+                  index={2}
+                  onMouseEnter={() => setIsNavbarHovered(true)}
+                  onMouseLeave={() => setIsNavbarHovered(false)}
+                >
+                  <span>Dashboard</span>
+                </StyledNavLink>
+              </li>
+              <li>
+                <LogoutButton
+                  onClick={handleLogout}
+                  index={3}
+                  onMouseEnter={() => setIsNavbarHovered(true)}
+                  onMouseLeave={() => setIsNavbarHovered(false)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span>Déconnexion</span>
+                </LogoutButton>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <StyledNavLink
+                  to="/connexion"
+                  className={({ isActive }) => isActive ? "activeLink" : undefined}
+                  onClick={() => setIsOpen(false)}
+                  index={2}
+                  onMouseEnter={() => setIsNavbarHovered(true)}
+                  onMouseLeave={() => setIsNavbarHovered(false)}
+                >
+                  <span>Connexion</span>
+                </StyledNavLink>
+              </li>
+              <li>
+                <StyledNavLink
+                  to="/inscription"
+                  className={({ isActive }) => isActive ? "activeLink" : undefined}
+                  onClick={() => setIsOpen(false)}
+                  index={3}
+                  onMouseEnter={() => setIsNavbarHovered(true)}
+                  onMouseLeave={() => setIsNavbarHovered(false)}
+                >
+                  <span>Inscription</span>
+                </StyledNavLink>
+              </li>
+            </>
+          )}
+          {/* Le lien contact a été supprimé ici */}
         </NavLinks>
       </NavContainer>
     </StyledNavbar>

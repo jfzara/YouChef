@@ -10,7 +10,7 @@ import Connexion from './pages/Connexion';
 import Inscription from './pages/Inscription';
 import Recettes from './pages/Recettes/Recettes';
 import DetailRecette from './pages/DetailRecette';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/Dashboard/Dashboard';
 
 import { useAuth } from './contexts/AuthContext';
 import { HoverProvider } from './contexts/HoverContext'; // <== NOUVEL IMPORTATION

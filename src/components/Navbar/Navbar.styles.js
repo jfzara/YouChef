@@ -4,7 +4,7 @@ import styled, { keyframes, css } from 'styled-components';
 import { Link, NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-// Keyframes (inchangés)
+// Keyframes
 const pulse = keyframes`
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.7; transform: scale(1.1); }
@@ -85,7 +85,7 @@ export const StyledNavbar = styled(motion.nav)`
   }
 
   &:hover::before {
-     opacity: 1;
+      opacity: 1;
   }
 
   @media (max-width: 768px) {
@@ -170,10 +170,8 @@ export const NavLinks = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
-  /* Assurons que NavLinks ne bloque rien */
-  position: relative; /* Pour que les enfants puissent être positionnés par rapport à lui si besoin */
-  z-index: 10; /* Assure que NavLinks est au-dessus d'autres éléments potentiels de la page */
-
+  position: relative;
+  z-index: 10;
 
   @media (max-width: 768px) {
     position: absolute;
@@ -201,6 +199,9 @@ export const NavLinks = styled.ul`
   }
 `;
 
+// Le LinkIllustration est maintenu car il était utilisé dans StyledNavLink précédemment
+// Même si le lien Contact est supprimé, cette définition peut rester si vous prévoyez de l'utiliser ailleurs
+// ou si vous voulez la garder pour référence pour d'autres liens futurs avec illustration.
 const LinkIllustration = styled(motion.span)`
   position: absolute;
   top: 0;
@@ -214,15 +215,16 @@ const LinkIllustration = styled(motion.span)`
   justify-content: center;
 
   &::before {
-    content: '🌿';
+    content: '🌿'; /* Exemple, l'emoji était '✨' pour Contact */
     font-size: var(--text-xl);
     opacity: 0;
     transform: scale(0);
     transition: none;
     position: absolute;
-    color: var(--soft-green-600);
+    color: var(--soft-green-600); /* Couleur ajustée si vous utilisez cet emoji */
   }
 `;
+
 
 export const StyledNavLink = styled(NavLink)`
   position: relative;
@@ -234,30 +236,27 @@ export const StyledNavLink = styled(NavLink)`
   border-radius: var(--radius-lg);
   transition: all var(--transition-base);
   overflow: hidden;
-  display: flex; /* Utilisation de flexbox pour aligner le contenu et le badge */
-  align-items: center; /* Centrage vertical du texte et du badge */
-  justify-content: center; /* Centrage horizontal pour le texte par défaut */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   white-space: nowrap;
-  cursor: pointer; /* Confirme que le curseur change au survol */
-  user-select: none; /* Empêche la sélection du texte au clic */
+  cursor: pointer;
+  user-select: none;
 
   background-color: var(--color-neutral-100);
   box-shadow: var(--shadow-xs);
-  z-index: 1; /* Assure que le NavLink est au-dessus du fond de la Navbar */
+  z-index: 1;
 
-  /* Le contenu textuel du lien */
   & > span {
     position: relative;
-    z-index: 2; /* Texte au-dessus du reflet et du badge */
+    z-index: 2;
     color: inherit;
     transition: color var(--transition-base);
-    /* Ajustement de la marge pour le texte seul dans le cas de "Recettes" */
     ${({ hasNotificationBadge }) => hasNotificationBadge && css`
-      margin-right: 16px; /* Espace pour le badge de notification */
+      margin-right: 16px;
     `}
   }
 
-  /* Pseudo-élément pour l'effet de reflet */
   &::before {
     content: '';
     position: absolute;
@@ -268,17 +267,16 @@ export const StyledNavLink = styled(NavLink)`
     background: linear-gradient(
       to right,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.4) 25%, /* L'opacité augmentée ici pour une meilleure visibilité */
-      rgba(255, 255, 255, 0.8) 50%, /* Le point le plus brillant, opacité augmentée */
+      rgba(255, 255, 255, 0.4) 25%,
+      rgba(255, 255, 255, 0.8) 50%,
       rgba(255, 255, 255, 0.4) 75%,
       rgba(255, 255, 255, 0) 100%
     );
     transform: translateX(-100%) skewX(-30deg);
     z-index: 1;
-    pointer-events: none; /* INDISPENSABLE pour la cliquabilité */
+    pointer-events: none;
   }
 
-  /* Au survol, déclenche l'animation de reflet */
   &:hover::before {
     animation: ${glossyShine} 0.8s ease-in-out forwards;
   }
@@ -400,14 +398,91 @@ export const ToggleSpan = styled.span`
 
 export const NotificationBadge = styled.span`
   position: absolute;
-  /* Top et Right ajustés pour un meilleur positionnement par rapport au texte du lien */
-  top: 6px; /* Ajuste la position verticale */
-  right: 6px; /* Ajuste la position horizontale */
+  top: 6px;
+  right: 6px;
   width: 12px;
   height: 12px;
   background: var(--color-error);
   border-radius: var(--radius-full);
   border: 2px solid white;
   animation: ${pulse} 2s infinite;
-  z-index: 3; /* Le badge doit être au-dessus de tout */
+  z-index: 3;
+`;
+
+// NOUVEAU: Styled Component pour le bouton de déconnexion
+export const LogoutButton = styled(motion.button)`
+  position: relative;
+  text-decoration: none;
+  color: var(--color-error);
+  font-weight: var(--font-medium);
+  font-size: var(--text-base);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  background-color: var(--color-neutral-100);
+  box-shadow: var(--shadow-xs);
+  z-index: 1;
+
+  & > span {
+    position: relative;
+    z-index: 2;
+    color: inherit;
+    transition: color var(--transition-base);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.4) 25%,
+      rgba(255, 255, 255, 0.8) 50%,
+      rgba(255, 255, 255, 0.4) 75%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: translateX(-100%) skewX(-30deg);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  &:hover::before {
+    animation: ${glossyShine} 0.8s ease-in-out forwards;
+  }
+
+  &:hover {
+    color: var(--color-error-dark);
+    background-color: rgba(255, 0, 0, 0.1);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-error), 0 0 0 4px rgba(255, 0, 0, 0.2);
+  }
+
+  ${({ index }) => css`
+    animation: ${fadeIn} 0.6s ease-out forwards;
+    animation-delay: ${0.1 + (index * 0.1)}s;
+  `}
+
+  @media (max-width: 768px) {
+    width: 100%;
+    text-align: center;
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+  }
 `;

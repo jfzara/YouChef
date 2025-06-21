@@ -765,7 +765,7 @@ const Dashboard = () => {
           </div>
         </ContentWrapper>
       )}
-      <Navbar /> {/* Garde la navbar en bas */}
+     
     </DashboardContainer>
   );
 };
