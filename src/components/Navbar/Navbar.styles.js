@@ -1,9 +1,10 @@
 // src/components/Navbar/Navbar.styles.js
 
 import styled, { keyframes, css } from 'styled-components';
-import { Link, NavLink } from 'react-router-dom'; // Correction : NavLink importé ici aussi
+import { Link, NavLink } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-// Keyframes pour les animations
+// Keyframes (inchangés)
 const pulse = keyframes`
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.7; transform: scale(1.1); }
@@ -20,7 +21,40 @@ const fadeIn = keyframes`
   }
 `;
 
-export const StyledNavbar = styled.nav`
+const glitchEffect = keyframes`
+  0% {
+    text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75), -0.02em -0.04em 0 rgba(0, 255, 0, 0.75), 0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  14% {
+    text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75), 0.025em 0.035em 0 rgba(0, 255, 0, 0.75), -0.03em -0.03em 0 rgba(0, 0, 255, 0.75);
+  }
+  15% {
+    text-shadow: none;
+  }
+  17% {
+    text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75), 0.025em 0.035em 0 rgba(0, 255, 0, 0.75), -0.03em -0.03em 0 rgba(0, 0, 255, 0.75);
+  }
+  20%, 100% {
+    text-shadow: none;
+  }
+`;
+
+const popInAndRotate = keyframes`
+  0% { opacity: 0; transform: scale(0) rotate(0deg); }
+  70% { opacity: 1; transform: scale(1.2) rotate(20deg); }
+  100% { opacity: 1; transform: scale(1) rotate(15deg); }
+`;
+
+const glossyShine = keyframes`
+  0% {
+    transform: translateX(-100%) skewX(-30deg);
+  }
+  100% {
+    transform: translateX(100%) skewX(-30deg);
+  }
+`;
+
+export const StyledNavbar = styled(motion.nav)`
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
@@ -38,9 +72,27 @@ export const StyledNavbar = styled.nav`
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--gradient-glass);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
     border-radius: inherit;
     z-index: -1;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+  }
+
+  &:hover::before {
+     opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    &:hover::before {
+      opacity: 0;
+      transform: scale(1);
+    }
   }
 `;
 
@@ -70,10 +122,13 @@ export const Brand = styled(Link)`
   align-items: center;
   gap: var(--space-2);
   transition: all var(--transition-base);
+  position: relative;
+  will-change: text-shadow;
 
   &:hover {
     color: var(--color-primary-700);
     transform: translateY(-1px);
+    animation: ${glitchEffect} 0.8s infinite alternate;
   }
 
   @media (max-width: 768px) {
@@ -113,8 +168,12 @@ export const NavLinks = styled.ul`
   align-items: center;
   gap: var(--space-2);
   list-style: none;
-  margin: 0; // Remove default ul margin
-  padding: 0; // Remove default ul padding
+  margin: 0;
+  padding: 0;
+  /* Assurons que NavLinks ne bloque rien */
+  position: relative; /* Pour que les enfants puissent être positionnés par rapport à lui si besoin */
+  z-index: 10; /* Assure que NavLinks est au-dessus d'autres éléments potentiels de la page */
+
 
   @media (max-width: 768px) {
     position: absolute;
@@ -134,7 +193,7 @@ export const NavLinks = styled.ul`
     visibility: hidden;
     transition: all var(--transition-base);
 
-    &.active { /* This class is added by Navbar.jsx's state */
+    &.active {
       transform: translateY(0);
       opacity: 1;
       visibility: visible;
@@ -142,7 +201,30 @@ export const NavLinks = styled.ul`
   }
 `;
 
-export const StyledNavLink = styled(NavLink)` // Use NavLink from react-router-dom
+const LinkIllustration = styled(motion.span)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: '🌿';
+    font-size: var(--text-xl);
+    opacity: 0;
+    transform: scale(0);
+    transition: none;
+    position: absolute;
+    color: var(--soft-green-600);
+  }
+`;
+
+export const StyledNavLink = styled(NavLink)`
   position: relative;
   text-decoration: none;
   color: var(--color-neutral-700);
@@ -152,51 +234,60 @@ export const StyledNavLink = styled(NavLink)` // Use NavLink from react-router-d
   border-radius: var(--radius-lg);
   transition: all var(--transition-base);
   overflow: hidden;
-  display: block; /* Ensure it takes full width in mobile menu */
-  white-space: nowrap; /* Prevent wrapping */
+  display: flex; /* Utilisation de flexbox pour aligner le contenu et le badge */
+  align-items: center; /* Centrage vertical du texte et du badge */
+  justify-content: center; /* Centrage horizontal pour le texte par défaut */
+  white-space: nowrap;
+  cursor: pointer; /* Confirme que le curseur change au survol */
+  user-select: none; /* Empêche la sélection du texte au clic */
 
-  /* Pseudo-element for hover effect */
+  background-color: var(--color-neutral-100);
+  box-shadow: var(--shadow-xs);
+  z-index: 1; /* Assure que le NavLink est au-dessus du fond de la Navbar */
+
+  /* Le contenu textuel du lien */
+  & > span {
+    position: relative;
+    z-index: 2; /* Texte au-dessus du reflet et du badge */
+    color: inherit;
+    transition: color var(--transition-base);
+    /* Ajustement de la marge pour le texte seul dans le cas de "Recettes" */
+    ${({ hasNotificationBadge }) => hasNotificationBadge && css`
+      margin-right: 16px; /* Espace pour le badge de notification */
+    `}
+  }
+
+  /* Pseudo-élément pour l'effet de reflet */
   &::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: var(--gradient-primary);
-    transition: left var(--transition-base);
-    z-index: -1;
-    opacity: 0.1;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.4) 25%, /* L'opacité augmentée ici pour une meilleure visibilité */
+      rgba(255, 255, 255, 0.8) 50%, /* Le point le plus brillant, opacité augmentée */
+      rgba(255, 255, 255, 0.4) 75%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: translateX(-100%) skewX(-30deg);
+    z-index: 1;
+    pointer-events: none; /* INDISPENSABLE pour la cliquabilité */
   }
 
-  /* Pseudo-element for advanced hover effect (radial gradient) */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
-    transform: translate(-50%, -50%);
-    transition: all var(--transition-base);
-    border-radius: var(--radius-full);
-    z-index: -1;
+  /* Au survol, déclenche l'animation de reflet */
+  &:hover::before {
+    animation: ${glossyShine} 0.8s ease-in-out forwards;
   }
 
   &:hover {
-    color: var(--color-primary-700);
+    color: var(--color-neutral-800);
+    background-color: rgba(34, 197, 94, 0.15);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-  }
-
-  &:hover::before {
-    left: 0;
-  }
-
-  &:hover::after {
-    width: 120px;
-    height: 120px;
   }
 
   &:focus-visible {
@@ -204,8 +295,7 @@ export const StyledNavLink = styled(NavLink)` // Use NavLink from react-router-d
     box-shadow: 0 0 0 2px var(--color-primary-500), 0 0 0 4px rgba(34, 197, 94, 0.2);
   }
 
-  /* Active link style from react-router-dom's NavLink */
-  &.activeLink { /* This class name comes from activeClassName prop on NavLink */
+  &.activeLink {
     color: var(--color-primary-600);
     background: rgba(34, 197, 94, 0.08);
     box-shadow: var(--shadow-sm);
@@ -221,16 +311,46 @@ export const StyledNavLink = styled(NavLink)` // Use NavLink from react-router-d
     height: 3px;
     background: var(--gradient-primary);
     border-radius: var(--radius-full);
-    /* Ensure this ::after (active indicator) is above the radial hover ::after */
-    z-index: 1; 
+    z-index: 2;
   }
 
-  /* Animation d'entrée pour les liens - applied directly via keyframes */
   ${({ index }) => css`
     animation: ${fadeIn} 0.6s ease-out forwards;
-    animation-delay: ${0.1 + (index * 0.1)}s; /* Dynamic delay based on index */
+    animation-delay: ${0.1 + (index * 0.1)}s;
   `}
 
+  ${({ $hasIllustration }) => $hasIllustration && css`
+    ${LinkIllustration} {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 0;
+
+      &::before {
+        content: '✨';
+        font-size: var(--text-xl);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        transition: none;
+        color: var(--accent-orange);
+      }
+    }
+
+    &:hover ${LinkIllustration}::before {
+      animation: ${popInAndRotate} 0.5s ease-out forwards;
+      animation-delay: 0.1s;
+    }
+  `}
 
   @media (max-width: 768px) {
     width: 100%;
@@ -241,7 +361,7 @@ export const StyledNavLink = styled(NavLink)` // Use NavLink from react-router-d
 `;
 
 export const MenuToggle = styled.button`
-  display: none; /* Hidden by default on desktop */
+  display: none;
   flex-direction: column;
   background: none;
   border: none;
@@ -255,7 +375,7 @@ export const MenuToggle = styled.button`
   }
 
   @media (max-width: 768px) {
-    display: flex; /* Show on mobile */
+    display: flex;
   }
 `;
 
@@ -280,12 +400,14 @@ export const ToggleSpan = styled.span`
 
 export const NotificationBadge = styled.span`
   position: absolute;
-  top: -4px;
-  right: -4px;
+  /* Top et Right ajustés pour un meilleur positionnement par rapport au texte du lien */
+  top: 6px; /* Ajuste la position verticale */
+  right: 6px; /* Ajuste la position horizontale */
   width: 12px;
   height: 12px;
   background: var(--color-error);
   border-radius: var(--radius-full);
   border: 2px solid white;
   animation: ${pulse} 2s infinite;
+  z-index: 3; /* Le badge doit être au-dessus de tout */
 `;
