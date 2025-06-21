@@ -3,12 +3,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import GlobalStyles from './styles/GlobalStyles';
-import Navbar from './components/Navbar'; // <== Assurez-vous que ce chemin est correct
+import Navbar from './components/Navbar/Navbar'; // <== Assurez-vous que ce chemin est correct
 
 import Accueil from './pages/Accueil';
 import Connexion from './pages/Connexion';
 import Inscription from './pages/Inscription';
-import Recettes from './pages/Recettes';
+import Recettes from './pages/Recettes/Recettes';
 import DetailRecette from './pages/DetailRecette';
 import Dashboard from './pages/Dashboard';
 

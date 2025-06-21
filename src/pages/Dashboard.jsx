@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from '../api/axiosInstance';
 import { toast } from 'react-toastify';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar/Navbar';
 import styled from 'styled-components'; // Importez styled-components
 import { motion, AnimatePresence } from 'framer-motion'; // Importez motion et AnimatePresence
 
