@@ -1,11 +1,12 @@
 // src/styles/GlobalStyles.js
 
 import { createGlobalStyle } from 'styled-components';
-import DashboardBg from '../assets/images/DashboardBackground.jpg';
+import DashboardBg from '../assets/images/WhiteBackground.jpg';
 
 import AbrilFatfaceOTF from '../assets/fonts/AbrilFatface-Regular.otf';
 import MuliRegularTTF from '../assets/fonts/Muli.ttf';
 import MuliSemiBoldTTF from '../assets/fonts/Muli-SemiBold.ttf';
+import MuliBoldTTF from '../assets/fonts/Muli-Bold.ttf'; // Importation de la police Muli-Bold
 
 const GlobalStyles = createGlobalStyle`
   /* Polices des titres (Abril Fatface) */
@@ -14,14 +15,14 @@ const GlobalStyles = createGlobalStyle`
     src: url(${AbrilFatfaceOTF}) format('opentype');
     font-weight: normal;
     font-style: normal;
-    font-display: swap;
+    font-display: swap; /* Bonne pratique pour le chargement des polices */
   }
 
   /* Polices du corps de texte (Muli) */
   @font-face {
     font-family: 'Muli';
     src: url(${MuliRegularTTF}) format('truetype');
-    font-weight: normal;
+    font-weight: normal; /* 400 */
     font-style: normal;
     font-display: swap;
   }
@@ -29,13 +30,21 @@ const GlobalStyles = createGlobalStyle`
   @font-face {
     font-family: 'Muli';
     src: url(${MuliSemiBoldTTF}) format('truetype');
-    font-weight: 600;
+    font-weight: 600; /* Semi-Bold */
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Muli';
+    src: url(${MuliBoldTTF}) format('truetype');
+    font-weight: bold; /* 700 */
     font-style: normal;
     font-display: swap;
   }
 
   :root {
-    /* Couleurs Neutres (Vérifiez qu'elles sont bien définies) */
+    /* Couleurs Neutres */
     --color-neutral-0: #FFFFFF;
     --color-neutral-50: #F8F8F8;
     --color-neutral-100: #F0F0F0;
@@ -76,10 +85,12 @@ const GlobalStyles = createGlobalStyle`
     --color-success-light: #E8F5E9;
     --color-success: #4CAF50;
     --color-success-dark: #2E7D32;
+    --color-success-soft: #d0f8d2;
 
     --color-error-light: #FFEBEE;
     --color-error: #F44336;
     --color-error-dark: #D32F2F;
+    --color-error-soft: #fbd6d6;
 
     --color-warning-light: #FFF8E1;
     --color-warning: #FFC107;
@@ -166,6 +177,10 @@ const GlobalStyles = createGlobalStyle`
 
     /* Hauteur de la barre de navigation */
     --navbar-height: 5rem;
+
+    /* Variables pour l'effet de flou du dashboard */
+    --dashboard-blur: 0px; /* Valeur par défaut */
+    --dashboard-opacity: 1; /* Valeur par défaut */
   }
 
   *, *::before, *::after {
@@ -189,16 +204,17 @@ const GlobalStyles = createGlobalStyle`
     font-weight: var(--font-normal);
     font-size: var(--text-lg);
 
-    /* --- VÉRIFICATION / AJUSTEMENT DU BACKGROUND --- */
     background-image: url(${DashboardBg});
-    background-position: center top; /* Changer top pour s'assurer qu'il ne masque pas la navbar */
+    background-position: center top;
     background-repeat: no-repeat;
-    background-size: cover; /* Changer à 'cover' pour s'assurer qu'il remplit l'écran sans trop dépasser */
-    background-attachment: fixed; /* Mettre 'fixed' si vous voulez qu'il reste en place au scroll */
+    background-size: cover;
+    background-attachment: fixed;
 
-    transition: transform 0.1s ease-out;
-    will-change: transform;
+    /* Applique le flou et l'opacité via les variables CSS */
+    filter: blur(var(--dashboard-blur)) brightness(var(--dashboard-opacity));
+    transition: filter 0.5s ease-in-out; /* Transition douce pour le flou */
   }
+
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-family-heading);

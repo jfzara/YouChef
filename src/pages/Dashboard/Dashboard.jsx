@@ -1,197 +1,100 @@
 // src/pages/Dashboard/Dashboard.jsx
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'react-toastify'; // Garder l'importation si tu l'utilises pour toast.success/error
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// Importe les composants du dashboard
+import RecipeFormModal from './RecipeFormModal'; // Pour ajouter/éditer une recette
+import UserRecipeList from './UserRecipeList'; // La liste des recettes de l'utilisateur
+import RecentRecipes from './RecentRecipes'; // Les 5 dernières recettes ajoutées
+import StatsBubble from './StatsBubble'; // Notre nouvelle bulle de stats
+
+// Importe TOUS les styled-components depuis Dashboard.styles.js
 import {
   DashboardContainer,
-  DashboardGrid,
-  SectionTitle,
-  AddRecipeToggleCard,
-  AddRecipeModalOverlay,
-  AddRecipeModalContent,
-  CloseButton,
-  StatsGrid,
-  StatCard,
-  RecentRecipesSection,
-  RecipeList,
-  RecipeListItem,
-  Card,
-  Button, // <== AJOUTER CET IMPORT
-} from './Dashboard.styles';
-import AddRecipeForm from './AddRecipeForm';
-import api from '../../api/axiosInstance';
-import { toast } from 'react-toastify';
-import { useAuth } from '../../contexts/AuthContext';
+  WelcomeSection,
+  ContentGrid,
+  MainContent,
+  SidebarContent,
+  Card, // Importé depuis Dashboard.styles.js
+  DashboardTitle,
+  AddRecipeToggleCard, // Importé depuis Dashboard.styles.js
+  // Si tu utilises AddRecipeModalOverlay, AddRecipeModalContent, CloseButton
+  // ou d'autres éléments définis comme styled-components directement dans ce fichier,
+  // il faudra les importer ici aussi ou les définir globalement.
+  // Pour le moment, je les laisse comme définis dans RecipeFormModal
+  // AddRecipeModalOverlay,
+  // AddRecipeModalContent,
+  // CloseButton,
+} from './Dashboard.styles'; // Assure-toi que ce fichier existe
 
 const Dashboard = () => {
-  const { token } = useAuth();
-  const [showAddRecipeModal, setShowAddRecipeModal] = useState(false);
-  const [stats, setStats] = useState({ totalRecipes: 0, totalCategories: 0, totalSousCategories: 0 });
-  const [recentRecipes, setRecentRecipes] = useState([]);
-  const [loadingStats, setLoadingStats] = useState(true);
-  const [loadingRecent, setLoadingRecent] = useState(true);
-  const [errorStats, setErrorStats] = useState(null);
-  const [errorRecent, setErrorRecent] = useState(null);
+  const { user } = useAuth();
+  const [isRecipeFormModalOpen, setIsRecipeFormModalOpen] = useState(false);
 
-  const fetchDashboardStats = async () => {
-    setLoadingStats(true);
-    setErrorStats(null);
-    try {
-      const response = await api.get('/dashboard/stats', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setStats(response.data);
-    } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
-      setErrorStats("Échec du chargement des statistiques.");
-      toast.error("Échec du chargement des statistiques du tableau de bord.");
-    } finally {
-      setLoadingStats(false);
-    }
-  };
+  const handleOpenRecipeFormModal = () => setIsRecipeFormModalOpen(true);
+  const handleCloseRecipeFormModal = () => setIsRecipeFormModalOpen(false);
 
-  const fetchRecentRecipes = async () => {
-    setLoadingRecent(true);
-    setErrorRecent(null);
-    try {
-      const response = await api.get('/dashboard/recent-recipes', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setRecentRecipes(response.data);
-    } catch (error) {
-      console.error("Error fetching recent recipes:", error);
-      setErrorRecent("Échec du chargement des recettes récentes.");
-      toast.error("Échec du chargement des recettes récentes.");
-    } finally {
-      setLoadingRecent(false);
-    }
-  };
-
-  useEffect(() => {
-    if (token) {
-      fetchDashboardStats();
-      fetchRecentRecipes();
-    }
-  }, [token]);
-
-  const handleRecipeAdded = () => {
-    fetchDashboardStats();
-    fetchRecentRecipes();
-    setShowAddRecipeModal(false);
-  };
+  // Les fonctions handleRecipeAdded, handleRecipeUpdated, handleRecipeDeleted
+  // sont gérées directement dans UserRecipeList maintenant, donc pas besoin ici.
 
   return (
     <DashboardContainer
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: 0.5 }}
     >
-      <h1>Vue d'ensemble du Tableau de Bord</h1>
+      <WelcomeSection
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <h1>Bienvenue, {user ? user.identifiant : 'Chef'} !</h1>
+        <p>Préparez vos papilles, c'est l'heure de créer de nouvelles saveurs !</p>
+      </WelcomeSection>
 
-      <section>
-        <SectionTitle>Statistiques Clés</SectionTitle>
-        {loadingStats ? (
-          <p>Chargement des statistiques...</p>
-        ) : errorStats ? (
-          <p className="error">{errorStats}</p>
-        ) : (
-          <StatsGrid>
-            <StatCard whileHover={{ scale: 1.02 }}>
-              <h3>{stats.totalRecipes}</h3>
-              <p>Recettes Totales</p>
-            </StatCard>
-            <StatCard whileHover={{ scale: 1.02 }}>
-              <h3>{stats.totalCategories}</h3>
-              <p>Catégories Uniques</p>
-            </StatCard>
-            <StatCard whileHover={{ scale: 1.02 }}>
-              <h3>{stats.totalSousCategories}</h3>
-              <p>Sous-catégories Uniques</p>
-            </StatCard>
-          </StatsGrid>
-        )}
-      </section>
+      <ContentGrid
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+      >
+        <MainContent>
+          <DashboardTitle>Mes Recettes</DashboardTitle>
+          <UserRecipeList /> {/* Affiche la liste des recettes de l'utilisateur */}
+        </MainContent>
 
-      <DashboardGrid>
-        <AddRecipeToggleCard
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          onClick={() => setShowAddRecipeModal(true)}
-          whileHover={{ scale: 1.02, boxShadow: 'var(--shadow-2xl)' }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <SectionTitle style={{ marginBottom: '0' }}>➕ Ajouter une Recette</SectionTitle>
-          <p style={{ color: 'var(--color-neutral-600)', marginTop: 'var(--space-2)' }}>Cliquez pour créer une nouvelle recette.</p>
-        </AddRecipeToggleCard>
-
-        <Card
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          whileHover={{ scale: 1.02, boxShadow: 'var(--shadow-2xl)' }}
-        >
-          <SectionTitle>Mes Recettes</SectionTitle>
-          <p>Gérez vos propres recettes, modifiez-les ou supprimez-les.</p>
-          <Button>Voir mes recettes (Bientôt!)</Button>
-        </Card>
-      </DashboardGrid>
-
-      <RecentRecipesSection>
-        <SectionTitle>Recettes Récentes</SectionTitle>
-        {loadingRecent ? (
-          <p>Chargement des recettes récentes...</p>
-        ) : errorRecent ? (
-          <p className="error">{errorRecent}</p>
-        ) : recentRecipes.length === 0 ? (
-          <p>Aucune recette récente à afficher. Ajoutez-en une !</p>
-        ) : (
-          <RecipeList>
-            <AnimatePresence>
-              {recentRecipes.map((recipe, index) => (
-                <RecipeListItem
-                  key={recipe._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <h4>{recipe.nom}</h4>
-                  <p>{recipe.description.substring(0, 80)}{recipe.description.length > 80 ? '...' : ''}</p>
-                  <span>{new Date(recipe.createdAt).toLocaleDateString()}</span>
-                </RecipeListItem>
-              ))}
-            </AnimatePresence>
-          </RecipeList>
-        )}
-      </RecentRecipesSection>
-
-      <AnimatePresence>
-        {showAddRecipeModal && (
-          <AddRecipeModalOverlay
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+        <SidebarContent>
+          <DashboardTitle>Boîte à Outils Culinaires</DashboardTitle>
+          {/* Carte "Ajouter une Recette" */}
+          <AddRecipeToggleCard
+            onClick={handleOpenRecipeFormModal}
+            whileTap={{ scale: 0.98, rotate: -1 }} // Effet de "pression" au clic
           >
-            <AddRecipeModalContent
-              initial={{ scale: 0.8, y: -50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.8, y: -50, opacity: 0 }}
-              transition={{ duration: 0.3, type: "spring", damping: 15, stiffness: 300 }}
-            >
-              <CloseButton
-                onClick={() => setShowAddRecipeModal(false)}
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                ✕
-              </CloseButton>
-              <AddRecipeForm onRecipeAdded={handleRecipeAdded} />
-            </AddRecipeModalContent>
-          </AddRecipeModalOverlay>
-        )}
-      </AnimatePresence>
+            <h3>Ajouter une Nouvelle Recette</h3>
+            <span className="add-icon">+</span>
+          </AddRecipeToggleCard>
+
+          {/* Section Recettes Récentes */}
+          <Card> {/* Utilise la Card importée */}
+            <DashboardTitle as="h3">Dernières Créations Mondiales</DashboardTitle> {/* Titre pour la card */}
+            <RecentRecipes />
+          </Card>
+
+          {/* Si tu as des StatsGrid et StatCard, ils doivent être définis dans Dashboard.styles.js
+              et importés. Pour le moment, ta StatsBubble gère ça différemment. */}
+        </SidebarContent>
+      </ContentGrid>
+
+      {/* Le composant de la bulle de statistiques */}
+      <StatsBubble />
+
+      {/* Le modal de formulaire de recette, reste inchangé ici */}
+      <RecipeFormModal
+        isOpen={isRecipeFormModalOpen}
+        onClose={handleCloseRecipeFormModal}
+        // onRecipeAdded={handleRecipeAdded} // Décommenter si tu as besoin de remonter l'ajout au dashboard
+      />
     </DashboardContainer>
   );
 };

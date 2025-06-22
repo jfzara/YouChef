@@ -1,247 +1,177 @@
-// src/pages/Dashboard/RecipeCard.jsx
-import React, { useState } from 'react';
+// src/components/RecipeCard.jsx
+import React from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import api from '../../api/axiosInstance'; // <-- Corrected path here
-import { useAuth } from '../../contexts/AuthContext';
-import { toast } from 'react-toastify';
-import { Button, FormGroup } from './Dashboard.styles'; // Réutilisation des styles génériques
 
-// Styles spécifiques à RecipeCard
-const StyledRecipeCard = styled(motion.div)`
-  background: white;
-  border-radius: var(--radius-xl);
+// Tu devras importer ces icônes
+import EditIcon from '../../assets/icons/edit.svg'; // Exemple d'icône d'édition (crayon)
+import DeleteIcon from '../../assets/icons/delete.svg'; // Exemple d'icône de suppression (poubelle)
+
+const RecipeCardStyled = styled(motion.div)`
+  background: var(--color-neutral-0); /* Blanc pur */
+  border-radius: var(--radius-2xl);
   padding: var(--space-6);
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-base);
+  box-shadow: var(--shadow-xl); /* Ombre par défaut */
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  border: 1px solid var(--color-neutral-200);
   position: relative;
   overflow: hidden;
+  min-width: 300px; /* Largeur minimale pour les cartes dans le carrousel */
+  max-width: 350px; /* Largeur maximale pour éviter qu'elles ne soient trop grandes */
+  flex-shrink: 0; /* Ne pas rétrécir les cartes dans le flexbox */
+  cursor: pointer;
+  border: 4px solid var(--color-primary-500); /* Bordure épaisse et "criarde" */
+
+  // Ajustements pour l'effet "bancal" après l'animation d'apparition
+  // Ceci est géré par la prop 'animate' passée depuis UserRecipeList,
+  // mais une légère rotation supplémentaire peut être appliquée ici
+  // si tu veux un effet encore plus fort.
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--color-primary-200);
+    transform: scale(1.05) rotate(0deg); /* Se redresse et grossit au survol */
+    box-shadow: var(--shadow-2xl); /* Ombre intense au survol */
+    border-color: var(--color-secondary-600); /* Changement de couleur de bordure au survol */
+    z-index: 10; /* S'assure que la carte survolée est au-dessus */
+  }
+`;
+
+const RecipeImage = styled.img`
+  width: 100%;
+  height: 180px; /* Hauteur fixe pour les images */
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-sm); /* Petite ombre pour l'image */
+`;
+
+const RecipeTitle = styled.h3`
+  font-family: var(--font-family-heading);
+  font-size: var(--text-2xl);
+  color: var(--color-primary-700);
+  margin: 0;
+  text-align: center;
+  text-shadow: var(--shadow-text-sm);
+  line-height: 1.2;
+`;
+
+const RecipeMeta = styled.p`
+  font-size: var(--text-sm);
+  color: var(--color-neutral-600);
+  margin: 0;
+  text-align: center;
+`;
+
+const RecipeDescription = styled.p`
+  font-size: var(--text-base);
+  color: var(--color-neutral-800);
+  margin: var(--space-2) 0;
+  /* Limite la description pour ne pas prendre trop de place */
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limite à 3 lignes */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: auto; /* Pousse les boutons vers le bas de la carte */
+  width: 100%;
+`;
+
+const ActionButton = styled(motion.button)`
+  background: var(--color-primary-500);
+  color: var(--color-neutral-0);
+  border: 3px solid var(--color-primary-700); /* Bordure épaisse */
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: var(--font-semibold);
+  font-family: var(--font-family-sans);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    filter: brightness(1.1); /* Légèrement plus lumineux */
   }
 
-  img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--space-4);
+  &:active {
+    transform: translateY(0);
     box-shadow: var(--shadow-sm);
   }
 
-  h3 {
-    font-family: var(--font-family-heading);
-    font-size: var(--text-2xl);
-    color: var(--color-primary-700);
-    margin-bottom: var(--space-2);
+  &.edit {
+    background: var(--color-info-500);
+    border-color: var(--color-info-700);
+    &:hover { background: var(--color-info-600); }
   }
 
-  p {
-    font-size: var(--text-base);
-    color: var(--color-neutral-700);
-    line-height: 1.5;
-    margin-bottom: var(--space-2);
-    max-height: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  &.delete {
+    background: var(--color-error-500);
+    border-color: var(--color-error-700);
+    &:hover { background: var(--color-error-600); }
   }
 
-  .meta-info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    font-size: var(--text-sm);
-    color: var(--color-neutral-600);
-    margin-top: auto;
-
-    span {
-      background: var(--color-neutral-100);
-      padding: var(--space-1) var(--space-3);
-      border-radius: var(--radius-full);
-      border: 1px solid var(--color-neutral-200);
-    }
-  }
-
-  .actions {
-    display: flex;
-    gap: var(--space-3);
-    margin-top: var(--space-4);
-
-    button {
-      flex: 1;
-      font-size: var(--text-sm);
-      padding: var(--space-2) var(--space-4);
-      box-shadow: var(--shadow-xs);
-
-      &:last-child {
-        background: var(--color-error);
-        &:hover {
-          background: var(--color-error-dark);
-        }
-      }
-    }
+  img {
+    width: 20px;
+    height: 20px;
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%); /* Pour rendre l'icône blanche */
   }
 `;
 
-const EditForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  margin-top: var(--space-4);
-`;
-
-const RecipeCard = ({ recette, onDelete, onUpdate }) => {
-  const { token } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
-  const [editFormData, setEditFormData] = useState({
-    nom: recette.nom,
-    description: recette.description,
-    categorie: recette.categorie,
-    sousCategorie: recette.sousCategorie,
-    imageUrl: recette.imageUrl || '',
-  });
-  const [loading, setLoading] = useState(false);
-
-  const handleDelete = async () => {
-    if (window.confirm(`Êtes-vous sûr de vouloir supprimer la recette "${recette.nom}" ?`)) {
-      setLoading(true);
-      try {
-        await api.delete(`/recettes/${recette._id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        onDelete(recette._id);
-      } catch (error) {
-        console.error('Erreur lors de la suppression de la recette:', error);
-        toast.error(error.response?.data?.message || 'Erreur lors de la suppression.');
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleEditChange = (e) => {
-    setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const response = await api.put(`/recettes/${recette._id}`, editFormData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      onUpdate(response.data);
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour de la recette:', error);
-      toast.error(error.response?.data?.message || 'Erreur lors de la mise à jour.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+const RecipeCard = React.forwardRef(({ recipe, onEdit, onDelete, ...props }, ref) => {
   return (
-    <StyledRecipeCard
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.1 }}
+    <RecipeCardStyled
+      ref={ref}
+      {...props} // Permet de passer les props d'animation (initial, animate, exit, transition, layout)
+      whileHover="hover" // Active l'état hover
+      variants={{
+        hover: {
+          scale: 1.05,
+          rotate: 0, // Se redresse
+          boxShadow: "0 25px 50px rgba(0, 0, 0, 0.3)", // Ombre plus forte
+          borderColor: "var(--color-secondary-600)", // Bordure change de couleur
+          zIndex: 10,
+          transition: { type: "spring", stiffness: 300, damping: 20 }
+        }
+      }}
     >
-      {recette.imageUrl && <img src={recette.imageUrl} alt={recette.nom} />}
-
-      {!isEditing ? (
-        <>
-          <h3>{recette.nom}</h3>
-          <p>{recette.description}</p>
-          <div className="meta-info">
-            {recette.categorie && <span>Catégorie: {recette.categorie}</span>}
-            {recette.sousCategorie && <span>Sous-catégorie: {recette.sousCategorie}</span>}
-            <span>Ajoutée le: {new Date(recette.createdAt).toLocaleDateString()}</span>
-          </div>
-          <div className="actions">
-            <Button onClick={() => setIsEditing(true)} disabled={loading}>
-              Éditer
-            </Button>
-            <Button onClick={handleDelete} disabled={loading} style={{ background: 'var(--color-error)' }}>
-              Supprimer
-            </Button>
-          </div>
-        </>
-      ) : (
-        <EditForm onSubmit={handleUpdate}>
-          <FormGroup>
-            <label htmlFor={`edit-nom-${recette._id}`}>Nom</label>
-            <input
-              type="text"
-              id={`edit-nom-${recette._id}`}
-              name="nom"
-              value={editFormData.nom}
-              onChange={handleEditChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <label htmlFor={`edit-description-${recette._id}`}>Description</label>
-            <textarea
-              id={`edit-description-${recette._id}`}
-              name="description"
-              value={editFormData.description}
-              onChange={handleEditChange}
-            ></textarea>
-          </FormGroup>
-          <FormGroup>
-            <label htmlFor={`edit-categorie-${recette._id}`}>Catégorie</label>
-            <input
-              type="text"
-              id={`edit-categorie-${recette._id}`}
-              name="categorie"
-              value={editFormData.categorie}
-              onChange={handleEditChange}
-            />
-          </FormGroup>
-          <FormGroup>
-            <label htmlFor={`edit-sousCategorie-${recette._id}`}>Sous-catégorie</label>
-            <input
-              type="text"
-              id={`edit-sousCategorie-${recette._id}`}
-              name="sousCategorie"
-              value={editFormData.sousCategorie}
-              onChange={handleEditChange}
-            />
-          </FormGroup>
-          <FormGroup>
-            <label htmlFor={`edit-imageUrl-${recette._id}`}>URL de l'image</label>
-            <input
-              type="text"
-              id={`edit-imageUrl-${recette._id}`}
-              name="imageUrl"
-              value={editFormData.imageUrl}
-              onChange={handleEditChange}
-              placeholder="URL de l'image"
-            />
-          </FormGroup>
-          <div className="actions">
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Mise à jour...' : 'Sauvegarder'}
-            </Button>
-            <Button type="button" onClick={() => setIsEditing(false)} disabled={loading} style={{ background: 'var(--color-neutral-500)' }}>
-              Annuler
-            </Button>
-          </div>
-        </EditForm>
-      )}
-    </StyledRecipeCard>
+      <RecipeImage src={recipe.imageUrl || 'https://via.placeholder.com/250/FFA726/FFFFFF?text=Recette'} alt={recipe.nom} />
+      <RecipeTitle>{recipe.nom}</RecipeTitle>
+      <RecipeMeta>
+        {recipe.categorie && <span>Catégorie: {recipe.categorie}</span>}
+        {recipe.sousCategorie && <span> | Sous-catégorie: {recipe.sousCategorie}</span>}
+      </RecipeMeta>
+      <RecipeDescription>{recipe.description}</RecipeDescription>
+      <ActionButtons>
+        <ActionButton
+          className="edit"
+          onClick={() => onEdit(recipe)}
+          whileTap={{ scale: 0.9 }}
+        >
+          <img src={EditIcon} alt="Modifier" />
+          Modifier
+        </ActionButton>
+        <ActionButton
+          className="delete"
+          onClick={() => onDelete(recipe._id)}
+          whileTap={{ scale: 0.9 }}
+        >
+          <img src={DeleteIcon} alt="Supprimer" />
+          Supprimer
+        </ActionButton>
+      </ActionButtons>
+    </RecipeCardStyled>
   );
-};
+});
 
 export default RecipeCard;

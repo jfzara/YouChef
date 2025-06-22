@@ -1,58 +1,133 @@
 // src/pages/Dashboard/Dashboard.styles.js
-
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
-// --- REMOVED: Keyframes are now handled by Framer Motion props directly in Dashboard.jsx ---
-// const fadeInScale = keyframes`...`;
-// const slideInTop = keyframes`...`;
-
 export const DashboardContainer = styled(motion.div)`
   padding: var(--space-8);
-  max-width: 1200px;
-  margin: var(--space-8) auto;
-  min-height: calc(100vh - var(--navbar-height) - var(--footer-height, 0px));
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
-  /* Added padding-top to prevent content from going under the fixed navbar */
-  padding-top: calc(var(--navbar-height) + var(--space-8));
+  padding-top: calc(var(--navbar-height) + var(--space-8)); /* Ajustement pour la navbar */
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden; /* Empêche le contenu de déborder avec les animations bancales */
 
   @media (max-width: 768px) {
-    padding: var(--space-6);
-    padding-top: calc(var(--navbar-height) + var(--space-6));
+    padding: var(--space-4);
+    padding-top: calc(var(--navbar-height) + var(--space-4));
   }
 `;
 
-export const DashboardGrid = styled.div`
+export const WelcomeSection = styled(motion.div)`
+  text-align: center;
+  margin-bottom: var(--space-8);
+  color: var(--color-neutral-800);
+
+  h1 {
+    font-size: var(--text-5xl);
+    color: var(--color-primary-700);
+    text-shadow: var(--shadow-text-md); /* Ombre de texte subtile */
+
+    @media (max-width: 768px) {
+      font-size: var(--text-4xl);
+    }
+  }
+
+  p {
+    font-size: var(--text-lg);
+    margin-top: var(--space-4);
+    color: var(--color-neutral-700);
+  }
+`;
+
+export const ContentGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-6);
+  grid-template-columns: 2fr 1fr; /* Plus d'espace pour les recettes */
+  gap: var(--space-8);
+  align-items: start; /* Alignement en haut des colonnes */
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr; /* Une seule colonne sur les petits écrans */
+  }
+`;
+
+export const MainContent = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+`;
+
+export const SidebarContent = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+
+  @media (max-width: 992px) {
+    order: -1; /* Place la sidebar au-dessus sur mobile */
+  }
 `;
 
 export const Card = styled(motion.div)`
-  background: var(--color-neutral-0);
-  border-radius: var(--radius-xl);
+  background: var(--color-neutral-0); /* Blanc pur pour l'opacité maximale */
+  border-radius: var(--radius-2xl); /* Bords plus arrondis pour un aspect plus doux */
   padding: var(--space-6);
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-xl); /* Ombre plus prononcée */
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  align-items: flex-start;
   position: relative;
-  overflow: hidden;
-
-  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 0h3v3H0V0zm3 3h3v3H3V3z'/%3E%3C/g%3E%3C/svg%3E");
+  overflow: hidden; /* Pour gérer les débordements des animations internes */
+  border: 4px solid var(--color-secondary-500); /* Bordure épaisse et criarde */
+  transform: rotate(${(Math.random() - 0.5) * 1}deg); /* Légère inclinaison aléatoire */
 `;
 
-export const SectionTitle = styled.h2`
-  font-family: var(--font-family-heading);
-  font-size: var(--text-2xl);
-  color: var(--color-primary-700);
-  margin-bottom: var(--space-4);
+export const DashboardTitle = styled.h2`
+  text-align: center;
+  margin-bottom: var(--space-6);
+  color: var(--color-primary-800);
+  font-size: var(--text-3xl);
   text-shadow: var(--shadow-text-sm);
 `;
 
+export const AddRecipeToggleCard = styled(Card)`
+  cursor: pointer;
+  background: var(--gradient-secondary); /* Un beau dégradé pour la carte "Ajouter" */
+  color: var(--color-neutral-0);
+  text-align: center;
+  padding: var(--space-8); /* Plus de padding pour la rendre plus "chaleureuse" */
+  transition: all var(--transition-base);
+
+  // Inclinaison initiale et effet de redressement pour le survol
+  transform: rotate(-3deg); /* Plus prononcé */
+  border: 4px solid var(--color-primary-500); /* Bordure épaisse et contrastée */
+
+  &:hover {
+    transform: scale(1.03) rotate(0deg); /* Se redresse et grossit légèrement au survol */
+    box-shadow: var(--shadow-2xl); /* Ombre encore plus intense au survol */
+    background: var(--gradient-primary); /* Change de gradient au survol */
+    border-color: var(--color-secondary-700); /* Changement de couleur de bordure au survol */
+  }
+
+  h3 {
+    color: var(--color-neutral-0);
+    margin-top: 0;
+    margin-bottom: var(--space-4);
+    font-size: var(--text-2xl);
+    text-shadow: var(--shadow-text-md);
+  }
+
+  .add-icon {
+    font-size: var(--text-6xl); /* Très grande taille pour le '+' */
+    line-height: 1;
+    text-shadow: var(--shadow-text-lg);
+    display: inline-block;
+    transition: transform var(--transition-fast);
+  }
+
+  &:hover .add-icon {
+    transform: rotate(90deg) scale(1.1); /* Tourne et grossit au survol */
+  }
+`;
+
+// Tu auras peut-être aussi besoin de ces styles s'ils sont utilisés ailleurs dans ton dashboard
+// Je les garde ici pour le cas où tu en aurais besoin dans les composants importés
 export const FormGroup = styled.div`
   margin-bottom: var(--space-4);
   width: 100%;
@@ -147,30 +222,6 @@ export const StatusMessage = styled(motion.p)`
   }
 `;
 
-export const AddRecipeToggleCard = styled(Card)`
-  cursor: pointer;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  min-height: 150px;
-
-  &:hover {
-    background: var(--color-primary-50);
-    transform: scale(1.02);
-    box-shadow: var(--shadow-xl);
-  }
-
-  h2 {
-    color: var(--color-primary-600);
-    font-size: var(--text-2xl);
-    transition: all var(--transition-base);
-  }
-
-  &:hover h2 {
-    color: var(--color-primary-700);
-  }
-`;
-
 export const AddRecipeModalOverlay = styled(motion.div)`
   position: fixed;
   top: 0;
@@ -193,8 +244,6 @@ export const AddRecipeModalContent = styled(motion.div)`
   max-width: 600px;
   width: 100%;
   position: relative;
-  /* --- REMOVED: CSS animation, Framer Motion handles it --- */
-  /* animation: ${fadeInScale} 0.4s ease-out forwards; */
 
   @media (max-width: 768px) {
     padding: var(--space-6);

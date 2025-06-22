@@ -50,7 +50,7 @@ import Vegetables from '../../assets/images/Vegetables.jpg';
 import WhiteBackground from '../../assets/images/WhiteBackground.jpg';
 import WhiteBackground2 from '../../assets/images/WhiteBackground2.jpg';
 import WhiteBackground3 from '../../assets/images/WhiteBackground3.jpg';
-import WhiteBackground4 from '../../assets/images/WhiteBackground4.png';
+
 import WhiteBackground5 from '../../assets/images/WhiteBackground5.png';
 import WhiteBackground6 from '../../assets/images/WhiteBackground6.jpg';
 import WhiteBackground7 from '../../assets/images/WhiteBackground7.avif';
@@ -62,7 +62,7 @@ const decorativeImages = [
   FruitsVegetables, HerbsGarlic, MathewSchwartz, NotebookRecipe,
   NotebookSpaghetti, NotebookTomato, Pomegranate, ShakeThePan, SomeDish,
   SomeSalad, Tomato, TomatoIcon, TomatoNav, Vegetables, WhiteBackground,
-  WhiteBackground2, WhiteBackground3, WhiteBackground4, WhiteBackground5,
+  WhiteBackground2, WhiteBackground3, WhiteBackground5,
   WhiteBackground6, WhiteBackground7, WhiteBackground8
 ];
 
