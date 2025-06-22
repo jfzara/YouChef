@@ -1,7 +1,7 @@
 // src/pages/Dashboard/Dashboard.jsx
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'; // Import AnimatePresence for exit animations
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   DashboardContainer,
   DashboardGrid,
@@ -15,15 +15,16 @@ import {
   RecentRecipesSection,
   RecipeList,
   RecipeListItem,
-  Card, // <-- CORRECTION ICI : 'Card' est maintenant importé
-} from './Dashboard.styles'; // Import new styled components
-import AddRecipeForm from './AddRecipeForm'; // Import the AddRecipeForm component
-import api from '../../api/axiosInstance'; // Assuming you have an Axios instance for API calls
+  Card,
+  Button, // <== AJOUTER CET IMPORT
+} from './Dashboard.styles';
+import AddRecipeForm from './AddRecipeForm';
+import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
-import { useAuth } from '../../contexts/AuthContext'; // To get the token
+import { useAuth } from '../../contexts/AuthContext';
 
 const Dashboard = () => {
-  const { token } = useAuth(); // Get token for API requests
+  const { token } = useAuth();
   const [showAddRecipeModal, setShowAddRecipeModal] = useState(false);
   const [stats, setStats] = useState({ totalRecipes: 0, totalCategories: 0, totalSousCategories: 0 });
   const [recentRecipes, setRecentRecipes] = useState([]);
@@ -32,7 +33,6 @@ const Dashboard = () => {
   const [errorStats, setErrorStats] = useState(null);
   const [errorRecent, setErrorRecent] = useState(null);
 
-  // Function to fetch dashboard statistics
   const fetchDashboardStats = async () => {
     setLoadingStats(true);
     setErrorStats(null);
@@ -50,13 +50,10 @@ const Dashboard = () => {
     }
   };
 
-  // Function to fetch recent recipes
   const fetchRecentRecipes = async () => {
     setLoadingRecent(true);
     setErrorRecent(null);
     try {
-      // Note: Backend /dashboard/recent-recipes endpoint doesn't seem to require auth or filter by user,
-      // but it's good practice to send the token if your API generally expects it.
       const response = await api.get('/dashboard/recent-recipes', {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -70,19 +67,17 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch data on component mount
   useEffect(() => {
     if (token) {
       fetchDashboardStats();
       fetchRecentRecipes();
     }
-  }, [token]); // Re-fetch if token changes (e.g., after login)
+  }, [token]);
 
-  // Function to refresh all data after a new recipe is added
   const handleRecipeAdded = () => {
     fetchDashboardStats();
     fetchRecentRecipes();
-    setShowAddRecipeModal(false); // Close the modal after adding
+    setShowAddRecipeModal(false);
   };
 
   return (
@@ -93,7 +88,6 @@ const Dashboard = () => {
     >
       <h1>Vue d'ensemble du Tableau de Bord</h1>
 
-      {/* Dashboard Statistics */}
       <section>
         <SectionTitle>Statistiques Clés</SectionTitle>
         {loadingStats ? (
@@ -119,7 +113,6 @@ const Dashboard = () => {
       </section>
 
       <DashboardGrid>
-        {/* Add Recipe Toggle Card */}
         <AddRecipeToggleCard
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -132,7 +125,6 @@ const Dashboard = () => {
           <p style={{ color: 'var(--color-neutral-600)', marginTop: 'var(--space-2)' }}>Cliquez pour créer une nouvelle recette.</p>
         </AddRecipeToggleCard>
 
-        {/* Existing "My Recipes" Card Placeholder (optional, remove if not needed) */}
         <Card
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -145,7 +137,6 @@ const Dashboard = () => {
         </Card>
       </DashboardGrid>
 
-      {/* Recent Recipes Section */}
       <RecentRecipesSection>
         <SectionTitle>Recettes Récentes</SectionTitle>
         {loadingRecent ? (
@@ -175,7 +166,6 @@ const Dashboard = () => {
         )}
       </RecentRecipesSection>
 
-      {/* Add Recipe Modal */}
       <AnimatePresence>
         {showAddRecipeModal && (
           <AddRecipeModalOverlay

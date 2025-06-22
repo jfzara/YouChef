@@ -1,43 +1,26 @@
 // src/pages/Dashboard/Dashboard.styles.js
 
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
-// --- New Keyframes for Modal Effect ---
-const fadeInScale = keyframes`
-  from {
-    opacity: 0;
-    transform: scale(0.8) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-`;
+// --- REMOVED: Keyframes are now handled by Framer Motion props directly in Dashboard.jsx ---
+// const fadeInScale = keyframes`...`;
+// const slideInTop = keyframes`...`;
 
-const slideInTop = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-// --- Existing Styled Components (if any, ensure they are here) ---
 export const DashboardContainer = styled(motion.div)`
   padding: var(--space-8);
   max-width: 1200px;
   margin: var(--space-8) auto;
-  min-height: calc(100vh - var(--navbar-height) - var(--footer-height, 0px)); // Adjust as needed
+  min-height: calc(100vh - var(--navbar-height) - var(--footer-height, 0px));
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
+  /* Added padding-top to prevent content from going under the fixed navbar */
+  padding-top: calc(var(--navbar-height) + var(--space-8));
 
   @media (max-width: 768px) {
     padding: var(--space-6);
+    padding-top: calc(var(--navbar-height) + var(--space-6));
   }
 `;
 
@@ -55,11 +38,10 @@ export const Card = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  align-items: flex-start; // Align content to the start
+  align-items: flex-start;
   position: relative;
-  overflow: hidden; // Ensures nothing spills out during animations
+  overflow: hidden;
 
-  // Add subtle texture or background for fun
   background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 0h3v3H0V0zm3 3h3v3H3V3z'/%3E%3C/g%3E%3C/svg%3E");
 `;
 
@@ -68,7 +50,7 @@ export const SectionTitle = styled.h2`
   font-size: var(--text-2xl);
   color: var(--color-primary-700);
   margin-bottom: var(--space-4);
-  text-shadow: var(--shadow-text-sm); // Using your new text shadow variable if defined
+  text-shadow: var(--shadow-text-sm);
 `;
 
 export const FormGroup = styled.div`
@@ -165,14 +147,12 @@ export const StatusMessage = styled(motion.p)`
   }
 `;
 
-// --- New Styled Components for the Add Recipe Modal/Collapsible Effect ---
-
 export const AddRecipeToggleCard = styled(Card)`
   cursor: pointer;
   justify-content: center;
   align-items: center;
   text-align: center;
-  min-height: 150px; // Ensure it's big enough to click
+  min-height: 150px;
 
   &:hover {
     background: var(--color-primary-50);
@@ -197,11 +177,11 @@ export const AddRecipeModalOverlay = styled(motion.div)`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.6); // Semi-transparent dark background
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: var(--z-modal); // Make sure it's above everything
+  z-index: var(--z-modal);
   padding: var(--space-4);
 `;
 
@@ -213,7 +193,8 @@ export const AddRecipeModalContent = styled(motion.div)`
   max-width: 600px;
   width: 100%;
   position: relative;
-  animation: ${fadeInScale} 0.4s ease-out forwards; // Apply the animation here
+  /* --- REMOVED: CSS animation, Framer Motion handles it --- */
+  /* animation: ${fadeInScale} 0.4s ease-out forwards; */
 
   @media (max-width: 768px) {
     padding: var(--space-6);
@@ -249,18 +230,18 @@ export const StatsGrid = styled.div`
 export const StatCard = styled(Card)`
   text-align: center;
   padding: var(--space-5);
-  background: var(--color-neutral-50); // Lighter background for stats
+  background: var(--color-neutral-50);
   box-shadow: var(--shadow-md);
 
   h3 {
     font-family: var(--font-family-heading);
-    font-size: var(--text-4xl); // Larger for the number
+    font-size: var(--text-4xl);
     color: var(--color-primary-600);
     margin-bottom: var(--space-2);
   }
 
   p {
-    font-size: var(--text-lg); // Clear description
+    font-size: var(--text-lg);
     color: var(--color-neutral-700);
     margin: 0;
   }
