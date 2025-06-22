@@ -150,8 +150,10 @@ export const RecipeGrid = styled(motion.div)`
 
 export const RecipeCard = styled(motion.div)`
   background: white; /* Fond blanc par défaut */
+  padding:2rem;
   border-radius: var(--radius-3xl);
   overflow: hidden;
+ 
   box-shadow: var(--shadow-md);
   position: relative;
   cursor: pointer;
@@ -195,8 +197,10 @@ export const RecipeCard = styled(motion.div)`
   /* Style pour le conteneur du contenu textuel, si vous décidez d'en utiliser un */
   .recipe-card-content {
     position: relative;
+    padding-left: 2rem;
     z-index: 2;
-    background: linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 50%, transparent 100%); /* Dégradé pour lisibilité */
+    background:  whitesmoke;  
+   box-shadow: var(--shadow-glass-hover);
     padding-top: var(--space-4); /* Maintenez le padding top pour le contenu */
     /* Autres paddings et styles du contenu ici */
   }
@@ -209,13 +213,13 @@ export const RecipeCard = styled(motion.div)`
   }
 `;
 
-// RecipeCardBackground est supprimé comme discuté.
+ 
 
 export const RecipeName = styled.h4`
   font-family: var(--font-family-heading);
   font-size: var(--text-xl);
   font-weight: var(--font-bold);
-  color: var(--color-neutral-800);
+  color: var( --color-neutral-800);
   padding: 0 var(--space-6) 0; /* Le padding-top peut être géré par .recipe-card-content si utilisé */
   margin-bottom: var(--space-2);
   position: relative;
