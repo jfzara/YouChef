@@ -1,10 +1,9 @@
 // src/pages/Dashboard/AddRecipeForm.jsx
 import React, { useState } from 'react';
-// import { motion } from 'framer-motion'; // <-- Supprimez cette ligne
-import { Card, FormGroup, Button, StatusMessage } from './Dashboard.styles';
+import { Card, FormGroup, Button, StatusMessage } from './Dashboard.styles'; // Ensure these are correctly imported from your styles
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-toastify';
-import api from '../../api/axiosInstance';
+import api from '../../api/axiosInstance'; // Assuming you have this axios setup
 
 const AddRecipeForm = ({ onRecipeAdded }) => {
   const { token } = useAuth();
@@ -35,7 +34,7 @@ const AddRecipeForm = ({ onRecipeAdded }) => {
       });
       toast.success("Recette ajoutée avec succès !");
       setMessage({ type: 'success', text: 'Recette ajoutée avec succès !' });
-      setFormData({
+      setFormData({ // Reset form
         nom: '',
         description: '',
         categorie: '',
@@ -43,7 +42,7 @@ const AddRecipeForm = ({ onRecipeAdded }) => {
         imageUrl: '',
       });
       if (onRecipeAdded) {
-        onRecipeAdded();
+        onRecipeAdded(); // Callback to refresh data in parent
       }
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la recette:', error);
@@ -57,9 +56,7 @@ const AddRecipeForm = ({ onRecipeAdded }) => {
 
   return (
     <Card
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay: 0.8 }}
+      // No motion props here, these will be managed by the parent Dashboard for the modal effect
     >
       <h3
         style={{ color: 'var(--color-primary-600)', marginBottom: 'var(--space-4)' }}

@@ -48,7 +48,7 @@ const Connexion = () => {
 
   return (
     <div>
-      <Navbar />
+     
       
       <div className={styles.container}>
         <div className={styles.card}> {/* Ajout d'une carte pour encadrer le formulaire */}

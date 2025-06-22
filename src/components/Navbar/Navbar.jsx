@@ -36,33 +36,29 @@ const Navbar = () => {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 120, damping: 10 }}
-      whileHover={{
-        scale: 1.005,
-        boxShadow: `0 10px 30px rgba(34, 197, 94, 0.2), 0 0 0 5px rgba(34, 197, 94, 0.05)`,
-        transition: { type: "spring", stiffness: 200, damping: 15 }
-      }}
+      // onMouseEnter={() => setIsNavbarHovered(true)} // Plus nécessaire ici, Framer Motion gère le hover
+      // onMouseLeave={() => setIsNavbarHovered(false)} // Plus nécessaire ici
     >
-      <NavContainer>
+      <NavContainer $isOpen={isOpen}>
         <Brand to="/">
           <BrandIcon>🍽️</BrandIcon>
           Mon Carnet de Recettes
         </Brand>
 
-        <MenuToggle onClick={toggleMenu} className={isOpen ? 'active' : ''}>
+        <MenuToggle onClick={toggleMenu} $isOpen={isOpen}>
           <ToggleSpan />
           <ToggleSpan />
           <ToggleSpan />
         </MenuToggle>
 
-        <NavLinks className={isOpen ? 'active' : ''}>
+        <NavLinks $isOpen={isOpen}>
           <li>
             <StyledNavLink
               to="/"
-              className={({ isActive }) => isActive ? "activeLink" : undefined}
+              $isActive={({ isActive }) => isActive}
               onClick={() => setIsOpen(false)}
-              index={0}
-              onMouseEnter={() => setIsNavbarHovered(true)}
-              onMouseLeave={() => setIsNavbarHovered(false)}
+              whileHover={{ scale: 1.05, y: -2 }} // <-- Animation de survol Framer Motion
+              whileTap={{ scale: 0.95 }} // <-- Animation de clic Framer Motion
             >
               <span>Accueil</span>
             </StyledNavLink>
@@ -70,12 +66,11 @@ const Navbar = () => {
           <li>
             <StyledNavLink
               to="/recettes"
-              className={({ isActive }) => isActive ? "activeLink" : undefined}
+              $isActive={({ isActive }) => isActive}
               onClick={() => setIsOpen(false)}
-              index={1}
-              onMouseEnter={() => setIsNavbarHovered(true)}
-              onMouseLeave={() => setIsNavbarHovered(false)}
-              hasNotificationBadge={true}
+              $hasNotificationBadge={true}
+              whileHover={{ scale: 1.05, y: -2 }} // <-- Animation de survol Framer Motion
+              whileTap={{ scale: 0.95 }} // <-- Animation de clic Framer Motion
             >
               <span>Recettes</span>
               <NotificationBadge />
@@ -86,11 +81,10 @@ const Navbar = () => {
               <li>
                 <StyledNavLink
                   to="/dashboard"
-                  className={({ isActive }) => isActive ? "activeLink" : undefined}
+                  $isActive={({ isActive }) => isActive}
                   onClick={() => setIsOpen(false)}
-                  index={2}
-                  onMouseEnter={() => setIsNavbarHovered(true)}
-                  onMouseLeave={() => setIsNavbarHovered(false)}
+                  whileHover={{ scale: 1.05, y: -2 }} // <-- Animation de survol Framer Motion
+                  whileTap={{ scale: 0.95 }} // <-- Animation de clic Framer Motion
                 >
                   <span>Dashboard</span>
                 </StyledNavLink>
@@ -98,9 +92,6 @@ const Navbar = () => {
               <li>
                 <LogoutButton
                   onClick={handleLogout}
-                  index={3}
-                  onMouseEnter={() => setIsNavbarHovered(true)}
-                  onMouseLeave={() => setIsNavbarHovered(false)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -113,11 +104,10 @@ const Navbar = () => {
               <li>
                 <StyledNavLink
                   to="/connexion"
-                  className={({ isActive }) => isActive ? "activeLink" : undefined}
+                  $isActive={({ isActive }) => isActive}
                   onClick={() => setIsOpen(false)}
-                  index={2}
-                  onMouseEnter={() => setIsNavbarHovered(true)}
-                  onMouseLeave={() => setIsNavbarHovered(false)}
+                  whileHover={{ scale: 1.05, y: -2 }} // <-- Animation de survol Framer Motion
+                  whileTap={{ scale: 0.95 }} // <-- Animation de clic Framer Motion
                 >
                   <span>Connexion</span>
                 </StyledNavLink>
@@ -125,18 +115,16 @@ const Navbar = () => {
               <li>
                 <StyledNavLink
                   to="/inscription"
-                  className={({ isActive }) => isActive ? "activeLink" : undefined}
+                  $isActive={({ isActive }) => isActive}
                   onClick={() => setIsOpen(false)}
-                  index={3}
-                  onMouseEnter={() => setIsNavbarHovered(true)}
-                  onMouseLeave={() => setIsNavbarHovered(false)}
+                  whileHover={{ scale: 1.05, y: -2 }} // <-- Animation de survol Framer Motion
+                  whileTap={{ scale: 0.95 }} // <-- Animation de clic Framer Motion
                 >
                   <span>Inscription</span>
                 </StyledNavLink>
               </li>
             </>
           )}
-          {/* Le lien contact a été supprimé ici */}
         </NavLinks>
       </NavContainer>
     </StyledNavbar>
