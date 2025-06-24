@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 // Importez l'image de fond originale
-import WhiteBackground from '../assets/images/WhiteBackground.jpg'; 
+import WhiteBackground from '../assets/images/HerbsGarlic.jpg'; 
 
 // Importez le hook de contexte de survol
 import { useHover } from '../contexts/HoverContext';

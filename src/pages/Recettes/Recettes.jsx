@@ -19,51 +19,36 @@ import {
   categoryColors, sousCategoryColors, hoverAnimations
 } from '../../data/recettesData';
 
-// Importez le blob
-import Blob1 from '../../assets/images/svg_blobs/blob (1).svg';
+
 
 // --- Importez toutes vos images décoratives ici ---
 // J'ai sélectionné celles qui semblent les plus adaptées pour un fond décoratif
 // N'hésitez pas à ajuster cette liste selon vos préférences pour le style "décoratif"
-import Avocado from '../../assets/images/Avocado.jpg';
-import BigTomato from '../../assets/images/BigTomato.jpg';
-import Cake from '../../assets/images/Cake.webp';
 import Carrot from '../../assets/images/Carrot.jpg';
 import Dish1 from '../../assets/images/Dish1.jpg';
 import EvieSab from '../../assets/images/evie-s-aBvM_cKYMxc-unsplash.jpg';
-import FoodBasket from '../../assets/images/Food basket.jpg';
 import FoodItems from '../../assets/images/FoodItems.jpg';
 import FruitsVegetables from '../../assets/images/FruitsVegetables.jpg';
 import HerbsGarlic from '../../assets/images/HerbsGarlic.jpg';
-import MathewSchwartz from '../../assets/images/mathew-schwartz-wPR7ilcymGg-unsplash.jpg';
 import NotebookRecipe from '../../assets/images/NotebookRecipe.jpg';
 import NotebookSpaghetti from '../../assets/images/NotebookSpaghetti.jpg';
 import NotebookTomato from '../../assets/images/NotebookTomato.jpg';
 import Pomegranate from '../../assets/images/Pomegranate.jpg';
-import ShakeThePan from '../../assets/images/ShakeThePan.png';
 import SomeDish from '../../assets/images/SomeDish.jpg';
 import SomeSalad from '../../assets/images/SomeSalad.jpg';
 import Tomato from '../../assets/images/Tomato.jpg';
-import TomatoIcon from '../../assets/images/TomatoIcon.jpg';
 import TomatoNav from '../../assets/images/TomatoNav.jpg';
 import Vegetables from '../../assets/images/Vegetables.jpg';
-import WhiteBackground from '../../assets/images/WhiteBackground.jpg';
 import WhiteBackground2 from '../../assets/images/WhiteBackground2.jpg';
 import WhiteBackground3 from '../../assets/images/WhiteBackground3.jpg';
-
-import WhiteBackground5 from '../../assets/images/WhiteBackground5.png';
 import WhiteBackground6 from '../../assets/images/WhiteBackground6.jpg';
-import WhiteBackground7 from '../../assets/images/WhiteBackground7.avif';
-import WhiteBackground8 from '../../assets/images/WhiteBackground8.png';
 
 // Array de toutes les images décoratives importées
 const decorativeImages = [
-  Avocado, BigTomato, Cake, Carrot, Dish1, EvieSab, FoodBasket, FoodItems,
-  FruitsVegetables, HerbsGarlic, MathewSchwartz, NotebookRecipe,
-  NotebookSpaghetti, NotebookTomato, Pomegranate, ShakeThePan, SomeDish,
-  SomeSalad, Tomato, TomatoIcon, TomatoNav, Vegetables, WhiteBackground,
-  WhiteBackground2, WhiteBackground3, WhiteBackground5,
-  WhiteBackground6, WhiteBackground7, WhiteBackground8
+ Carrot, Dish1, EvieSab, FoodItems, FruitsVegetables, HerbsGarlic,
+  NotebookRecipe, NotebookSpaghetti, NotebookTomato, Pomegranate,
+  SomeDish, SomeSalad, Tomato, TomatoNav, Vegetables,
+  WhiteBackground2, WhiteBackground3, WhiteBackground6,
 ];
 
 const Recettes = () => {
@@ -240,12 +225,7 @@ const Recettes = () => {
       initial="hidden"
       animate={controls}
     >
-      <BlobBackground
-        src={Blob1}
-        alt="Animated Background Blob"
-        animate={blobControls}
-        initial={{ scale: 0.1, opacity: 0, x: '-50%', y: '-50%' }}
-      />
+      
 
       <PageTitle variants={itemVariants}>Toutes les Recettes</PageTitle>
 

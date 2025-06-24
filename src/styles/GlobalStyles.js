@@ -1,7 +1,7 @@
 // src/styles/GlobalStyles.js
 
 import { createGlobalStyle } from 'styled-components';
-import DashboardBg from '../assets/images/WhiteBackground.jpg'; // Vous pourriez vouloir remplacer cette image
+
 
 // Importations des nouvelles polices (exemple avec Google Fonts)
 import QuicksandLightTTF from '../assets/fonts/Quicksand-Light.ttf';
@@ -187,7 +187,7 @@ const GlobalStyles = createGlobalStyle`
     font-size: var(--text-lg);
 
     /* Gestion de l'image de fond pour un look plus "quirky" */
-    background-image: url(${DashboardBg}); /* Conservez l'image mais pensez à la remplacer */
+   
     background-position: center center; /* Ajusté */
     background-repeat: no-repeat;
     background-size: cover;
