@@ -1,38 +1,39 @@
+// src/pages/Accueil.jsx
 import React from 'react';
-import styled, { css } from 'styled-components'; // Importez 'css' de styled-components
+import styled from 'styled-components'; // Pas besoin d'importer 'css' ici sauf si vous l'utilisez spécifiquement
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-// Importez l'image de fond originale
-import WhiteBackground from '../assets/images/HerbsGarlic.jpg'; 
+// Importez l'image de fond originale - Nous allons la styliser différemment.
+import HerbsGarlicBackground from '../assets/images/HerbsGarlic.jpg'; 
+// Vous avez aussi importé 'WhiteBackground' dans votre exemple précédent,
+// mais 'HerbsGarlic.jpg' semble être celle que vous voulez utiliser comme image décorative.
+// Si vous voulez un fond blanc pur comme base, cela sera géré par background-color.
 
 // Importez le hook de contexte de survol
 import { useHover } from '../contexts/HoverContext';
 
 // --- Styled Components pour la Page d'Accueil ---
 
+// Utilisation de motion.div comme base pour les animations du conteneur principal
 const AccueilContainer = styled(motion.div)`
-  min-height: 100vh;
+  min-height: calc(100vh - var(--navbar-height, 80px)); /* Ajuste à la hauteur de l'écran moins la navbar */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: var(--space-8) var(--space-4);
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Important pour masquer les débordements des éléments décoratifs */
   
-  color: var(--neutral-800);
+  color: var(--color-neutral-800); /* Couleur de texte neutre */
   text-align: center;
 
-  /* Par défaut, un fond blanc pur */
-  background-color: white; 
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-color: var(--color-cream); /* Utilisez la couleur crème comme fond de base */
+  /* L'image decorative sera gérée par BackgroundImageLayer */
 
   @media (max-width: 768px) {
-    padding-bottom: calc(var(--space-8) + 70px);
+    padding-bottom: calc(var(--space-8) + 70px); /* Garde de l'espace pour un éventuel élément fixe en bas sur mobile */
   }
 `;
 
@@ -43,96 +44,119 @@ const BackgroundImageLayer = styled(motion.div)`
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url(${WhiteBackground}); /* Utilisez l'image WhiteBackground.jpg ici */
+  background-image: url(${HerbsGarlicBackground}); /* Utilisez votre image décorative ici */
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-attachment: fixed; /* L'image reste fixe au scroll, mais c'est une page unique */
   pointer-events: none; /* Important pour que le fond ne bloque pas les interactions */
   z-index: 0; /* Assurez-vous qu'il est en arrière-plan */
+  opacity: 0; /* Commence invisible, sera animé */
 `;
 
+const ContentWrapper = styled.div`
+  max-width: 900px; /* Augmenté pour un meilleur espacement */
+  z-index: 1; /* Assurez-vous que le contenu est au-dessus des fonds */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6); /* Espacement entre les éléments de contenu */
+`;
 
 const MainTitle = styled(motion.h1)`
-  font-family: var(--font-display);
-  font-size: var(--text-5xl);
-  color: var(--soft-green-800);
+  font-family: var(--font-family-heading); /* Utilisez votre police "heading" (Cabin Sketch) */
+  font-size: var(--text-6xl); /* Taille très grande pour un impact "quirky" */
+  color: var(--color-bright-pink-crayola); /* Rose vif pour le titre principal */
   margin-bottom: var(--space-4);
   line-height: 1.1;
-  z-index: 1; /* Assurez-vous que le texte est au-dessus des fonds */
+  text-shadow: 4px 4px 0px var(--color-salmon); /* Ombre décalée pour un effet amusant */
+
+  @media (max-width: 1024px) {
+    font-size: var(--text-5xl);
+  }
 
   @media (max-width: 768px) {
     font-size: var(--text-4xl);
   }
+
+  @media (max-width: 480px) {
+    font-size: var(--text-3xl);
+  }
 `;
 
 const Subtitle = styled(motion.p)`
-  font-family: var(--font-body);
-  font-size: var(--text-xl);
-  color: var(--neutral-700);
-  margin-bottom: var(--space-6);
-  max-width: 800px;
-  z-index: 1; /* Assurez-vous que le texte est au-dessus des fonds */
+  font-family: var(--font-family-sans); /* Utilisez votre police "sans" (Quicksand) */
+  font-size: var(--text-2xl); /* Taille plus grande pour le sous-titre */
+  color: var(--color-neutral-800); /* Couleur neutre foncée pour la lisibilité */
+  margin-bottom: var(--space-8);
+  max-width: 700px; /* Ajustez la largeur pour une meilleure lecture */
+  line-height: 1.6;
 
   @media (max-width: 768px) {
-    font-size: var(--text-lg);
+    font-size: var(--text-xl);
   }
 `;
 
-const CallToActionButton = styled(Link)`
-  background-color: var(--soft-blue-500);
-  color: var(--neutral-0);
-  font-family: var(--font-body);
+const CallToActionButton = styled(motion(Link))` /* Utilisez motion(Link) pour les animations Framer Motion sur un Link */
+  background-color: var(--color-jasmine); /* Couleur chaude et accueillante (Jaune) */
+  color: var(--color-neutral-900); /* Texte foncé pour le contraste */
+  font-family: var(--font-family-sans);
   font-size: var(--text-xl);
-  padding: var(--space-3) var(--space-6);
+  padding: var(--space-4) var(--space-8); /* Padding généreux pour un bouton bien visible */
   border: none;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-full); /* Bords très arrondis pour un look ludique */
   cursor: pointer;
   box-shadow: var(--shadow-md);
   transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
-  text-decoration: none;
-  display: inline-flex;
+  text-decoration: none; /* Enlève le soulignement du lien */
+  display: inline-flex; /* Permet d'aligner le contenu si vous ajoutez une icône par exemple */
   align-items: center;
   justify-content: center;
-  z-index: 1; /* Assurez-vous que le bouton est au-dessus des fonds */
+  z-index: 1;
 
   &:hover {
-    background-color: var(--soft-blue-600);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
+    background-color: var(--color-salmon); /* Devient Saumon au survol */
+    color: var(--color-neutral-0); /* Texte blanc au survol */
+    transform: translateY(-4px); /* Soulève un peu plus pour un effet "flottant" */
+    box-shadow: var(--shadow-lg); /* Ombre plus prononcée */
   }
 
   &:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow-sm);
+    transform: translateY(0); /* Revient à sa position initiale au clic */
+    box-shadow: var(--shadow-sm); /* Ombre plus légère au clic */
+  }
+
+  @media (max-width: 480px) {
+    font-size: var(--text-lg);
+    padding: var(--space-3) var(--space-6);
   }
 `;
 
 // --- Composant Page d'Accueil ---
 
 const Accueil = () => {
-  const { isNavbarHovered } = useHover(); // Lisez l'état du contexte
+  const { isNavbarHovered } = useHover(); // Lisez l'état du contexte pour l'animation de fond
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.5
+        staggerChildren: 0.2, // Légèrement réduit le stagger pour une apparition plus rapide
+        delayChildren: 0.3 // Réduit le délai initial
       }
     }
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 50, opacity: 0 }, // Part d'un peu plus bas
     visible: {
       y: 0,
       opacity: 1,
       transition: {
         type: "spring",
-        stiffness: 100,
-        damping: 15
+        stiffness: 120, // Plus rigide
+        damping: 15 // Moins de rebond
       }
     }
   };
@@ -143,28 +167,30 @@ const Accueil = () => {
       initial="hidden"
       animate="visible"
     >
-      {/* L'image de fond apparaît ou disparaît par-dessus le fond blanc */}
+      {/* L'image de fond s'anime en fonction du survol de la navbar */}
       <BackgroundImageLayer
-        initial={{ opacity: 0 }} // Commence invisible
-        animate={{ opacity: isNavbarHovered ? 1 : 0 }} // Opacité 1 si survolé, 0 sinon
-        transition={{ duration: 2, ease: "easeOut" }} // Durée de 1.5s pour le fade-in/out
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isNavbarHovered ? 0.15 : 0 }} /* Opacité subtile (15%) si nav survolée, 0 sinon */
+        transition={{ duration: 1.5, ease: "easeOut" }} /* Ralenti un peu la transition */
       />
 
-      <MainTitle variants={itemVariants}>
-        Cuisinez avec Joie,<br />Partagez avec Amour.
-      </MainTitle>
-      <Subtitle variants={itemVariants}>
-        Des recettes simples et délicieuses pour inspirer vos aventures culinaires quotidiennes.
-      </Subtitle>
-      <motion.div variants={itemVariants}>
+      <ContentWrapper>
+        <MainTitle variants={itemVariants}>
+          Votre Aventure Culinaire Commence Maintenant !
+        </MainTitle>
+        <Subtitle variants={itemVariants}>
+          Oubliez la routine et laissez votre imagination gustative s'envoler. Des plats qui font pétiller les papilles, des idées folles pour la cuisine de tous les jours. Préparez-vous à croquer la vie !
+        </Subtitle>
+        {/* Le bouton utilise motion(Link) pour les animations Framer Motion */}
         <CallToActionButton
           to="/recettes"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          variants={itemVariants} /* Utilise les mêmes variants pour l'apparition */
+          whileHover={{ scale: 1.05, y: -4, boxShadow: "var(--shadow-lg)" }} /* Animations de survol */
+          whileTap={{ scale: 0.95, y: 0, boxShadow: "var(--shadow-sm)" }} /* Animations de clic */
         >
           Découvrir les Recettes
         </CallToActionButton>
-      </motion.div>
+      </ContentWrapper>
     </AccueilContainer>
   );
 };
