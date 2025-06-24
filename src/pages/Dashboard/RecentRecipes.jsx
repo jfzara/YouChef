@@ -1,11 +1,11 @@
 // src/pages/Dashboard/RecentRecipes.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import styled from 'styled-components';
+import styled from 'styled-components'; // Unique importation de styled
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 
-// --- Styles pour le Rolodex ---
+// --- Styles pour le Rolodex (INTACTS) ---
 
 const RolodexContainer = styled(motion.div)`
   position: relative;
@@ -106,65 +106,84 @@ const RolodexNavigation = styled.div`
   padding-bottom: var(--space-2);
 `;
 
-const NavButton = styled(motion.button)`
-  background: var(--color-bright-pink-crayola);
+// --- Bouton de Navigation (NavButton) AMÉLIORÉ et centré ---
+export const NavButton = styled(motion.button)`
+  background: var(--color-bright-pink-crayola); /* Conserve votre couleur de base vibrante */
   color: var(--color-neutral-0);
   border: 3px solid var(--color-bright-pink-crayola);
-  border-radius: var(--radius-full);
-  width: 55px;
-  height: 55px;
+  border-radius: var(--radius-full); /* Parfaitement rond */
+  width: 60px; /* Légèrement plus grand pour plus d'impact */
+  height: 60px; /* Gardez-le un cercle parfait */
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: var(--font-bold);
   cursor: pointer;
   box-shadow: var(--shadow-md);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  transform: rotate(calc((Math.random() - 0.5) * 6deg));
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Transition rebondissante */
+  transform: rotate(calc((Math.random() - 0.5) * 8deg)); /* Inclinaison initiale aléatoire légèrement augmentée */
   text-shadow: var(--shadow-text-sm);
   outline: none;
   position: relative;
   overflow: hidden;
+  z-index: 1; /* Assurez-vous que le contenu est au-dessus de ::before */
+  font-family: 'Comic Sans MS', cursive; /* Ajout d'une police excentrique si disponible, ou une de secours */
 
-  span {
+ span {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: var(--text-4xl);
+    font-size: var(--text-2xl);
+    
     line-height: 1;
-    transform: translateY(1px);
+    position: relative;
+    top: -2px;
+    z-index: 2;
+    animation: bounceAndWiggle 2s infinite ease-in-out;
+    /* AJUSTEMENT ICI POUR LE CENTRAGE VISUEL */
+    transform: translateY(-2px); /* Ajustez cette valeur (ex: -1px, -2px, 1px) jusqu'à ce que ce soit parfait */
   }
 
+
+  /* Amélioration de ::before pour un effet "étincelant" ou "lumineux" plus dynamique */
   &::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
-    transform: rotate(45deg);
-    transition: transform 0.3s ease-out;
+    top: 50%; /* Centre l'effet */
+    left: 50%; /* Centre l'effet */
+    width: 0%; /* Commence petit */
+    height: 0%; /* Commence petit */
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 70%); /* Éclat plus fort et mieux défini */
+    border-radius: 50%; /* En faire un cercle */
+    transform: translate(-50%, -50%) scale(0); /* Commence caché et centré */
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out; /* Transition plus douce */
+    opacity: 0;
+    z-index: -1; /* Garder derrière le contenu du bouton */
   }
 
   &:hover {
-    background: var(--color-salmon);
+    background: var(--color-salmon); /* Reste avec votre saumon ludique au survol */
     border-color: var(--color-bright-pink-crayola);
-    transform: scale(1.2) translateY(-8px) rotate(calc((Math.random() - 0.5) * -12deg));
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    animation: glitchEffect 0.4s infinite alternate;
+    transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)); /* Saut et inclinaison plus exagérés */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4); /* Ombre plus profonde et prononcée */
+    animation: glitchEffect 0.4s infinite alternate, pulseBorder 1s infinite alternate; /* Garde le glitch, ajoute une bordure pulsante */
+    
+    span {
+      animation: none; /* Arrête le rebond au survol pour laisser le glitch prendre le dessus */
+      transform: scale(1.1); /* La flèche grandit légèrement au survol */
+    }
 
     &::before {
-      transform: rotate(45deg) scale(1.5);
-      opacity: 0.8;
+      transform: translate(-50%, -50%) scale(2); /* L'éclat s'étend considérablement */
+      opacity: 1; /* L'éclat devient entièrement visible */
     }
   }
 
   &:active {
     background: var(--color-bright-pink-crayola);
-    transform: scale(0.9) translateY(0) rotate(calc((Math.random() - 0.5) * 3deg));
+    transform: scale(0.85) translateY(2px) rotate(calc((Math.random() - 0.5) * 5deg)); /* État actif plus "écrasé" */
     box-shadow: var(--shadow-sm);
-    animation: none;
+    animation: none; /* Pas de glitch en état actif */
   }
 
   &:disabled {
@@ -176,15 +195,36 @@ const NavButton = styled(motion.button)`
     transform: none;
     animation: none;
     pointer-events: none;
+    opacity: 0.7; /* Légèrement estompé lorsque désactivé */
+    
+    span {
+      animation: none; /* Arrête le rebond */
+    }
   }
 
+  /* Keyframes pour l'effet glitch (gardés tels quels, ils sont bien !) */
   @keyframes glitchEffect {
-    0% { transform: scale(1.2) translateY(-8px) rotate(calc((Math.random() - 0.5) * -12deg)) translateX(0px); filter: hue-rotate(0deg); }
-    20% { transform: scale(1.2) translateY(-8px) rotate(calc((Math.random() - 0.5) * -12deg)) translateX(2px) skewX(2deg); filter: hue-rotate(10deg); }
-    40% { transform: scale(1.2) translateY(-8px) rotate(calc((Math.random() - 0.5) * -12deg)) translateX(-3px) skewX(-1deg); filter: hue-rotate(0deg); }
-    60% { transform: scale(1.2) translateY(-8px) rotate(calc((Math.random() - 0.5) * -12deg)) translateX(1px) skewX(1deg); filter: hue-rotate(5deg); }
-    80% { transform: scale(1.2) translateY(-8px) rotate(calc((Math.random() - 0.5) * -12deg)) translateX(-2px) skewX(-2deg); filter: hue-rotate(0deg); }
-    100% { transform: scale(1.2) translateY(-8px) rotate(calc((Math.random() - 0.5) * -12deg)) translateX(0px); filter: hue-rotate(0deg); }
+    0% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(0px); filter: hue-rotate(0deg); }
+    20% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(3px) skewX(3deg); filter: hue-rotate(15deg); }
+    40% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(-4px) skewX(-2deg); filter: hue-rotate(0deg); }
+    60% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(2px) skewX(2deg); filter: hue-rotate(8deg); }
+    80% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(-3px) skewX(-3deg); filter: hue-rotate(0deg); }
+    100% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(0px); filter: hue-rotate(0deg); }
+  }
+
+  /* Nouveaux Keyframes pour un rebond et une oscillation subtils et constants */
+  @keyframes bounceAndWiggle {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-3px) rotate(1deg); }
+    50% { transform: translateY(0) rotate(-1deg); }
+    75% { transform: translateY(-1px) rotate(0.5deg); }
+  }
+
+  /* Nouveaux Keyframes pour une bordure pulsante au survol */
+  @keyframes pulseBorder {
+    0% { border-color: var(--color-bright-pink-crayola); }
+    50% { border-color: var(--color-dark-purple); } /* Pulsation vers une couleur différente et contrastante */
+    100% { border-color: var(--color-bright-pink-crayola); }
   }
 `;
 
@@ -209,6 +249,8 @@ const NoRecentRecipesMessage = styled(motion.div)`
     margin: 0;
   }
 `;
+
+// --- Composant Principal RecentRecipes ---
 
 const RecentRecipes = () => {
   const [recipes, setRecipes] = useState([]);
@@ -271,6 +313,7 @@ const RecentRecipes = () => {
   const paginate = (newDirection) => {
     setDirection(newDirection);
     setCurrentIndex((prevIndex) => {
+      if (recipes.length === 0) return 0; // Prevent errors if no recipes
       if (newDirection > 0) { // Next
         return (prevIndex + 1) % recipes.length;
       } else { // Previous
@@ -352,8 +395,8 @@ const RecentRecipes = () => {
 
       {recipes.length > 1 && (
         <RolodexNavigation>
-          <NavButton onClick={() => paginate(-1)} whileTap={{ scale: 0.9 }}><span>&larr;</span></NavButton>
-          <NavButton onClick={() => paginate(1)} whileTap={{ scale: 0.9 }}><span>&rarr;</span></NavButton>
+          <NavButton onClick={() => paginate(-1)} whileTap={{ scale: 0.85 }}><span>&larr;</span></NavButton>
+          <NavButton onClick={() => paginate(1)} whileTap={{ scale: 0.85 }}><span>&rarr;</span></NavButton>
         </RolodexNavigation>
       )}
     </RolodexContainer>
