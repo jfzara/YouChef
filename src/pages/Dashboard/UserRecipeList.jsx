@@ -8,6 +8,7 @@ import RecipeCard from "./RecipeCard"; // Garde ce chemin si tu veux que RecipeC
 // IMPORTS MANQUANTS AJOUTÉS ICI
 import api from '../../api/axiosInstance'; // Importe ton instance Axios configurée
 import { useAuth } from '../../contexts/AuthContext'; // Importe le hook useAuth
+
 // Styles internes à UserRecipeList.jsx (ou déplacés si nécessaire)
 const RecipeListContainer = styled(motion.div)`
   position: relative;
@@ -23,37 +24,54 @@ const RecipeListContainer = styled(motion.div)`
 `;
 
 const NoRecipesMessage = styled(motion.div)`
-  padding: var(--space-8);
+  padding: var(--space-4); /* Moins de padding pour réduire la hauteur */
   background: var(--color-neutral-0); /* Fond blanc uni */
-
+  border-radius: var(--radius-lg); /* Moins arrondi que les cartes principales */
   text-align: center;
-  font-size: var(--text-lg);
-  box-shadow: var(--shadow-lg); /* Ombre pour donner du relief */
-  width: 80%;
-  max-width: 600px;
-  margin: var(--space-8) auto;
-  position: relative; /* Pour que la rotation fonctionne bien */
-  overflow: hidden; /* Assure que les bordures restent contenues avec la rotation */
+  font-size: var(--text-base); /* Taille de texte réduite */
+  box-shadow: var(--shadow-md); /* Ombre plus discrète */
+  width: 70%; /* Moins large */
+  max-width: 500px; /* Limite la largeur */
+  margin: var(--space-6) auto; /* Moins de marge verticale */
+  position: relative;
+  overflow: hidden;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2); /* Espace entre icône et texte */
+  
+  transform: rotate(${(Math.random() - 0.5) * 2}deg); /* Légère inclinaison aléatoire */
+  transition: all var(--transition-base); /* Pour un hover subtil */
 
-  /* --- STYLES DE BORDURE POUR L'ÉTAT NORMAL (NON-ERREUR) --- */
-  border-top: 1px solid var(--color-secondary-700); /* Couleur secondaire pour les bordures top/bottom en mode normal */
-  border-bottom: 1px solid var(--color-secondary-700);
-  border-left: 0px solid transparent; /* Latérales invisibles */
-  border-right: 0px solid transparent;
-
+  &:hover {
+    transform: rotate(0deg) scale(1.01); /* Se redresse et grossit très légèrement */
+    box-shadow: var(--shadow-lg);
+  }
 
   p {
     margin: 0;
-    font-weight: var(--font-semibold);
-    color: var(--color-primary-700); /* Texte en couleur primaire par défaut */
+    font-weight: var(--font-medium); /* Moins gras */
+    color: var(--color-primary-600); /* Couleur primaire légèrement plus douce */
+    line-height: 1.4;
+  }
+
+  .message-icon { /* Style pour l'icône dans le message */
+    font-size: var(--text-3xl); /* Taille moyenne pour l'icône */
+    color: var(--color-primary-500);
+    margin-bottom: var(--space-1);
   }
 
   /* Styles pour l'état d'erreur - DÉCOMMENTÉS ET CORRECTS */
   &.error-message {
-    border-top-color: var(--color-error-500); /* Change la couleur de la bordure supérieure en rouge pour l'erreur */
-    border-bottom-color: var(--color-error-500); /* Change la couleur de la bordure inférieure en rouge pour l'erreur */
+   
+   
     p {
       color: var(--color-error-800); /* Texte rouge foncé pour l'erreur */
+    }
+    .message-icon {
+        color: var(--color-error-500); /* Icône rouge pour l'erreur */
     }
   }
 `;
@@ -122,6 +140,7 @@ const UserRecipeList = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ type: "spring", stiffness: 100, damping: 10 }}
       >
+        <span className="message-icon">⏳</span>
         <p>Chargement de vos recettes...</p>
       </NoRecipesMessage>
     );
@@ -136,6 +155,7 @@ const UserRecipeList = () => {
         animate={{ opacity: 1, scale: 1, rotate: 0 }} // Redressement
         transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.2 }}
       >
+        <span className="message-icon">⚠️</span> {/* Icône d'avertissement */}
         <p>{error}</p>
       </NoRecipesMessage>
     );
@@ -149,6 +169,7 @@ const UserRecipeList = () => {
         animate={{ opacity: 1, scale: 1, rotate: 0 }} // Redressement
         transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.2 }}
       >
+        <span className="message-icon">🥄</span> {/* Icône de cuillère pour un message vide */}
         <p>Vous n'avez pas encore de recettes. Créez-en une nouvelle pour commencer !</p>
       </NoRecipesMessage>
     );

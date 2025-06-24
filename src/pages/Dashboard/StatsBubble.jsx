@@ -19,43 +19,46 @@ const StatsTrigger = styled(motion.div)`
   position: fixed;
   bottom: var(--space-8);
   right: var(--space-8);
-  width: 70px;
-  height: 70px;
-  background: var(--gradient-primary);
-  border-radius: var(--radius-2xl);
+  width: 75px; /* Légèrement plus grand */
+  height: 75px; /* Légèrement plus grand */
+  background: var(--color-accent-purple); /* Nouvelle couleur qui se démarque bien */
+  border-radius: var(--radius-full); /* Rendre le bouton parfaitement rond */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-2xl); /* Ombre plus prononcée pour attirer l'œil */
   color: var(--color-neutral-0);
   font-family: var(--font-family-heading);
   font-size: var(--text-sm);
   text-align: center;
   line-height: 1.2;
   z-index: var(--z-mid); /* Au-dessus du contenu normal, sous le modal */
-  transform: rotate(2deg);
+  transform: rotate(5deg); /* Plus de rotation pour un look "quirky" */
+  border: 4px solid var(--color-accent-purple-dark); /* Bordure épaisse pour le contraste */
+  transition: all var(--transition-base) ease-in-out; /* Assure une belle transition */
+
 
   &:hover {
-    background: var(--gradient-secondary);
-    box-shadow: var(--shadow-xl);
-    transform: scale(1.05) rotate(-2deg);
-    transition: all var(--transition-base);
+    background: var(--color-accent-purple-light); /* Changer de couleur au survol */
+    box-shadow: var(--shadow-3xl); /* Ombre encore plus intense */
+    transform: scale(1.1) rotate(-5deg); /* Rotation inverse et grossissement au survol */
+    border-color: var(--color-accent-purple-dark); /* Maintenir une bordure forte */
   }
 
   span {
     margin-top: var(--space-1);
+    font-weight: var(--font-bold); /* Texte plus gras */
+    text-shadow: var(--shadow-text-sm); /* Petite ombre sur le texte */
   }
 
   img {
-    width: 30px;
-    height: 30px;
-    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
+    width: 35px; /* Icône légèrement plus grande */
+    height: 35px; /* Icône légèrement plus grande */
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%); /* Rendre l'icône blanche */
   }
 `;
-
-
 
 const StatsOverlay = styled(motion.div)`
   position: fixed;
@@ -73,16 +76,16 @@ const StatsOverlay = styled(motion.div)`
   backdrop-filter: blur(12px); /* Augmente la valeur du flou pour un effet plus prononcé */
   
   /* IMPORTANT: Si tu as toujours tes variables CSS --dashboard-blur et --dashboard-opacity
-     définies *ailleurs* (par exemple, dans GlobalStyles.js) et que tu veux les utiliser,
-     assure-toi qu'elles sont appliquées à StatsOverlay comme suit:
-     background: rgba(0, 0, 0, var(--dashboard-opacity));
-     backdrop-filter: blur(var(--dashboard-blur));
-     MAIS D'ABORD, ESSAYE AVEC DES VALEURS FIXES COMME 0.7 et 12px POUR T'ASSURER DU FONCTIONNEMENT.
+      définies *ailleurs* (par exemple, dans GlobalStyles.js) et que tu veux les utiliser,
+      assure-toi qu'elles sont appliquées à StatsOverlay comme suit:
+      background: rgba(0, 0, 0, var(--dashboard-opacity));
+      backdrop-filter: blur(var(--dashboard-blur));
+      MAIS D'ABORD, ESSAYE AVEC DES VALEURS FIXES COMME 0.7 et 12px POUR T'ASSURER DU FONCTIONNEMENT.
   */
 `;
 
 const StatsBubbleContainer = styled(motion.div)`
-  background: rgba(255, 255, 255, 0.95); /* Fond opaque pour la bulle elle-même */
+  background: rgba(255, 255, 255, 0.98); /* Presque opaque pour la bulle elle-même */
   border-radius: var(--radius-2xl);
   padding: var(--space-6);
   box-shadow: var(--shadow-2xl);
@@ -91,13 +94,15 @@ const StatsBubbleContainer = styled(motion.div)`
   align-items: center;
   max-width: 400px;
   position: relative;
-  border: 2px solid var(--color-primary-300);
+  border: 4px solid var(--color-primary-500); /* Bordure plus épaisse */
   z-index: calc(var(--z-high) + 10); /* Assure qu'elle est bien au-dessus de l'overlay flouté */
   transform: translateZ(0); /* Conserve pour l'optimisation Framer Motion */
 
   h2 {
     color: var(--color-primary-800);
     margin-bottom: var(--space-4);
+    font-size: var(--text-3xl); /* Titre plus grand */
+    text-shadow: var(--shadow-text-sm);
   }
 `;
 const CloseButton = styled(motion.button)`
@@ -106,7 +111,7 @@ const CloseButton = styled(motion.button)`
   right: var(--space-3);
   background: none;
   border: none;
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl); /* Icône plus grande */
   color: var(--color-neutral-600);
   cursor: pointer;
   padding: var(--space-2);
@@ -116,12 +121,12 @@ const CloseButton = styled(motion.button)`
   &:hover {
     background: var(--color-error-light);
     color: var(--color-error-dark);
-    transform: rotate(90deg);
+    transform: rotate(90deg) scale(1.1); /* Rotation et léger grossissement */
   }
 
   img {
-    width: 24px;
-    height: 24px;
+    width: 28px; /* Taille d'icône plus grande */
+    height: 28px;
     filter: invert(30%) sepia(0%) saturate(1%) hue-rotate(0deg) brightness(0%) contrast(100%);
   }
 `;
@@ -129,20 +134,21 @@ const CloseButton = styled(motion.button)`
 const StatsGrid = styled(motion.div)`
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-4);
+  gap: var(--space-5); /* Espacement légèrement augmenté */
   margin-top: var(--space-4);
 `;
 
 const StatCardStyled = styled(motion.div)`
-  background: var(--color-primary-50);
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
+  background: var(--color-tertiary-100); /* Couleur de fond pour les stat cards */
+  padding: var(--space-5); /* Plus de padding */
+  border-radius: var(--radius-xl); /* Bords plus arrondis */
   text-align: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  border: 2px solid var(--color-tertiary-300); /* Bordure légère */
 
   &:nth-child(1) { transform: rotate(-1deg); }
   &:nth-child(2) { transform: rotate(2deg); }
@@ -150,7 +156,7 @@ const StatCardStyled = styled(motion.div)`
 
 
   strong {
-    font-size: var(--text-3xl);
+    font-size: var(--text-4xl); /* Valeurs plus grandes */
     color: var(--color-primary-900);
     font-family: var(--font-family-heading);
     line-height: 1;
@@ -158,20 +164,24 @@ const StatCardStyled = styled(motion.div)`
   }
 
   span {
-    font-size: var(--text-sm);
+    font-size: var(--text-base); /* Labels plus grands */
     color: var(--color-neutral-800);
+    font-weight: var(--font-medium);
   }
 
   img {
-    width: 32px;
-    height: 32px;
-    margin-bottom: var(--space-2);
+    width: 36px; /* Icônes plus grandes */
+    height: 36px;
+    margin-bottom: var(--space-3); /* Plus d'espace sous l'icône */
     filter: invert(20%) sepia(90%) saturate(1000%) hue-rotate(30deg) brightness(90%) contrast(100%);
   }
 `;
 
 const StatCard = ({ value, label, icon: IconComponent }) => (
-  <StatCardStyled>
+  <StatCardStyled variants={{
+    hidden: { opacity: 0, y: 20, scale: 0.9, rotate: (Math.random() - 0.5) * 5 },
+    visible: { opacity: 1, y: 0, scale: 1, rotate: 0, transition: { type: "spring", stiffness: 300, damping: 20 } },
+  }}>
     {IconComponent && <img src={IconComponent} alt={label} />}
     <strong>{value}</strong>
     <span>{label}</span>
@@ -201,6 +211,7 @@ const StatsBubble = () => {
   }, [showBubble]);
 
   useEffect(() => {
+    // Ne charger les stats que si la bulle est ouverte et si elles n'ont pas déjà été chargées (ou si elles sont à 0)
     if (showBubble && (stats.totalRecipes === 0 && stats.totalCategories === 0 && stats.totalSousCategories === 0) && !loading) {
       const fetchStats = async () => {
         setLoading(true);
@@ -210,7 +221,7 @@ const StatsBubble = () => {
           setStats(response.data);
         } catch (err) {
           console.error('Erreur lors de la récupération des statistiques:', err);
-          setError('Impossible de charger les statistiques.');
+          setError('Impossible de charger les statistiques. 😢');
           toast.error('Erreur de chargement des statistiques.');
         } finally {
           setLoading(false);
@@ -225,19 +236,7 @@ const StatsBubble = () => {
     visible: { opacity: 1, scale: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 100, damping: 10 } },
   };
 
-  const statItemVariants = {
-    hidden: { opacity: 0, y: 20, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 20,
-      },
-    },
-  };
+  // Les variants pour les items de stat card sont maintenant directement dans StatCardStyled
 
   const recipeBookIcon = RecipeBookIcon;
   const categoriesIcon = ToqueIcon;
@@ -249,7 +248,7 @@ const StatsBubble = () => {
       <StatsTrigger
         onClick={toggleBubble}
         initial={{ opacity: 0, scale: 0, rotate: 10 }}
-        animate={{ opacity: 1, scale: 1, rotate: 2 }}
+        animate={{ opacity: 1, scale: 1, rotate: 5 }} /* Animation finale avec rotation */
         transition={{ type: "spring", stiffness: 150, damping: 10, delay: 1 }}
       >
         <img src={BrainIcon} alt="Cerveau" />
@@ -289,9 +288,9 @@ const StatsBubble = () => {
                     },
                   }}
                 >
-                  <StatCard value={stats.totalRecipes} label="Recettes Créées" icon={recipeBookIcon} variants={statItemVariants} />
-                  <StatCard value={stats.totalCategories} label="Catégories Uniques" icon={categoriesIcon} variants={statItemVariants} />
-                  <StatCard value={stats.totalSousCategories} label="Sous-Catégories Explorées" icon={subCategoriesIcon} variants={statItemVariants} />
+                  <StatCard value={stats.totalRecipes} label="Recettes Créées" icon={recipeBookIcon} />
+                  <StatCard value={stats.totalCategories} label="Catégories Uniques" icon={categoriesIcon} />
+                  <StatCard value={stats.totalSousCategories} label="Sous-Catégories Explorées" icon={subCategoriesIcon} />
                 </StatsGrid>
               )}
             </StatsBubbleContainer>

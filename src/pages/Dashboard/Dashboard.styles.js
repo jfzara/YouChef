@@ -94,11 +94,11 @@ export const DashboardTitle = styled.h2`
   text-shadow: var(--shadow-text-sm);
 `;
 
-// MISE À JOUR DE ADD RECIPE TOGGLE CARD POUR QU'ELLE RESSEMBLE À UN BOUTON PLUS FUN
+// MISE À JOUR DE ADD RECIPE TOGGLE CARD POUR QU'ELLE RESSEMBLE À UN BOUTON PLUS FUN ET VISIBLE
 export const AddRecipeToggleCard = styled(motion.button)` /* Changé en motion.button */
-  background: var(--gradient-primary); /* Utilise un dégradé pour un look plus vivant */
+  background: var(--color-accent-blue); /* Nouvelle couleur qui se détache du jaune */
   color: var(--color-neutral-0); /* Texte blanc */
-  border: 4px solid var(--color-primary-700); /* Bordure épaisse qui ressort */
+  border: 4px solid var(--color-accent-blue-dark); /* Bordure épaisse qui ressort */
   border-radius: var(--radius-2xl); /* Bouton rond, ou radius-2xl pour une carte-bouton */
   padding: var(--space-6) var(--space-6); /* Plus de padding pour le rendre imposant */
   font-size: var(--text-lg);
@@ -135,10 +135,10 @@ export const AddRecipeToggleCard = styled(motion.button)` /* Changé en motion.b
   }
 
   &:hover {
-    background: var(--gradient-secondary); /* Changement de dégradé au survol */
+    background: var(--color-accent-blue-dark); /* Changement de dégradé au survol */
     box-shadow: var(--shadow-xl); /* Ombre plus prononcée */
     transform: translateY(-5px) rotate(0deg) scale(1.02); /* Léger saut, se redresse et grossit */
-    border-color: var(--color-secondary-700); /* Changement de couleur de bordure */
+    border-color: var(--color-accent-blue-light); /* Changement de couleur de bordure */
 
     &:before {
       transform: translate(-50%, -50%) scale(1.5); /* L'éclat grossit et devient visible */
