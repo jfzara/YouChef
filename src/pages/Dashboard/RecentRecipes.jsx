@@ -1,7 +1,7 @@
 // src/pages/Dashboard/RecentRecipes.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import styled from 'styled-components'; // Unique importation de styled
+import styled, { keyframes } from 'styled-components'; // Importation de keyframes
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 
@@ -106,6 +106,38 @@ const RolodexNavigation = styled.div`
   padding-bottom: var(--space-2);
 `;
 
+// --- Keyframes pour les animations des boutons ---
+
+const bounceAndWiggle = keyframes`
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-3px) rotate(1deg); }
+  50% { transform: translateY(0) rotate(-1deg); }
+  75% { transform: translateY(-1px) rotate(0.5deg); }
+`;
+
+const glitchEffect = keyframes`
+  0% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(0px); filter: hue-rotate(0deg); }
+  20% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(3px) skewX(3deg); filter: hue-rotate(8deg); } /* Réduit de 15deg à 8deg */
+  40% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(-4px) skewX(-2deg); filter: hue-rotate(0deg); }
+  60% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(2px) skewX(2deg); filter: hue-rotate(4deg); } /* Réduit de 8deg à 4deg */
+  80% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(-3px) skewX(-3deg); filter: hue-rotate(0deg); }
+  100% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(0px); filter: hue-rotate(0deg); }
+`;
+
+const pulseBorder = keyframes`
+  0% { border-color: var(--color-bright-pink-crayola); }
+  50% { border-color: var(--color-dark-purple); } /* Pulsation vers une couleur différente et contrastante */
+  100% { border-color: var(--color-bright-pink-crayola); }
+`;
+
+// Nouvelle animation pour le hover des flèches
+const hoverWiggle = keyframes`
+  0%, 100% { transform: translateY(0) scale(1.1) rotate(0deg); }
+  25% { transform: translateY(-5px) scale(1.2) rotate(3deg); }
+  50% { transform: translateY(0) scale(1.1) rotate(-3deg); }
+  75% { transform: translateY(-2px) scale(1.15) rotate(1deg); }
+`;
+
 // --- Bouton de Navigation (NavButton) AMÉLIORÉ et centré ---
 export const NavButton = styled(motion.button)`
   background: var(--color-bright-pink-crayola); /* Conserve votre couleur de base vibrante */
@@ -117,7 +149,7 @@ export const NavButton = styled(motion.button)`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: var(--font-bold);
+  font-weight: var(--font-bold); /* CORRECTION ICI */
   cursor: pointer;
   box-shadow: var(--shadow-md);
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Transition rebondissante */
@@ -129,21 +161,29 @@ export const NavButton = styled(motion.button)`
   z-index: 1; /* Assurez-vous que le contenu est au-dessus de ::before */
   font-family: 'Comic Sans MS', cursive; /* Ajout d'une police excentrique si disponible, ou une de secours */
 
- span {
+  span {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: var(--text-2xl);
-    
+    font-size: var(--text-3xl); /* Remis à 4xl pour plus d'impact */
     line-height: 1;
-    position: relative;
-    top: -2px;
+    
+    position: relative; /* Garder relative pour translateY */
+    top: -3px;
     z-index: 2;
-    animation: bounceAndWiggle 2s infinite ease-in-out;
     /* AJUSTEMENT ICI POUR LE CENTRAGE VISUEL */
     transform: translateY(-2px); /* Ajustez cette valeur (ex: -1px, -2px, 1px) jusqu'à ce que ce soit parfait */
+    
+    /* L'animation constante n'est plus ici, elle sera ajoutée/retirée par JS */
+    
+    /* Animation au survol */
+    transition: transform 0.2s ease-out; /* Transition douce pour le scale/rotate */
   }
 
+  /* Classe pour l'animation occasionnelle */
+  span.occasional-wiggle {
+    animation: ${bounceAndWiggle} 2s infinite ease-in-out;
+  }
 
   /* Amélioration de ::before pour un effet "étincelant" ou "lumineux" plus dynamique */
   &::before {
@@ -166,11 +206,11 @@ export const NavButton = styled(motion.button)`
     border-color: var(--color-bright-pink-crayola);
     transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)); /* Saut et inclinaison plus exagérés */
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4); /* Ombre plus profonde et prononcée */
-    animation: glitchEffect 0.4s infinite alternate, pulseBorder 1s infinite alternate; /* Garde le glitch, ajoute une bordure pulsante */
+    animation: ${glitchEffect} 0.4s 1 alternate, ${pulseBorder} 1s 1 alternate; /* Garde le glitch, ajoute une bordure pulsante */
     
     span {
-      animation: none; /* Arrête le rebond au survol pour laisser le glitch prendre le dessus */
-      transform: scale(1.1); /* La flèche grandit légèrement au survol */
+      animation: ${hoverWiggle} 0.8s 1 ease-in-out; /* Nouvelle animation au survol */
+      transform: translateY(-2px) scale(1.1); /* Conserve le centrage et la petite croissance */
     }
 
     &::before {
@@ -199,32 +239,8 @@ export const NavButton = styled(motion.button)`
     
     span {
       animation: none; /* Arrête le rebond */
+      transform: translateY(-2px); /* Garde le centrage même désactivé */
     }
-  }
-
-  /* Keyframes pour l'effet glitch (gardés tels quels, ils sont bien !) */
-  @keyframes glitchEffect {
-    0% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(0px); filter: hue-rotate(0deg); }
-    20% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(3px) skewX(3deg); filter: hue-rotate(15deg); }
-    40% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(-4px) skewX(-2deg); filter: hue-rotate(0deg); }
-    60% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(2px) skewX(2deg); filter: hue-rotate(8deg); }
-    80% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(-3px) skewX(-3deg); filter: hue-rotate(0deg); }
-    100% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(0px); filter: hue-rotate(0deg); }
-  }
-
-  /* Nouveaux Keyframes pour un rebond et une oscillation subtils et constants */
-  @keyframes bounceAndWiggle {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    25% { transform: translateY(-3px) rotate(1deg); }
-    50% { transform: translateY(0) rotate(-1deg); }
-    75% { transform: translateY(-1px) rotate(0.5deg); }
-  }
-
-  /* Nouveaux Keyframes pour une bordure pulsante au survol */
-  @keyframes pulseBorder {
-    0% { border-color: var(--color-bright-pink-crayola); }
-    50% { border-color: var(--color-dark-purple); } /* Pulsation vers une couleur différente et contrastante */
-    100% { border-color: var(--color-bright-pink-crayola); }
   }
 `;
 
@@ -257,6 +273,8 @@ const RecentRecipes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  // État pour contrôler l'animation occasionnelle de la flèche
+  const [wiggleClass, setWiggleClass] = useState('');
 
   const fetchRecentRecipes = useCallback(async () => {
     setLoading(true);
@@ -275,6 +293,26 @@ const RecentRecipes = () => {
 
   useEffect(() => {
     fetchRecentRecipes();
+
+    // Logique pour l'animation occasionnelle du wiggle
+    const startWiggleInterval = () => {
+      // Déclenche le wiggle pendant 2 secondes, puis le retire
+      setWiggleClass('occasional-wiggle');
+      const wiggleTimeout = setTimeout(() => {
+        setWiggleClass('');
+      }, 2000); // Durée de l'animation
+
+      // Planifie le prochain wiggle dans 15 à 20 secondes (après la fin du wiggle actuel)
+      const nextWiggleTime = 15000 + Math.random() * 5000; // entre 15 et 20 secondes
+      return setTimeout(startWiggleInterval, nextWiggleTime);
+    };
+
+    let intervalId = startWiggleInterval();
+
+    return () => {
+      // Nettoyage à la désinitialisation du composant
+      clearTimeout(intervalId);
+    };
   }, [fetchRecentRecipes]);
 
   const cardVariants = {
@@ -395,8 +433,13 @@ const RecentRecipes = () => {
 
       {recipes.length > 1 && (
         <RolodexNavigation>
-          <NavButton onClick={() => paginate(-1)} whileTap={{ scale: 0.85 }}><span>&larr;</span></NavButton>
-          <NavButton onClick={() => paginate(1)} whileTap={{ scale: 0.85 }}><span>&rarr;</span></NavButton>
+          {/* Les flèches reçoivent la classe dynamique */}
+          <NavButton onClick={() => paginate(-1)} whileTap={{ scale: 0.85 }}>
+            <span className={wiggleClass}>&larr;</span>
+          </NavButton>
+          <NavButton onClick={() => paginate(1)} whileTap={{ scale: 0.85 }}>
+            <span className={wiggleClass}>&rarr;</span>
+          </NavButton>
         </RolodexNavigation>
       )}
     </RolodexContainer>
