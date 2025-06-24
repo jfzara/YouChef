@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
@@ -20,29 +19,30 @@ const RecipeCardStyled = styled(motion.div)`
   gap: var(--space-4);
   position: relative;
   overflow: hidden;
-  min-width: 300px; /* Largeur minimale pour les cartes dans le carrousel */
-  max-width: 350px; /* Largeur maximale pour éviter qu'elles ne soient trop grandes */
-  flex-shrink: 0; /* Ne pas rétrécir les cartes dans le flexbox */
+  min-width: 300px;
+  max-width: 350px;
+  flex-shrink: 0;
   cursor: pointer;
-  border: 4px solid var(--color-primary-500); /* Bordure épaisse et "criarde" */
+  border: 4px dashed var(--color-primary-500); /* Bordure épaisse et "criarde" et pointillée */
+  transform: rotate(calc((Math.random() - 0.5) * 3deg)); /* Légèrement bancal par défaut */
 
   &:hover {
     transform: scale(1.05) rotate(0deg); /* Se redresse et grossit au survol */
     box-shadow: var(--shadow-2xl); /* Ombre intense au survol */
     border-color: var(--color-secondary-600); /* Changement de couleur de bordure au survol */
-    z-index: 10; /* S'assure que la carte survolée est au-dessus */
+    z-index: 10;
   }
 `;
 
 const RecipeImage = styled.img`
   width: 100%;
-  height: 180px; /* Hauteur fixe pour les images */
+  height: 180px;
   object-fit: cover;
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-3);
-  box-shadow: var(--shadow-sm); /* Petite ombre pour l'image */
-  /* Ajoute un fond uni pour le cas où l'image par défaut serait un SVG transparent */
-  background-color: var(--color-neutral-100); /* Une couleur de fond discrète */
+  box-shadow: var(--shadow-sm);
+  background-color: var(--color-neutral-100);
+  border: 2px solid var(--color-info-300); /* Petite bordure autour de l'image */
 `;
 
 const RecipeTitle = styled.h3`
@@ -67,7 +67,7 @@ const RecipeDescription = styled.p`
   color: var(--color-neutral-800);
   margin: var(--space-2) 0;
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* Limite à 3 lignes */
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -77,14 +77,14 @@ const ActionButtons = styled.div`
   display: flex;
   justify-content: center;
   gap: var(--space-3);
-  margin-top: auto; /* Pousse les boutons vers le bas de la carte */
+  margin-top: auto;
   width: 100%;
 `;
 
 const ActionButton = styled(motion.button)`
   background: var(--color-primary-500);
   color: var(--color-neutral-0);
-  border: 3px solid var(--color-primary-700); /* Bordure épaisse */
+  border: 3px solid var(--color-primary-700);
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-4);
   font-size: var(--text-sm);
@@ -100,7 +100,7 @@ const ActionButton = styled(motion.button)`
   &:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-    filter: brightness(1.1); /* Légèrement plus lumineux */
+    filter: brightness(1.1);
   }
 
   &:active {
@@ -123,7 +123,7 @@ const ActionButton = styled(motion.button)`
   img {
     width: 20px;
     height: 20px;
-    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%); /* Pour rendre l'icône blanche */
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
   }
 `;
 
@@ -131,20 +131,19 @@ const RecipeCard = React.forwardRef(({ recipe, onEdit, onDelete, ...props }, ref
   return (
     <RecipeCardStyled
       ref={ref}
-      {...props} // Permet de passer les props d'animation (initial, animate, exit, transition, layout)
-      whileHover="hover" // Active l'état hover
+      {...props}
+      whileHover="hover"
       variants={{
         hover: {
           scale: 1.05,
-          rotate: 0, // Se redresse
-          boxShadow: "0 25px 50px rgba(0, 0, 0, 0.3)", // Ombre plus forte
-          borderColor: "var(--color-secondary-600)", // Bordure change de couleur
+          rotate: 0,
+          boxShadow: "0 25px 50px rgba(0, 0, 0, 0.3)",
+          borderColor: "var(--color-secondary-600)",
           zIndex: 10,
           transition: { type: "spring", stiffness: 300, damping: 20 }
         }
       }}
     >
-      {/* Utilise l'URL de la recette, ou l'image par défaut locale */}
       <RecipeImage src={recipe.imageUrl || DefaultRecipeImage} alt={recipe.nom} />
       <RecipeTitle>{recipe.nom}</RecipeTitle>
       <RecipeMeta>

@@ -50,7 +50,8 @@ const Dashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <h1>Bienvenue, {user ? user.identifiant : 'Chef'} !</h1>
+        {/* TITRE DE BIENVENUE MIS À JOUR POUR ÊTRE PLUS FUN */}
+        <h1>Bienvenue, Chef {user ? user.identifiant : 'Gourmet'} ! 🧑‍🍳✨</h1>
         <p>Préparez vos papilles, c'est l'heure de créer de nouvelles saveurs !</p>
       </WelcomeSection>
 

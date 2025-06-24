@@ -1,5 +1,3 @@
-
-
 // src/pages/Dashboard/RecipeFormModal.jsx
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,25 +14,26 @@ const ModalOverlay = styled(motion.div)`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.6); /* Fond sombre semi-transparent */
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: var(--z-modal); /* S'assure que le modal est au-dessus de tout */
-  backdrop-filter: blur(5px); /* Effet de flou sur l'arrière-plan du modal */
+  z-index: var(--z-modal);
+  backdrop-filter: blur(5px);
 `;
 
 const ModalContent = styled(motion.div)`
   background: var(--color-neutral-0);
-  border-radius: var(--radius-2xl); /* Bords arrondis pour un look doux */
+  border-radius: var(--radius-2xl);
   padding: var(--space-8);
   box-shadow: var(--shadow-2xl);
-  max-width: 600px; /* Largeur maximale du modal */
-  width: 90%; /* Prend 90% de la largeur disponible */
+  max-width: 600px;
+  width: 90%;
   position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+  border: 4px solid var(--color-info-500); /* Bordure colorée pour le modal */
 
   @media (max-width: 768px) {
     padding: var(--space-6);
@@ -57,7 +56,7 @@ const CloseButton = styled(motion.button)`
   &:hover {
     background: var(--color-error-light);
     color: var(--color-error-dark);
-    transform: rotate(90deg);
+    transform: rotate(90deg) scale(1.1); /* Plus d'effet au survol */
   }
 `;
 
@@ -66,6 +65,7 @@ const FormTitle = styled.h2`
   color: var(--color-primary-700);
   font-size: var(--text-3xl);
   margin-bottom: var(--space-4);
+  text-shadow: var(--shadow-text-sm); /* Ombre légère pour le titre */
 `;
 
 const FormGroup = styled.div`
@@ -87,12 +87,12 @@ const FormGroup = styled.div`
     font-family: var(--font-family-sans);
     font-size: var(--text-base);
     transition: all var(--transition-fast);
-    outline: none; /* Supprime l'outline par défaut du navigateur */
+    outline: none;
 
     &:focus {
-      border-color: var(--color-primary-500);
-      box-shadow: 0 0 0 3px var(--color-primary-100); /* Effet d'auréole */
-      transform: translateY(-2px); /* Léger déplacement vers le haut au focus */
+      border-color: var(--color-secondary-500); /* Couleur de focus plus flashy */
+      box-shadow: 0 0 0 4px var(--color-secondary-100); /* Effet d'auréole plus large */
+      transform: translateY(-2px);
     }
   }
 
@@ -114,15 +114,17 @@ const SubmitButton = styled(motion.button)`
   cursor: pointer;
   transition: all var(--transition-base);
   box-shadow: var(--shadow-md);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 
   &:hover {
     background: var(--gradient-secondary);
     box-shadow: var(--shadow-lg);
-    transform: translateY(-2px); /* Léger "saut" au survol */
+    transform: translateY(-3px); /* Plus de "saut" au survol */
   }
 
   &:active {
-    transform: translateY(0); /* Retour à la position normale au clic */
+    transform: translateY(0);
     box-shadow: var(--shadow-sm);
   }
 
@@ -166,7 +168,7 @@ const RecipeFormModal = ({ isOpen, onClose, onRecipeAdded, onRecipeUpdated, reci
         imageUrl: '',
       });
     }
-  }, [recipeToEdit, isOpen]); // Déclenche quand recipeToEdit change ou le modal s'ouvre/ferme
+  }, [recipeToEdit, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -201,7 +203,7 @@ const RecipeFormModal = ({ isOpen, onClose, onRecipeAdded, onRecipeUpdated, reci
         toast.success("Recette ajoutée avec succès ! 🎉");
         if (onRecipeAdded) onRecipeAdded(response.data);
       }
-      onClose(); // Ferme le modal après succès
+      onClose();
     } catch (error) {
       console.error('Erreur lors de la soumission de la recette:', error);
       toast.error(`Erreur : ${error.response?.data?.message || 'Quelque chose a mal tourné.'}`);
@@ -210,9 +212,9 @@ const RecipeFormModal = ({ isOpen, onClose, onRecipeAdded, onRecipeUpdated, reci
     }
   };
 
-  // Variants pour l'animation Framer Motion
+  // Variants pour l'animation Framer Motion - Rendre plus "fun" et "quirky"
   const modalVariants = {
-    hidden: { opacity: 0, y: "-100vh", scale: 0.5, rotate: -10 },
+    hidden: { opacity: 0, y: "-100vh", scale: 0.2, rotate: -30 }, // Plus petite et plus rotative à l'entrée
     visible: {
       opacity: 1,
       y: "0",
@@ -220,21 +222,21 @@ const RecipeFormModal = ({ isOpen, onClose, onRecipeAdded, onRecipeUpdated, reci
       rotate: 0,
       transition: {
         type: "spring",
-        stiffness: 100,
-        damping: 10,
-        when: "beforeChildren", // Anime l'overlay avant le contenu
+        stiffness: 120, // Un peu plus souple
+        damping: 15, // Plus d'amortissement pour un atterrissage en douceur
+        when: "beforeChildren",
         staggerChildren: 0.1,
       },
     },
     exit: {
       opacity: 0,
       y: "100vh",
-      scale: 0.5,
-      rotate: 10,
+      scale: 0.2,
+      rotate: 30, // Rotative à la sortie
       transition: {
         type: "spring",
-        stiffness: 100,
-        damping: 10,
+        stiffness: 120,
+        damping: 15,
       },
     },
   };
@@ -248,19 +250,19 @@ const RecipeFormModal = ({ isOpen, onClose, onRecipeAdded, onRecipeUpdated, reci
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={onClose} // Ferme le modal en cliquant sur l'overlay
+          onClick={onClose}
         >
           <ModalContent
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            onClick={(e) => e.stopPropagation()} // Empêche le clic sur le contenu de fermer le modal
+            onClick={(e) => e.stopPropagation()}
           >
-            <CloseButton onClick={onClose} whileTap={{ scale: 0.9 }}>
-              &times; {/* Symbole "x" pour fermer */}
+            <CloseButton onClick={onClose} whileTap={{ scale: 0.8 }} aria-label="Fermer le modal">
+              &times;
             </CloseButton>
-            <FormTitle>{recipeToEdit ? 'Modifier la Recette' : 'Ajouter une Nouvelle Recette'}</FormTitle>
+            <FormTitle>{recipeToEdit ? 'Modifier cette Pépite ✍️' : 'Ajouter une Nouvelle Création 🤩'}</FormTitle>
             <form onSubmit={handleSubmit}>
               <FormGroup>
                 <label htmlFor="nom">Nom de la recette</label>
@@ -313,7 +315,7 @@ const RecipeFormModal = ({ isOpen, onClose, onRecipeAdded, onRecipeUpdated, reci
                 />
               </FormGroup>
               <SubmitButton type="submit" disabled={loading} whileTap={{ scale: 0.95 }}>
-                {loading ? 'Envoi...' : recipeToEdit ? 'Mettre à jour la recette' : 'Ajouter la recette'}
+                {loading ? 'Envoi en cours...' : recipeToEdit ? 'Mettre à jour la recette 🚀' : 'Ajouter la recette 🥳'}
               </SubmitButton>
             </form>
           </ModalContent>

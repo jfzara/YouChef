@@ -83,7 +83,7 @@ export const Card = styled(motion.div)`
   position: relative;
   overflow: hidden; /* Pour gérer les débordements des animations internes */
   border: 4px solid var(--color-secondary-500); /* Bordure épaisse et criarde */
-  transform: rotate(${(Math.random() - 0.5) * 1}deg); /* Légère inclinaison aléatoire */
+  transform: rotate(${(Math.random() - 0.5) * 2}deg); /* Légère inclinaison aléatoire sur toutes les cartes */
 `;
 
 export const DashboardTitle = styled.h2`
@@ -94,23 +94,62 @@ export const DashboardTitle = styled.h2`
   text-shadow: var(--shadow-text-sm);
 `;
 
-export const AddRecipeToggleCard = styled(Card)`
+// MISE À JOUR DE ADD RECIPE TOGGLE CARD POUR QU'ELLE RESSEMBLE À UN BOUTON PLUS FUN
+export const AddRecipeToggleCard = styled(motion.button)` /* Changé en motion.button */
+  background: var(--gradient-primary); /* Utilise un dégradé pour un look plus vivant */
+  color: var(--color-neutral-0); /* Texte blanc */
+  border: 4px solid var(--color-primary-700); /* Bordure épaisse qui ressort */
+  border-radius: var(--radius-2xl); /* Bouton rond, ou radius-2xl pour une carte-bouton */
+  padding: var(--space-6) var(--space-6); /* Plus de padding pour le rendre imposant */
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
   cursor: pointer;
-  background: var(--gradient-secondary); /* Un beau dégradé pour la carte "Ajouter" */
-  color: var(--color-neutral-0);
+  transition: all var(--transition-base); /* Transition plus longue pour le hover */
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column; /* Pour empiler titre et icône */
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2); /* Espace entre l'icône et le texte */
+  text-transform: uppercase; /* Texte en majuscules pour plus d'impact */
+  letter-spacing: 1px; /* Espacement des lettres */
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
   text-align: center;
-  padding: var(--space-8); /* Plus de padding pour la rendre plus "chaleureuse" */
-  transition: all var(--transition-base);
+  min-height: 180px; /* Hauteur minimale pour que ce soit bien visible */
+  transform: rotate(-5deg); /* Inclinaison initiale plus prononcée */
 
-  // Inclinaison initiale et effet de redressement pour le survol
-  transform: rotate(-3deg); /* Plus prononcé */
-  border: 4px solid var(--color-primary-500); /* Bordure épaisse et contrastée */
+
+  &:before {
+    content: '✨'; /* Un petit éclat fun */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: var(--text-5xl); /* Plus grand */
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Rebondissant */
+    z-index: -1;
+    pointer-events: none; /* Ne doit pas interférer avec le clic */
+  }
 
   &:hover {
-    transform: scale(1.03) rotate(0deg); /* Se redresse et grossit légèrement au survol */
-    box-shadow: var(--shadow-2xl); /* Ombre encore plus intense au survol */
-    background: var(--gradient-primary); /* Change de gradient au survol */
-    border-color: var(--color-secondary-700); /* Changement de couleur de bordure au survol */
+    background: var(--gradient-secondary); /* Changement de dégradé au survol */
+    box-shadow: var(--shadow-xl); /* Ombre plus prononcée */
+    transform: translateY(-5px) rotate(0deg) scale(1.02); /* Léger saut, se redresse et grossit */
+    border-color: var(--color-secondary-700); /* Changement de couleur de bordure */
+
+    &:before {
+      transform: translate(-50%, -50%) scale(1.5); /* L'éclat grossit et devient visible */
+      opacity: 1;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+  }
+
+  &:active {
+    transform: translateY(0) rotate(0deg) scale(0.98); /* Retour à la normale au clic, léger rétrécissement */
+    box-shadow: var(--shadow-sm);
   }
 
   h3 {
@@ -119,20 +158,22 @@ export const AddRecipeToggleCard = styled(Card)`
     margin-bottom: var(--space-4);
     font-size: var(--text-2xl);
     text-shadow: var(--shadow-text-md);
+    line-height: 1.2;
   }
 
   .add-icon {
-    font-size: var(--text-6xl); /* Très grande taille pour le '+' */
+    font-size: var(--text-7xl); /* Très grande taille pour le '+' */
     line-height: 1;
     text-shadow: var(--shadow-text-lg);
     display: inline-block;
-    transition: transform var(--transition-fast);
+    transition: transform 0.3s ease-out;
   }
 
   &:hover .add-icon {
-    transform: rotate(90deg) scale(1.1); /* Tourne et grossit au survol */
+    transform: rotate(180deg) scale(1.2); /* Tourne complètement et grossit au survol */
   }
 `;
+
 
 // Tu auras peut-être aussi besoin de ces styles s'ils sont utilisés ailleurs dans ton dashboard
 // Je les garde ici pour le cas où tu en aurais besoin dans les composants importés

@@ -10,23 +10,23 @@ import { toast } from 'react-toastify';
 const RolodexContainer = styled(motion.div)`
   position: relative;
   width: 100%;
-  height: 250px; /* Hauteur fixe pour le rolodex */
+  height: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
-  perspective: 1000px; /* Pour l'effet 3D */
-  overflow: hidden; /* Cache les cartes en dehors de la vue */
-  border: 4px solid var(--color-secondary-500); /* Bordure épaisse "criarde" */
+  perspective: 1000px;
+  overflow: hidden;
+  border: 4px solid var(--color-secondary-500);
   border-radius: var(--radius-2xl);
-  background: var(--color-neutral-0); /* Fond blanc pour bien contraster */
-  box-shadow: var(--shadow-xl); /* Ombre pour le conteneur */
+  background: var(--color-primary-50); /* Fond légèrement coloré pour le conteneur */
+  box-shadow: var(--shadow-xl);
 `;
 
 const RolodexCard = styled(motion.div)`
   position: absolute;
-  width: 85%; /* Taille de la carte dans le rolodex */
+  width: 85%;
   height: 85%;
-  background: var(--color-neutral-50); /* Fond légèrement différent pour la carte */
+  background: var(--color-neutral-0); /* Les cartes restent blanches pour le contraste */
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
@@ -34,17 +34,23 @@ const RolodexCard = styled(motion.div)`
   align-items: center;
   padding: var(--space-4);
   box-shadow: var(--shadow-md);
-  backface-visibility: hidden; /* Prévient les flashs lors des rotations 3D */
-  border: 2px solid var(--color-primary-300); /* Bordure interne */
+  backface-visibility: hidden;
+  border: 2px dashed var(--color-primary-300); /* Bordure en pointillé, plus fun */
   text-align: center;
+  cursor: grab; /* Indique qu'on peut la "saisir" */
+
+  &:active {
+    cursor: grabbing;
+  }
 `;
 
 const CardImage = styled.img`
-  width: 100px; /* Plus petite image pour le rolodex */
+  width: 100px;
   height: 100px;
   object-fit: cover;
   border-radius: var(--radius-md);
   margin-bottom: var(--space-2);
+  border: 2px solid var(--color-info-300); /* Petite bordure autour de l'image */
 `;
 
 const CardTitle = styled.h4`
@@ -69,16 +75,16 @@ const RolodexNavigation = styled.div`
   display: flex;
   justify-content: center;
   gap: var(--space-6);
-  z-index: 2; /* Au-dessus des cartes */
+  z-index: 2;
 `;
 
 const NavButton = styled(motion.button)`
   background: var(--color-secondary-500);
   color: var(--color-neutral-0);
-  border: 3px solid var(--color-secondary-700); /* Bordure épaisse */
+  border: 3px solid var(--color-secondary-700);
   border-radius: var(--radius-full);
-  width: 40px;
-  height: 40px;
+  width: 45px; /* Légèrement plus grands */
+  height: 45px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,13 +93,16 @@ const NavButton = styled(motion.button)`
   cursor: pointer;
   box-shadow: var(--shadow-md);
   transition: all var(--transition-fast);
-  transform: rotate(calc((Math.random() - 0.5) * 5deg)); /* Légèrement bancal */
+  transform: rotate(calc((Math.random() - 0.5) * 10deg)); /* Plus bancal */
   text-shadow: var(--shadow-text-sm);
+  font-family: 'HandwrittenFont', cursive; /* Si vous avez une police d'écriture manuelle */
+
 
   &:hover {
     background: var(--color-secondary-600);
     box-shadow: var(--shadow-lg);
-    transform: scale(1.1) rotate(calc((Math.random() - 0.5) * -5deg));
+    transform: scale(1.15) rotate(calc((Math.random() - 0.5) * -15deg)); /* Plus de mouvement */
+    animation: pulse 0.5s infinite alternate; /* Ajout d'une petite animation de pulsation */
   }
   &:disabled {
     background: var(--color-neutral-300);
@@ -101,6 +110,16 @@ const NavButton = styled(motion.button)`
     cursor: not-allowed;
     box-shadow: var(--shadow-sm);
     transform: none;
+    animation: none;
+  }
+
+  @keyframes pulse {
+    from {
+      transform: scale(1.15) rotate(calc((Math.random() - 0.5) * -15deg));
+    }
+    to {
+      transform: scale(1.2) rotate(calc((Math.random() - 0.5) * 15deg));
+    }
   }
 `;
 
@@ -115,14 +134,16 @@ const NoRecentRecipesMessage = styled(motion.div)`
   box-shadow: var(--shadow-lg);
   border: 4px dashed var(--color-primary-300);
   width: 90%;
-  height: 90%; /* Prend presque toute la hauteur du conteneur */
+  height: 90%;
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: rotate(2deg); /* Message bancal */
+  transform: rotate(2deg);
 
   p {
     margin: 0;
+    color: var(--color-info-700); /* Couleur plus joyeuse pour le texte */
+    font-weight: var(--font-semibold);
   }
 `;
 
@@ -151,42 +172,42 @@ const RecentRecipes = () => {
     fetchRecentRecipes();
   }, [fetchRecentRecipes]);
 
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % recipes.length);
-  };
+  // Anciennes fonctions handleNext/handlePrev supprimées, remplacées par paginate
 
-  const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + recipes.length) % recipes.length);
-  };
-
-  // Variants pour l'animation de la carte (Rolodex)
+  // Variants pour l'animation de la carte (Rolodex) - Rendues plus "quirky"
   const cardVariants = {
     enter: (direction) => ({
       opacity: 0,
-      rotateY: direction > 0 ? 90 : -90,
-      scale: 0.8,
-      x: direction > 0 ? 200 : -200,
+      rotateY: direction > 0 ? 120 : -120, // Rotation plus large
+      scale: 0.6, // Plus petite à l'entrée
+      x: direction > 0 ? 300 : -300, // Déplacement plus grand
+      filter: 'blur(5px)', // Flou à l'entrée
+      rotateZ: direction > 0 ? 15 : -15, // Inclinaison sur l'axe Z
     }),
     center: {
       opacity: 1,
       rotateY: 0,
       scale: 1,
       x: 0,
+      filter: 'blur(0px)',
+      rotateZ: 0,
       transition: {
         type: "spring",
-        stiffness: 200,
-        damping: 15
+        stiffness: 150, // Moins rigide
+        damping: 8, // Moins d'amortissement, plus de rebond
       }
     },
     exit: (direction) => ({
       opacity: 0,
-      rotateY: direction > 0 ? -90 : 90,
-      scale: 0.8,
-      x: direction > 0 ? -200 : 200,
+      rotateY: direction > 0 ? -120 : 120,
+      scale: 0.6,
+      x: direction > 0 ? -300 : 300,
+      filter: 'blur(5px)',
+      rotateZ: direction > 0 ? -15 : 15,
       transition: {
         type: "spring",
-        stiffness: 200,
-        damping: 15
+        stiffness: 150,
+        damping: 8,
       }
     })
   };
@@ -213,7 +234,7 @@ const RecentRecipes = () => {
           animate={{ opacity: 1, scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.5 }}
         >
-          <p>Feuilletage des créations mondiales...</p>
+          <p>Feuilletage des créations mondiales... 🌍🍜</p>
         </NoRecentRecipesMessage>
       </RolodexContainer>
     );
@@ -228,7 +249,7 @@ const RecentRecipes = () => {
           animate={{ opacity: 1, scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.5 }}
         >
-          <p>{error}</p>
+          <p>{error} 😔</p>
         </NoRecentRecipesMessage>
       </RolodexContainer>
     );
@@ -236,14 +257,14 @@ const RecentRecipes = () => {
 
   return (
     <RolodexContainer
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 1 }} // Apparition du conteneur du rolodex
+      initial={{ opacity: 0, y: 50, rotateX: 10 }} // Ajoute une petite rotation X à l'entrée
+      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+      transition={{ duration: 0.8, delay: 1, type: "spring", stiffness: 100, damping: 10 }}
     >
       <AnimatePresence initial={false} custom={direction}>
         {recipes.length > 0 && (
           <RolodexCard
-            key={currentIndex} // La clé change pour déclencher l'animation
+            key={currentIndex}
             custom={direction}
             variants={cardVariants}
             initial="enter"
@@ -252,25 +273,25 @@ const RecentRecipes = () => {
           >
             <CardImage src={recipes[currentIndex].imageUrl || 'https://via.placeholder.com/100/FF9800/FFFFFF?text=Création'} alt={recipes[currentIndex].nom} />
             <CardTitle>{recipes[currentIndex].nom}</CardTitle>
-            <CardAuthor>par {recipes[currentIndex].auteur || 'Un Chef Inconnu'}</CardAuthor>
+            <CardAuthor>par {recipes[currentIndex].auteur || 'Un Chef Inconnu'} 👩‍🍳</CardAuthor>
           </RolodexCard>
         )}
       </AnimatePresence>
 
-      {recipes.length > 1 && ( // Affiche les boutons seulement s'il y a plus d'une recette
+      {recipes.length > 1 && (
         <RolodexNavigation>
-          <NavButton onClick={() => paginate(-1)} whileTap={{ scale: 0.9 }}>&larr;</NavButton>
-          <NavButton onClick={() => paginate(1)} whileTap={{ scale: 0.9 }}>&rarr;</NavButton>
+          <NavButton onClick={() => paginate(-1)} whileTap={{ scale: 0.8 }} aria-label="Recette précédente">&larr;</NavButton>
+          <NavButton onClick={() => paginate(1)} whileTap={{ scale: 0.8 }} aria-label="Recette suivante">&rarr;</NavButton>
         </RolodexNavigation>
       )}
 
       {recipes.length === 0 && (
-         <NoRecentRecipesMessage
+          <NoRecentRecipesMessage
             initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.5 }}
           >
-            <p>Pas de nouvelles créations mondiales pour le moment.</p>
+            <p>Pas de nouvelles créations mondiales pour le moment. Le frigo est vide ! 😅</p>
           </NoRecentRecipesMessage>
       )}
     </RolodexContainer>
