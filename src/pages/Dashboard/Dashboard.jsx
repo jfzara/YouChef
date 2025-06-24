@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify'; // Assurez-vous que ToastContainer est dans App.js
 
 // Importe les composants du dashboard
 import RecipeFormModal from './RecipeFormModal';
@@ -17,8 +17,6 @@ import {
   ContentGrid,
   MainContent,
   SidebarContent,
-  // Retire Card d'ici si tu ne l'utilises nulle part ailleurs
-  // Si tu l'utilises ailleurs, garde l'importation mais ne l'utilise plus autour de RecentRecipes
   DashboardTitle,
   AddRecipeToggleCard,
 } from './Dashboard.styles';
@@ -29,6 +27,15 @@ const Dashboard = () => {
 
   const handleOpenRecipeFormModal = () => setIsRecipeFormModalOpen(true);
   const handleCloseRecipeFormModal = () => setIsRecipeFormModalOpen(false);
+
+  // Callback pour rafraîchir les listes après ajout/modification
+  const handleRecipeFormSuccess = () => {
+    setIsRecipeFormModalOpen(false);
+    // Ici, vous devrez probablement déclencher un rafraîchissement dans UserRecipeList
+    // Vous pouvez le faire en passant une fonction à UserRecipeList ou en utilisant un état global/contexte si plus complexe.
+    // Pour l'instant, UserRecipeList a son propre useEffect qui devrait se déclencher
+    // si son prop `user` change, ou si vous lui passez une prop `refreshTrigger`.
+  };
 
   return (
     <DashboardContainer
@@ -66,13 +73,9 @@ const Dashboard = () => {
             <span className="add-icon">+</span>
           </AddRecipeToggleCard>
 
-          {/* Section Recettes Récentes - MODIFIÉE ICI */}
-          {/* Retire la Card englobante et laisse le titre et RecentRecipes directement */}
-          <DashboardTitle as="h3">Dernières Créations Mondiales</DashboardTitle> {/* Le titre est conservé */}
-          <RecentRecipes /> {/* RecentRecipes gère maintenant son propre conteneur (RolodexContainer) */}
+          <DashboardTitle as="h3">Dernières Créations Mondiales</DashboardTitle>
+          <RecentRecipes />
 
-          {/* Si tu as des StatsGrid et StatCard, ils doivent être définis dans Dashboard.styles.js
-              et importés. Pour le moment, ta StatsBubble gère ça différemment. */}
         </SidebarContent>
       </ContentGrid>
 
@@ -81,6 +84,9 @@ const Dashboard = () => {
       <RecipeFormModal
         isOpen={isRecipeFormModalOpen}
         onClose={handleCloseRecipeFormModal}
+        onRecipeAdded={handleRecipeFormSuccess} // Passez le callback pour rafraîchir
+        onRecipeUpdated={handleRecipeFormSuccess} // Passez le callback pour rafraîchir
+        recipeToEdit={null} // Initialement pour l'ajout, pas d'édition
       />
     </DashboardContainer>
   );

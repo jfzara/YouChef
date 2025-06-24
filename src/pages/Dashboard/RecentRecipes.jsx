@@ -1,5 +1,3 @@
-
-
 // src/pages/Dashboard/RecentRecipes.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,11 +10,11 @@ import { toast } from 'react-toastify';
 const RolodexContainer = styled(motion.div)`
   position: relative;
   width: 100%;
-  height: 480px; /* Légèrement augmenté pour un meilleur équilibre visuel */
+  height: 480px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Espace la zone de la carte et la navigation */
-  align-items: center; /* Centre les éléments enfants horizontalement */
+  justify-content: space-between;
+  align-items: center;
   perspective: 1000px;
   overflow: hidden;
   border: 4px solid var(--color-primary-500);
@@ -25,7 +23,7 @@ const RolodexContainer = styled(motion.div)`
   box-shadow: var(--shadow-xl);
   transform: rotate(${(Math.random() - 0.5) * 1.5}deg);
   transition: transform 0.3s ease-out;
-  padding: var(--space-4); /* Padding interne pour laisser de l'espace autour du contenu */
+  padding: var(--space-4);
 
   &:hover {
     transform: rotate(0deg) scale(1.005);
@@ -33,33 +31,45 @@ const RolodexContainer = styled(motion.div)`
 `;
 
 const RolodexCardArea = styled.div`
-  position: relative; /* Très important : base pour la position absolue de la carte */
-  width: 95%; /* Prend presque toute la largeur du conteneur */
-  height: 85%; /* Alloue la majorité de l'espace à la zone de la carte */
-  display: flex; /* Utilise Flexbox pour centrer le contenu interne (même si la carte est absolue) */
+  position: relative;
+  width: 95%;
+  height: 85%;
+  display: flex;
   justify-content: center;
   align-items: center;
-  /* Pas de margin-bottom ici, car RolodexContainer gère l'espacement avec justify-content: space-between */
 `;
 
 const RolodexCard = styled(motion.div)`
-  position: absolute; /* Reste absolu pour les animations de rotation */
-  /* top: 50%; */ /* RETIRÉ COMME DEMANDÉ */
-  /* left: 50%; */ /* RETIRÉ COMME DEMANDÉ */
-  transform: translate(-50%, -50%); /* DÉCALAGE DE LA MOITIÉ DE SA PROPRE LARGEUR/HAUTEUR pour un centrage parfait */
+  position: absolute;
+  transform: translate(-50%, -50%); /* Centrage parfait */
 
-  width: 85%; /* Taille ajustée pour être 85% de la RolodexCardArea */
-  height: 90%; /* Hauteur ajustée pour être 90% de la RolodexCardArea */
+  width: 85%;
+  height: 90%;
   background: var(--color-neutral-50);
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
-  justify-content: space-around; /* Bonne répartition verticale du contenu interne */
+  justify-content: space-around;
   align-items: center;
   padding: var(--space-4);
   box-shadow: var(--shadow-md);
   backface-visibility: hidden;
   text-align: center;
+`;
+
+// Nouveau style pour l'image de placeholder (emoji ou icône)
+const CardPlaceholderImage = styled.div`
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+  background: var(--color-neutral-200); /* Fond léger pour le placeholder */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--text-6xl); /* Grande taille pour l'emoji/icône */
+  color: var(--color-primary-600); /* Couleur sympa pour l'emoji/icône */
+  border: 2px dashed var(--color-primary-300); /* Bordure en pointillés fun */
 `;
 
 const CardImage = styled.img`
@@ -68,6 +78,8 @@ const CardImage = styled.img`
   object-fit: cover;
   border-radius: var(--radius-md);
   margin-bottom: var(--space-2);
+  /* Optionnel: Ajoutez une transition pour un effet doux lors du chargement */
+  transition: opacity 0.3s ease-in-out;
 `;
 
 const CardTitle = styled.h4`
@@ -91,7 +103,7 @@ const RolodexNavigation = styled.div`
   justify-content: center;
   gap: var(--space-6);
   z-index: 2;
-  padding-bottom: var(--space-2); /* Un peu de padding pour les boutons */
+  padding-bottom: var(--space-2);
 `;
 
 const NavButton = styled(motion.button)`
@@ -223,7 +235,6 @@ const RecentRecipes = () => {
     fetchRecentRecipes();
   }, [fetchRecentRecipes]);
 
-  // Variants pour l'animation de la carte (Rolodex)
   const cardVariants = {
     enter: (direction) => ({
       opacity: 0,
@@ -314,7 +325,14 @@ const RecentRecipes = () => {
               animate="center"
               exit="exit"
             >
-              <CardImage src={recipes[currentIndex].imageUrl || 'https://via.placeholder.com/100/FF9800/FFFFFF?text=Création'} alt={recipes[currentIndex].nom} />
+              {/* Condition pour afficher l'image réelle ou le placeholder */}
+              {recipes[currentIndex].imageUrl ? (
+                <CardImage src={recipes[currentIndex].imageUrl} alt={recipes[currentIndex].nom} />
+              ) : (
+                <CardPlaceholderImage>
+                  😋 {/* Un emoji sympa pour la nourriture ! */}
+                </CardPlaceholderImage>
+              )}
               <CardTitle>{recipes[currentIndex].nom}</CardTitle>
               <CardAuthor>par {recipes[currentIndex].auteur || 'Un Chef Inconnu'}</CardAuthor>
             </RolodexCard>

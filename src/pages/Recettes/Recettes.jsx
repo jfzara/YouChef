@@ -129,7 +129,8 @@ const Recettes = () => {
     const fetchRecettes = async () => {
       try {
         console.log("🔄 Chargement des recettes...");
-        const res = await axios.get("/recettes");
+        // MODIFICATION ICI : Appel à la nouvelle route /api/recettes/all
+        const res = await axios.get("/recettes/all"); // <-- LIGNE MODIFIÉE
         const data = res.data;
         console.log("✅ Données reçues:", data);
         const regroupées = {};
@@ -225,7 +226,8 @@ const Recettes = () => {
       initial="hidden"
       animate={controls}
     >
-      
+      {/* L'élément vide ici semble être un vestige, vous pouvez le retirer si ce n'est pas intentionnel */}
+      {/* */} 
 
       <PageTitle variants={itemVariants}>Toutes les Recettes</PageTitle>
 

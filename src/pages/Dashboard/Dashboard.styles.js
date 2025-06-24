@@ -2,7 +2,6 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
-
 export const RecipeImage = styled.img`
   width: 100%;
   height: 150px; /* Hauteur fixe pour uniformité */
@@ -10,6 +9,7 @@ export const RecipeImage = styled.img`
   border-radius: var(--radius-md); /* Bords arrondis pour l'image */
   margin-bottom: var(--space-3); /* Espace sous l'image */
 `;
+
 export const DashboardContainer = styled(motion.div)`
   padding: var(--space-8);
   padding-top: calc(var(--navbar-height) + var(--space-8)); /* Ajustement pour la navbar */
@@ -94,7 +94,6 @@ export const DashboardTitle = styled.h2`
   text-shadow: var(--shadow-text-sm);
 `;
 
-// MISE À JOUR DE ADD RECIPE TOGGLE CARD POUR QU'ELLE RESSEMBLE À UN BOUTON PLUS FUN ET VISIBLE
 export const AddRecipeToggleCard = styled(motion.button)` /* Changé en motion.button */
   background: var(--color-accent-blue); /* Nouvelle couleur qui se détache du jaune */
   color: var(--color-neutral-0); /* Texte blanc */
@@ -119,7 +118,6 @@ export const AddRecipeToggleCard = styled(motion.button)` /* Changé en motion.b
   text-align: center;
   min-height: 180px; /* Hauteur minimale pour que ce soit bien visible */
   transform: rotate(-5deg); /* Inclinaison initiale plus prononcée */
-
 
   &:before {
     content: '✨'; /* Un petit éclat fun */
@@ -174,9 +172,6 @@ export const AddRecipeToggleCard = styled(motion.button)` /* Changé en motion.b
   }
 `;
 
-
-// Tu auras peut-être aussi besoin de ces styles s'ils sont utilisés ailleurs dans ton dashboard
-// Je les garde ici pour le cas où tu en aurais besoin dans les composants importés
 export const FormGroup = styled.div`
   margin-bottom: var(--space-4);
   width: 100%;
@@ -271,6 +266,9 @@ export const StatusMessage = styled(motion.p)`
   }
 `;
 
+// Ces styles de modale ne sont plus utilisés car RecipeFormModal définit les siens.
+// Je les laisse commentés au cas où vous les utiliseriez ailleurs.
+/*
 export const AddRecipeModalOverlay = styled(motion.div)`
   position: fixed;
   top: 0;
@@ -298,26 +296,10 @@ export const AddRecipeModalContent = styled(motion.div)`
     padding: var(--space-6);
   }
 `;
+*/
 
-export const CloseButton = styled(motion.button)`
-  position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
-  background: none;
-  border: none;
-  font-size: var(--text-2xl);
-  color: var(--color-neutral-500);
-  cursor: pointer;
-  padding: var(--space-2);
-  border-radius: var(--radius-full);
-  transition: all var(--transition-base);
-
-  &:hover {
-    color: var(--color-error);
-    background-color: var(--color-neutral-100);
-    transform: rotate(90deg);
-  }
-`;
+// La seule et unique CloseButton pour les modals, maintenant définie dans RecipeFormModal.jsx
+// export const CloseButton = styled(motion.button)`...`;
 
 export const StatsGrid = styled.div`
   display: grid;

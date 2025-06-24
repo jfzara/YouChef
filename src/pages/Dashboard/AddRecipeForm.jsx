@@ -1,11 +1,12 @@
 // src/pages/Dashboard/AddRecipeForm.jsx
 import React, { useState } from 'react';
-import { Card, FormGroup, Button, StatusMessage } from './Dashboard.styles'; // Ensure these are correctly imported from your styles
+// Assurez-vous que StatusMessage est un composant motion pour les animations
+import { Card, FormGroup, Button, StatusMessage } from './Dashboard.styles';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-toastify';
-import api from '../../api/axiosInstance'; // Assuming you have this axios setup
+import api from '../../api/axiosInstance';
 
-const AddRecipeForm = ({ onRecipeAdded }) => {
+const AddRecipeForm = ({ onRecipeAdded, onClose }) => { // Ajout de onClose pour la fermeture de la modale
   const { token } = useAuth();
   const [formData, setFormData] = useState({
     nom: '',
@@ -15,7 +16,8 @@ const AddRecipeForm = ({ onRecipeAdded }) => {
     imageUrl: '',
   });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
+  // Supprimons l'état 'message' car nous allons nous fier entièrement à react-toastify pour les notifications.
+  // const [message, setMessage] = useState(null); 
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,7 +26,7 @@ const AddRecipeForm = ({ onRecipeAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(null);
+    // setMessage(null); // Plus nécessaire
 
     try {
       await api.post('/recettes', formData, {
@@ -32,8 +34,9 @@ const AddRecipeForm = ({ onRecipeAdded }) => {
           Authorization: `Bearer ${token}`
         }
       });
-      toast.success("Recette ajoutée avec succès !");
-      setMessage({ type: 'success', text: 'Recette ajoutée avec succès !' });
+      toast.success("Recette ajoutée avec succès ! 🎉"); // Ajout d'un emoji pour plus de visibilité
+      // Le message de statut interne n'est plus nécessaire car Toastify le gère
+      // setMessage({ type: 'success', text: 'Recette ajoutée avec succès !' }); 
       setFormData({ // Reset form
         nom: '',
         description: '',
@@ -42,22 +45,24 @@ const AddRecipeForm = ({ onRecipeAdded }) => {
         imageUrl: '',
       });
       if (onRecipeAdded) {
-        onRecipeAdded(); // Callback to refresh data in parent
+        onRecipeAdded(); // Callback to refresh data in parent (UserRecipeList)
+      }
+      // Ferme la modale après un ajout réussi
+      if (onClose) {
+        onClose();
       }
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la recette:', error);
       const errorMessage = error.response?.data?.message || 'Une erreur est survenue lors de l\'ajout de la recette.';
-      toast.error(errorMessage);
-      setMessage({ type: 'error', text: errorMessage });
+      toast.error(`Échec de l'ajout : ${errorMessage} 😕`); // Message d'erreur plus clair avec emoji
+      // setMessage({ type: 'error', text: errorMessage }); // Plus nécessaire
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card
-      // No motion props here, these will be managed by the parent Dashboard for the modal effect
-    >
+    <Card> {/* Pas besoin de motion props ici si Card est stylisé par Dashboard.styles */}
       <h3
         style={{ color: 'var(--color-primary-600)', marginBottom: 'var(--space-4)' }}
       >
@@ -118,7 +123,8 @@ const AddRecipeForm = ({ onRecipeAdded }) => {
         <Button type="submit" disabled={loading}>
           {loading ? 'Ajout en cours...' : 'Ajouter Recette'}
         </Button>
-        {message && (
+        {/* Suppression du StatusMessage interne, on se fie à react-toastify */}
+        {/* {message && (
           <StatusMessage
             className={message.type}
             initial={{ opacity: 0, y: 10 }}
@@ -127,7 +133,7 @@ const AddRecipeForm = ({ onRecipeAdded }) => {
           >
             {message.text}
           </StatusMessage>
-        )}
+        )} */}
       </form>
     </Card>
   );

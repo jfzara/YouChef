@@ -200,7 +200,7 @@ const RecipeFormModal = ({ isOpen, onClose, onRecipeAdded, onRecipeUpdated, reci
             Authorization: `Bearer ${token}`,
           },
         });
-        toast.success("Recette ajoutée avec succès ! 🎉");
+        toast.success("Recette ajoutée !  Rafraîchissez la page pour la voir 🎉");
         if (onRecipeAdded) onRecipeAdded(response.data);
       }
       onClose();
