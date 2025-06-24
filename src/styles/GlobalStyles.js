@@ -1,50 +1,63 @@
 // src/styles/GlobalStyles.js
 
 import { createGlobalStyle } from 'styled-components';
-import DashboardBg from '../assets/images/WhiteBackground.jpg';
+import DashboardBg from '../assets/images/WhiteBackground.jpg'; // Vous pourriez vouloir remplacer cette image
 
-import AbrilFatfaceOTF from '../assets/fonts/AbrilFatface-Regular.otf';
-import MuliRegularTTF from '../assets/fonts/Muli.ttf';
-import MuliSemiBoldTTF from '../assets/fonts/Muli-SemiBold.ttf';
-import MuliBoldTTF from '../assets/fonts/Muli-Bold.ttf'; // Importation de la police Muli-Bold
+// Importations des nouvelles polices (exemple avec Google Fonts)
+import QuicksandLightTTF from '../assets/fonts/Quicksand-Light.ttf';
+import QuicksandRegularTTF from '../assets/fonts/Quicksand-Regular.ttf';
+import QuicksandSemiBoldTTF from '../assets/fonts/Quicksand-SemiBold.ttf';
+import QuicksandBoldTTF from '../assets/fonts/Quicksand-Bold.ttf';
+import CabinSketchRegularTTF from '../assets/fonts/CabinSketch-Regular.ttf'; // Exemple pour la police de titre artistique
 
 const GlobalStyles = createGlobalStyle`
-  /* Polices des titres (Abril Fatface) */
+  /* Suppression des anciennes polices ou mise à jour */
   @font-face {
-    font-family: 'Abril Fatface';
-    src: url(${AbrilFatfaceOTF}) format('opentype');
+    font-family: 'Cabin Sketch';
+    src: url(${CabinSketchRegularTTF}) format('truetype');
     font-weight: normal;
     font-style: normal;
-    font-display: swap; /* Bonne pratique pour le chargement des polices */
-  }
-
-  /* Polices du corps de texte (Muli) */
-  @font-face {
-    font-family: 'Muli';
-    src: url(${MuliRegularTTF}) format('truetype');
-    font-weight: normal; /* 400 */
-    font-style: normal;
     font-display: swap;
   }
 
   @font-face {
-    font-family: 'Muli';
-    src: url(${MuliSemiBoldTTF}) format('truetype');
-    font-weight: 600; /* Semi-Bold */
+    font-family: 'Quicksand';
+    src: url(${QuicksandLightTTF}) format('truetype');
+    font-weight: 300; /* Light */
     font-style: normal;
     font-display: swap;
   }
-
   @font-face {
-    font-family: 'Muli';
-    src: url(${MuliBoldTTF}) format('truetype');
-    font-weight: bold; /* 700 */
+    font-family: 'Quicksand';
+    src: url(${QuicksandRegularTTF}) format('truetype');
+    font-weight: 400; /* Regular */
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Quicksand';
+    src: url(${QuicksandSemiBoldTTF}) format('truetype');
+    font-weight: 600; /* SemiBold */
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Quicksand';
+    src: url(${QuicksandBoldTTF}) format('truetype');
+    font-weight: 700; /* Bold */
     font-style: normal;
     font-display: swap;
   }
 
   :root {
-    /* Couleurs Neutres */
+    /* Nouvelle Palette de Couleurs */
+    --color-light-sky-blue: #9ac6e6;
+    --color-cream: #eff1b3;
+    --color-jasmine: #fcd180;
+    --color-salmon: #fa8c73;
+    --color-bright-pink-crayola: #f74f73;
+
+    /* Vous pouvez garder certaines de vos couleurs neutres existantes pour le texte et les bordures */
     --color-neutral-0: #FFFFFF;
     --color-neutral-50: #F8F8F8;
     --color-neutral-100: #F0F0F0;
@@ -57,31 +70,7 @@ const GlobalStyles = createGlobalStyle`
     --color-neutral-800: #222222;
     --color-neutral-900: #000000;
 
-    /* Couleurs Primaires */
-    --color-primary-50: #E0F7FA;
-    --color-primary-100: #B2EBF2;
-    --color-primary-200: #80DEEA;
-    --color-primary-300: #4DD0E1;
-    --color-primary-400: #26C6DA;
-    --color-primary-500: #00BCD4;
-    --color-primary-600: #00ACC1;
-    --color-primary-700: #0097A7;
-    --color-primary-800: #00838F;
-    --color-primary-900: #006064;
-
-    /* Couleurs Secondaires */
-    --color-secondary-50: #FFF3E0;
-    --color-secondary-100: #FFE0B2;
-    --color-secondary-200: #FFCC80;
-    --color-secondary-300: #FFB74D;
-    --color-secondary-400: #FFA726;
-    --color-secondary-500: #FF9800;
-    --color-secondary-600: #FB8C00;
-    --color-secondary-700: #F57C00;
-    --color-secondary-800: #EF6C00;
-    --color-secondary-900: #E65100;
-
-    /* Couleurs de Feedback */
+    /* Adapter les couleurs de feedback si nécessaire, ou les garder comme des couleurs utilitaires */
     --color-success-light: #E8F5E9;
     --color-success: #4CAF50;
     --color-success-dark: #2E7D32;
@@ -100,7 +89,7 @@ const GlobalStyles = createGlobalStyle`
     --color-info: #2196F3;
     --color-info-dark: #1976D2;
 
-    /* Espacement */
+    /* Espacement, Rayons, Ombres, Transitions, Z-index - Gardez-les, ils sont excellents */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;
@@ -115,7 +104,6 @@ const GlobalStyles = createGlobalStyle`
     --space-16: 6rem;
     --space-20: 8rem;
 
-    /* Rayons de Bordure */
     --radius-sm: 0.125rem;
     --radius-md: 0.25rem;
     --radius-lg: 0.5rem;
@@ -123,7 +111,6 @@ const GlobalStyles = createGlobalStyle`
     --radius-2xl: 1rem;
     --radius-full: 9999px;
 
-    /* Ombres */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -131,31 +118,29 @@ const GlobalStyles = createGlobalStyle`
     --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.2);
     --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
 
-    /* Ombres de Texte */
     --shadow-text-sm: 1px 1px 2px rgba(0, 0, 0, 0.1);
     --shadow-text-md: 2px 2px 4px rgba(0, 0, 0, 0.2);
     --shadow-text-lg: 3px 3px 6px rgba(0, 0, 0, 0.3);
 
-    /* Transitions */
     --transition-base: 0.3s ease-in-out;
     --transition-fast: 0.15s ease-out;
     --transition-slow: 0.5s ease-in-out;
 
-    /* Z-index */
     --z-low: 10;
     --z-mid: 100;
     --z-high: 1000;
     --z-modal: 10000;
     --z-tooltip: 20000;
 
-    /* Dégradés (Gradients) */
-    --gradient-primary: linear-gradient(45deg, var(--color-primary-600), var(--color-primary-400));
-    --gradient-secondary: linear-gradient(45deg, var(--color-secondary-600), var(--color-secondary-400));
-    --gradient-neutral: linear-gradient(45deg, var(--color-neutral-300), var(--color-neutral-100));
+    /* Nouveaux dégradés avec votre palette */
+    --gradient-quirky-1: linear-gradient(45deg, var(--color-light-sky-blue), var(--color-jasmine));
+    --gradient-quirky-2: linear-gradient(135deg, var(--color-salmon), var(--color-bright-pink-crayola));
+    --gradient-quirky-3: linear-gradient(90deg, var(--color-cream), var(--color-light-sky-blue));
 
-    /* Typographie */
-    --font-family-heading: 'Abril Fatface', serif;
-    --font-family-sans: 'Muli', sans-serif;
+
+    /* Typographie - Mettre à jour avec les nouvelles polices */
+    --font-family-heading: 'Cabin Sketch', cursive; /* Ou 'Quicksand', sans-serif; si vous préférez */
+    --font-family-sans: 'Quicksand', sans-serif;
 
     --text-xs: 0.75rem;
     --text-sm: 0.875rem;
@@ -170,17 +155,14 @@ const GlobalStyles = createGlobalStyle`
 
     --font-light: 300;
     --font-normal: 400;
-    --font-medium: 500;
+    --font-medium: 500; /* Quicksand n'a pas ce poids, utilisez semi-bold */
     --font-semibold: 600;
     --font-bold: 700;
-    --font-extrabold: 800;
+    --font-extrabold: 800; /* Quicksand n'a pas ce poids */
 
-    /* Hauteur de la barre de navigation */
     --navbar-height: 5rem;
-
-    /* Variables pour l'effet de flou du dashboard */
-    --dashboard-blur: 0px; /* Valeur par défaut */
-    --dashboard-opacity: 1; /* Valeur par défaut */
+    --dashboard-blur: 0px;
+    --dashboard-opacity: 1;
   }
 
   *, *::before, *::after {
@@ -194,9 +176,9 @@ const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     font-family: var(--font-family-sans);
-    color: var(--color-neutral-800);
+    color: var(--color-neutral-800); /* Garder un texte foncé pour la lisibilité */
     line-height: 1.6;
-    background-color: var(--color-neutral-50);
+    background-color: var(--color-cream); /* Utilisation de votre nouvelle couleur crème pour le fond */
     position: relative;
     min-height: 100vh;
     overflow-x: hidden;
@@ -204,31 +186,30 @@ const GlobalStyles = createGlobalStyle`
     font-weight: var(--font-normal);
     font-size: var(--text-lg);
 
-    background-image: url(${DashboardBg});
-    background-position: center top;
+    /* Gestion de l'image de fond pour un look plus "quirky" */
+    background-image: url(${DashboardBg}); /* Conservez l'image mais pensez à la remplacer */
+    background-position: center center; /* Ajusté */
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
-
-    /* Applique le flou et l'opacité via les variables CSS */
+    /* Pour un look "quirky", le flou peut être plus prononcé ou l'image plus abstraite/graphique */
     filter: blur(var(--dashboard-blur)) brightness(var(--dashboard-opacity));
-    transition: filter 0.5s ease-in-out; /* Transition douce pour le flou */
+    transition: filter 0.5s ease-in-out;
   }
-
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-family-heading);
     line-height: 1.2;
     margin-top: var(--space-6);
     margin-bottom: var(--space-4);
-    color: var(--color-primary-700);
+    color: var(--color-bright-pink-crayola); /* Utilisez une couleur plus vive pour les titres ! */
   }
 
   a {
-    color: var(--color-primary-600);
+    color: var(--color-salmon); /* Utilisez Salmon pour les liens */
     text-decoration: none;
     &:hover {
-      color: var(--color-primary-700);
+      color: var(--color-bright-pink-crayola); /* Un joli effet au survol */
     }
   }
 

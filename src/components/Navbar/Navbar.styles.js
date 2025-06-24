@@ -1,220 +1,203 @@
 // src/components/Navbar/Navbar.styles.js
-
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { NavLink } from 'react-router-dom';
 
 export const StyledNavbar = styled(motion.nav)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  background-color: var(--color-light-sky-blue);
   height: var(--navbar-height);
-  // --- CHANGEMENT ICI : Nouvelle couleur de fond pour la Navbar ---
-  background: var(--color-neutral-0); /* Blanc pur */
-  /* Alternative : un dégradé très léger et chaleureux si vous voulez plus d'audace */
-  /* background: linear-gradient(90deg, var(--color-neutral-0) 0%, var(--color-neutral-50) 100%); */
-  box-shadow: var(--shadow-lg);
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 var(--space-4);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
   z-index: var(--z-high);
-  color: var(--color-neutral-800); /* Changer la couleur du texte pour qu'elle contraste avec le blanc */
-  transition: all var(--transition-base);
+  width: 100%;
 `;
 
-export const NavContainer = styled(motion.div)`
-  width: 100%;
-  max-width: 1200px;
+export const NavContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 var(--space-8);
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 var(--space-4);
 
   @media (max-width: 768px) {
-    padding: 0 var(--space-4);
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: flex-start;
   }
 `;
 
-export const Brand = styled(NavLink)`
-  font-family: var(--font-family-heading); /* Applique la nouvelle police de titre */
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-  color: var(--color-primary-700); /* Une couleur qui contraste bien avec le blanc du fond */
-  text-shadow: var(--shadow-text-sm); /* Une ombre plus subtile si le fond est clair */
-  text-decoration: none;
+export const Brand = styled.div`
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  text-decoration: none;
+  font-family: var(--font-family-heading);
+  font-size: var(--text-2xl);
+  color: var(--color-bright-pink-crayola);
+  text-shadow: var(--shadow-text-sm);
   cursor: pointer;
-  transition: transform var(--transition-fast);
+  transition: var(--transition-fast);
+  padding: var(--space-2);
 
   &:hover {
-    transform: translateY(-2px);
+    color: var(--color-salmon);
+    transform: scale(1.02);
   }
 
   @media (max-width: 768px) {
     font-size: var(--text-xl);
-    flex-grow: 1;
   }
 `;
 
 export const BrandIcon = styled.span`
   font-size: var(--text-3xl);
-  line-height: 1;
-  @media (max-width: 768px) {
-    font-size: var(--text-2xl);
+  margin-right: var(--space-2);
+  color: var(--color-jasmine);
+  transform: rotate(-10deg);
+  display: inline-block;
+  transition: transform var(--transition-base);
+
+  ${Brand}:hover & {
+    transform: rotate(10deg) scale(1.1);
+    color: var(--color-bright-pink-crayola);
   }
 `;
 
-export const NavLinks = styled(motion.ul)`
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    position: absolute;
-    top: var(--navbar-height);
-    left: 0;
-    width: 100%;
-    // --- CHANGEMENT ICI : Fond des NavLinks en mode mobile ---
-    background: var(--color-neutral-0); /* Utilise la même couleur que la navbar */
-    box-shadow: var(--shadow-xl);
-    transform: translateY(${props => (props.$isOpen ? '0' : '-100%')});
-    transition: transform var(--transition-base);
-    align-items: center;
-    padding: var(--space-4) 0;
-    z-index: var(--z-mid);
-  }
-`;
-
-// --- CHANGEMENT MAJEUR ICI : StyledNavLink est maintenant un motion.custom(NavLink) ---
-export const StyledNavLink = styled(motion(NavLink))`
-  color: var(--color-neutral-700); /* Couleur des liens pour contraster avec le fond blanc */
-  text-decoration: none;
-  font-family: var(--font-family-sans); /* Applique la nouvelle police de texte */
-  font-size: var(--text-lg);
-  font-weight: var(--font-medium);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
-  position: relative;
-  margin: 0 var(--space-3);
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05); /* Fond de survol plus discret */
-    color: var(--color-primary-600); /* Changer la couleur du texte au survol */
-  }
-
-  /* Les animations Framer Motion seront gérées via les props dans Navbar.jsx */
-
-  &.activeLink {
-    background-color: rgba(0, 0, 0, 0.1); /* Couleur pour le lien actif */
-    font-weight: var(--font-semibold);
-    color: var(--color-primary-700); /* Couleur du lien actif */
-  }
-
-  ${({ $isActive }) =>
-    $isActive &&
-    `
-  `}
-
-  ${({ $hasNotificationBadge }) =>
-    $hasNotificationBadge &&
-    `
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 8px;
-      height: 8px;
-      background-color: var(--color-secondary-500);
-      border-radius: 50%;
-      border: 1px solid var(--color-neutral-0);
-    }
-  `}
-
-  @media (max-width: 768px) {
-    margin: var(--space-3) 0;
-    width: 80%;
-    text-align: center;
-  }
-`;
-
-export const MenuToggle = styled(motion.div)`
+export const MenuToggle = styled.button`
   display: none;
-  flex-direction: column;
-  justify-content: space-around;
-  width: 30px;
-  height: 25px;
+  background: none;
+  border: none;
   cursor: pointer;
-  z-index: var(--z-high);
+  padding: var(--space-2);
+  z-index: var(--z-mid);
 
   @media (max-width: 768px) {
     display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: var(--space-8);
+    height: var(--space-8);
   }
+`;
 
-  ${({ $isOpen }) =>
-    $isOpen &&
-    `
-    ${ToggleSpan}:nth-child(1) {
-      transform: rotate(45deg);
+export const ToggleSpan = styled.span`
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: var(--color-neutral-800);
+  border-radius: var(--radius-full);
+  transition: all 0.3s ease-in-out;
+
+  /* Correction ici : Utilisez les props directement sur ToggleSpan */
+  ${props => props.$isOpen && `
+    &:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
     }
-    ${ToggleSpan}:nth-child(2) {
+    &:nth-child(2) {
       opacity: 0;
-      transform: translateX(-20px);
     }
-    ${ToggleSpan}:nth-child(3) {
-      transform: rotate(-45deg);
+    &:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
     }
   `}
 `;
 
-export const ToggleSpan = styled.div`
-  width: 100%;
-  height: 3px;
-  background-color: var(--color-primary-600); /* Couleur des barres du burger pour contraster avec le fond blanc */
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
-  transform-origin: 1px;
+export const NavLinks = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--space-6);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--color-light-sky-blue);
+    position: absolute;
+    top: var(--navbar-height);
+    left: 0;
+    padding: var(--space-8) var(--space-4);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(${props => (props.$isOpen ? '0' : '100%')});
+    transition: transform 0.3s ease-in-out;
+    opacity: ${props => (props.$isOpen ? '1' : '0')};
+    pointer-events: ${props => (props.$isOpen ? 'auto' : 'none')};
+  }
 `;
 
-export const NotificationBadge = styled.span`
-  /* Reste le même, le style est appliqué via $hasNotificationBadge sur StyledNavLink */
-`;
-
-export const LogoutButton = styled(motion.button)`
-  background: var(--color-secondary-500); /* Une couleur audacieuse pour le bouton de déconnexion */
-  color: var(--color-neutral-0);
-  padding: var(--space-2) var(--space-4);
-  border: none;
-  border-radius: var(--radius-lg);
-  font-family: var(--font-family-heading); /* Applique la police de titre */
-  font-size: var(--text-base);
+export const StyledNavLink = styled(motion.a)`
+  font-family: var(--font-family-sans);
+  font-size: var(--text-lg);
   font-weight: var(--font-semibold);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-md);
+  color: var(--color-neutral-800);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  position: relative;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-    background-color: var(--color-secondary-600); /* Légèrement plus foncé au survol */
+    color: var(--color-bright-pink-crayola);
+    background-color: var(--color-cream);
   }
 
-  &:active {
-    transform: translateY(0);
+  &.active {
+    color: var(--color-bright-pink-crayola);
+    background-color: var(--color-jasmine);
     box-shadow: var(--shadow-sm);
   }
 
   @media (max-width: 768px) {
-    width: 80%;
-    margin-top: var(--space-3);
+    padding: var(--space-4);
+    font-size: var(--text-xl);
+  }
+`;
+
+export const NotificationBadge = styled.span`
+  background-color: var(--color-salmon);
+  color: var(--color-neutral-0);
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  border-radius: var(--radius-full);
+  padding: 0.1rem 0.4rem;
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  transform: translate(50%, -50%);
+  display: none;
+
+  /* Correction ici : Utilisez les props directement sur NotificationBadge */
+  ${props => props.$hasNotificationBadge && `
+    display: block;
+  `}
+`;
+
+export const LogoutButton = styled(motion.button)`
+  background-color: var(--color-bright-pink-crayola);
+  color: var(--color-neutral-0);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-full);
+  border: none;
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-bold);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-base);
+
+  &:hover {
+    background-color: var(--color-salmon);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-top: var(--space-4);
   }
 `;

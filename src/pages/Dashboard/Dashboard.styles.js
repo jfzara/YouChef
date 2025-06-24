@@ -2,6 +2,14 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
+
+export const RecipeImage = styled.img`
+  width: 100%;
+  height: 150px; /* Hauteur fixe pour uniformité */
+  object-fit: cover; /* Recadre l'image pour couvrir l'espace */
+  border-radius: var(--radius-md); /* Bords arrondis pour l'image */
+  margin-bottom: var(--space-3); /* Espace sous l'image */
+`;
 export const DashboardContainer = styled(motion.div)`
   padding: var(--space-8);
   padding-top: calc(var(--navbar-height) + var(--space-8)); /* Ajustement pour la navbar */

@@ -1,4 +1,4 @@
-// src/components/RecipeCard.jsx
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
@@ -6,6 +6,9 @@ import styled from 'styled-components';
 // Tu devras importer ces icônes
 import EditIcon from '../../assets/icons/edit.svg'; // Exemple d'icône d'édition (crayon)
 import DeleteIcon from '../../assets/icons/delete.svg'; // Exemple d'icône de suppression (poubelle)
+
+// Importe ton image de remplacement locale
+import DefaultRecipeImage from '../../assets/images/default_recipe_image.jpg'; // <--- ASSURE-TOI QUE CE CHEMIN EST CORRECT ET QUE L'IMAGE EXISTE !
 
 const RecipeCardStyled = styled(motion.div)`
   background: var(--color-neutral-0); /* Blanc pur */
@@ -23,11 +26,6 @@ const RecipeCardStyled = styled(motion.div)`
   cursor: pointer;
   border: 4px solid var(--color-primary-500); /* Bordure épaisse et "criarde" */
 
-  // Ajustements pour l'effet "bancal" après l'animation d'apparition
-  // Ceci est géré par la prop 'animate' passée depuis UserRecipeList,
-  // mais une légère rotation supplémentaire peut être appliquée ici
-  // si tu veux un effet encore plus fort.
-
   &:hover {
     transform: scale(1.05) rotate(0deg); /* Se redresse et grossit au survol */
     box-shadow: var(--shadow-2xl); /* Ombre intense au survol */
@@ -43,6 +41,8 @@ const RecipeImage = styled.img`
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-3);
   box-shadow: var(--shadow-sm); /* Petite ombre pour l'image */
+  /* Ajoute un fond uni pour le cas où l'image par défaut serait un SVG transparent */
+  background-color: var(--color-neutral-100); /* Une couleur de fond discrète */
 `;
 
 const RecipeTitle = styled.h3`
@@ -66,7 +66,6 @@ const RecipeDescription = styled.p`
   font-size: var(--text-base);
   color: var(--color-neutral-800);
   margin: var(--space-2) 0;
-  /* Limite la description pour ne pas prendre trop de place */
   display: -webkit-box;
   -webkit-line-clamp: 3; /* Limite à 3 lignes */
   -webkit-box-orient: vertical;
@@ -145,11 +144,14 @@ const RecipeCard = React.forwardRef(({ recipe, onEdit, onDelete, ...props }, ref
         }
       }}
     >
-      <RecipeImage src={recipe.imageUrl || 'https://via.placeholder.com/250/FFA726/FFFFFF?text=Recette'} alt={recipe.nom} />
+      {/* Utilise l'URL de la recette, ou l'image par défaut locale */}
+      <RecipeImage src={recipe.imageUrl || DefaultRecipeImage} alt={recipe.nom} />
       <RecipeTitle>{recipe.nom}</RecipeTitle>
       <RecipeMeta>
         {recipe.categorie && <span>Catégorie: {recipe.categorie}</span>}
-        {recipe.sousCategorie && <span> | Sous-catégorie: {recipe.sousCategorie}</span>}
+        {recipe.sousCategories && recipe.sousCategories.length > 0 && (
+          <span> | Sous-catégorie: {recipe.sousCategories.join(', ')}</span>
+        )}
       </RecipeMeta>
       <RecipeDescription>{recipe.description}</RecipeDescription>
       <ActionButtons>
