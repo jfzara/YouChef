@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+// src/pages/Dashboard/Dashboard.jsx
+import React, { useState, useEffect, useCallback } from 'react'; // Ajout de useEffect et useCallback
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-toastify';
+import api from '../../api/axiosInstance'; // Import de l'instance Axios pour les appels API
 
 import RecipeFormModal from './RecipeFormModal';
-import UserRecipeList from './UserRecipeList';
+import RecipeCarousel from '../../components/RecipeCarousel'; // Chemin mis à jour pour le nouveau composant
 import RecentRecipes from './RecentRecipes';
 import StatsBubble from './StatsBubble';
 
@@ -21,13 +23,39 @@ import {
 const Dashboard = () => {
   const { user } = useAuth();
   const [isRecipeFormModalOpen, setIsRecipeFormModalOpen] = useState(false);
+  const [userRecipes, setUserRecipes] = useState([]); // Nouvel état pour stocker les recettes de l'utilisateur
+  const [loadingUserRecipes, setLoadingUserRecipes] = useState(true); // État de chargement
+  const [errorUserRecipes, setErrorUserRecipes] = useState(null); // État d'erreur
 
   const handleOpenRecipeFormModal = () => setIsRecipeFormModalOpen(true);
   const handleCloseRecipeFormModal = () => setIsRecipeFormModalOpen(false);
 
+  // Fonction pour recharger les recettes après ajout/modification
   const handleRecipeFormSuccess = () => {
     setIsRecipeFormModalOpen(false);
+    fetchUserRecipes(); // Recharger les recettes après une action réussie
   };
+
+  // Fonction pour récupérer les recettes de l'utilisateur
+  const fetchUserRecipes = useCallback(async () => {
+    setLoadingUserRecipes(true);
+    setErrorUserRecipes(null);
+    try {
+      const response = await api.get('/recipes/user'); // Endpoint pour les recettes de l'utilisateur
+      setUserRecipes(response.data);
+    } catch (err) {
+      console.error('Erreur lors de la récupération des recettes de l\'utilisateur:', err);
+      setErrorUserRecipes('Impossible de charger vos recettes.');
+      toast.error('Erreur de chargement de vos recettes.');
+    } finally {
+      setLoadingUserRecipes(false);
+    }
+  }, []); // Dépendances vides car cette fonction ne dépend de rien d'externe
+
+  // Charger les recettes de l'utilisateur au montage du composant
+  useEffect(() => {
+    fetchUserRecipes();
+  }, [fetchUserRecipes]); // Le tableau de dépendances inclut fetchUserRecipes pour éviter les avertissements ESLint
 
   return (
     <DashboardContainer
@@ -51,7 +79,14 @@ const Dashboard = () => {
       >
         <MainContent>
           <DashboardTitle>Mes Recettes</DashboardTitle>
-          <UserRecipeList />
+          {/* Passage des recettes au nouveau composant RecipeCarousel */}
+          {loadingUserRecipes ? (
+            <p style={{ textAlign: 'center', color: 'var(--color-neutral-600)' }}>Chargement de vos recettes...</p>
+          ) : errorUserRecipes ? (
+            <p style={{ textAlign: 'center', color: 'var(--color-error-dark)' }}>{errorUserRecipes}</p>
+          ) : (
+            <RecipeCarousel recipes={userRecipes} />
+          )}
         </MainContent>
 
         <SidebarContent>
@@ -76,8 +111,8 @@ const Dashboard = () => {
       <RecipeFormModal
         isOpen={isRecipeFormModalOpen}
         onClose={handleCloseRecipeFormModal}
-        onRecipeAdded={handleRecipeFormSuccess}
-        onRecipeUpdated={handleRecipeFormSuccess}
+        onRecipeAdded={handleRecipeFormSuccess} // Appel de fetchUserRecipes après ajout/modification
+        onRecipeUpdated={handleRecipeFormSuccess} // Appel de fetchUserRecipes après ajout/modification
         recipeToEdit={null}
       />
     </DashboardContainer>

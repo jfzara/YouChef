@@ -32,7 +32,7 @@ const RolodexContainer = styled(motion.div)`
   /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
   @media (max-width: 880px) {
     width: 95%; /* Réduit la largeur du conteneur pour laisser un peu de marge sur les bords du viewport */
-    max-width: 500px; /* Limite la largeur sur des écrans un peu plus grands mais toujours "mobiles" */
+    max-width: 400px; /* Limite la largeur sur des écrans un peu plus grands mais toujours "mobiles" */
     height: 550px; /* Augmente légèrement la hauteur pour accommoder la carte plus grande */
     margin: 0 auto; /* Centre le conteneur */
   }
