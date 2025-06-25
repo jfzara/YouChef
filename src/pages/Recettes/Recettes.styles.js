@@ -10,24 +10,10 @@ export const RecettesContainer = styled(motion.div)`
   padding: var(--space-8) 0;
   background: var(--gradient-mesh); /* Votre fond mesh existant */
   position: relative;
-  overflow: hidden; /* Important pour que le blob ne déborde pas visiblement */
-  display: flex; /* Ajouté pour centrer le contenu comme avant */
+  overflow: hidden; /* Important pour que le contenu ne déborde pas visiblement */
+  display: flex;
   flex-direction: column;
   align-items: center; /* Centrer horizontalement */
-`;
-
-export const BlobBackground = styled(motion.img)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Centrage initial */
-  width: 500px; /* Taille de base pour qu'il puisse grandir */
-  height: 500px;
-  object-fit: contain;
-  pointer-events: none; /* Ne doit pas interférer avec les interactions de la souris */
-  z-index: 0; /* Assurez-vous qu'it is in the background */
-  filter: blur(50px); /* Flou par défaut pour un effet doux */
-  opacity: 0; /* Commence invisible ou très peu visible */
 `;
 
 export const PageTitle = styled(motion.h1)`
@@ -42,7 +28,7 @@ export const PageTitle = styled(motion.h1)`
   line-height: 1.1;
   text-align: center;
   position: relative; /* Pour le pseudo-élément */
-  z-index: 1; /* Assurez-vous que le titre est au-dessus du blob */
+  z-index: 1; /* Assurez-vous que le titre est au-dessus du contenu */
 
   &::after {
     content: '';
@@ -67,7 +53,7 @@ export const CategorySection = styled(motion.section)`
   max-width: 1280px; /* Adaptez à votre wrapper */
   margin: var(--space-12) auto;
   padding: 0 var(--space-6);
-  z-index: 1; /* Assurez-vous que le contenu est au-dessus du blob */
+  z-index: 1; /* Assurez-vous que le contenu est au-dessus */
 
   @media (max-width: 768px) {
     padding: 0 var(--space-4);
@@ -82,7 +68,7 @@ export const CategoryTitle = styled(motion.h2)`
   margin-bottom: var(--space-8);
   position: relative;
   text-align: center;
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -111,7 +97,7 @@ export const SubCategoryArticle = styled(motion.article)`
   padding: var(--space-8);
   margin-bottom: var(--space-10);
   position: relative;
-  z-index: 1; /* Assurez-vous que le contenu est au-dessus du blob */
+  z-index: 1; /* Assurez-vous que le contenu est au-dessus */
 
   @media (max-width: 768px) {
     padding: var(--space-6);
@@ -150,61 +136,25 @@ export const RecipeGrid = styled(motion.div)`
 
 export const RecipeCard = styled(motion.div)`
   background: white; /* Fond blanc par défaut */
-  padding:2rem;
+  padding: 2rem;
   border-radius: var(--radius-3xl);
   overflow: hidden;
- 
+
   box-shadow: var(--shadow-md);
   position: relative;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  /* Retiré la transition 'all' ici car Framer Motion gérera les animations des props */
   z-index: 1;
 
-  /* Pseudo-élément pour l'image de fond décorative qui apparaît */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 180px; /* Hauteur de la zone d'image de fond */
-    background-image: url(${props => props.$backgroundImage}); /* Utilise la prop passée depuis JSX */
-    background-size: cover;
-    background-position: center;
-    opacity: 0; /* Commence invisible */
-    transition: opacity 0.5s ease-in-out; /* Fade-in/out doux sur 0.5s */
-    pointer-events: none; /* Ne doit pas bloquer les clics sur la carte */
-    z-index: 0; /* Placez-le en dessous du contenu du texte */
-    border-top-left-radius: inherit; /* Hérite du border-radius du parent */
-    border-top-right-radius: inherit; /* Hérite du border-radius du parent */
-  }
-
-  /* Au survol, l'image apparaît */
-  &:hover::before {
-    opacity: 1;
-  }
-
-  /* Styles pour s'assurer que le contenu textuel est toujours visible et lisible */
-  ${/* Important: This targets elements that are not directly styled by a specific RecipeCard sub-component, */ ''}
-  ${/* ensuring they're above the pseudo-element. You might not need this if all content is explicitly styled. */ ''}
-  & > *:not(.recipe-card-content) { 
-    position: relative;
-    z-index: 2; /* Assurez-vous que tous les enfants directs sont au-dessus de ::before */
-  }
-
-  /* Style pour le conteneur du contenu textuel, si vous décidez d'en utiliser un */
   .recipe-card-content {
     position: relative;
     padding-left: 2rem;
     z-index: 2;
-    background:  whitesmoke;  
-   box-shadow: var(--shadow-glass-hover);
-    padding-top: var(--space-4); /* Maintenez le padding top pour le contenu */
-    /* Autres paddings et styles du contenu ici */
+    background: whitesmoke;
+    box-shadow: var(--shadow-glass-hover);
+    padding-top: var(--space-4);
   }
-
 
   &:hover {
     transform: translateY(-12px) scale(1.02);
@@ -213,14 +163,12 @@ export const RecipeCard = styled(motion.div)`
   }
 `;
 
- 
-
 export const RecipeName = styled.h4`
   font-family: var(--font-family-heading);
   font-size: var(--text-xl);
   font-weight: var(--font-bold);
   color: var( --color-neutral-800);
-  padding: 0 var(--space-6) 0; /* Le padding-top peut être géré par .recipe-card-content si utilisé */
+  padding: 0 var(--space-6) 0;
   margin-bottom: var(--space-2);
   position: relative;
   z-index: 2;

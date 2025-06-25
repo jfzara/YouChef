@@ -1,64 +1,47 @@
-
-
 // src/pages/Recettes/Recettes.jsx
 
 import React, { useEffect, useState } from "react";
 import { useAnimation } from 'framer-motion';
 import axios from "../../api/axiosInstance";
 import { toast } from "react-toastify";
-
-// Importez les styles du fichier dédié
+ 
 import {
   RecettesContainer, PageTitle, CategorySection, CategoryTitle,
   SubCategoryArticle, SubCategoryTitle, RecipeGrid, RecipeCard,
-  RecipeName, RecipeDescription, Tag, BlobBackground
+  RecipeName, RecipeDescription, Tag 
 } from './Recettes.styles';
-
-// Importez les données statiques du fichier dédié
+ 
 import {
   categoryColors, sousCategoryColors, hoverAnimations
 } from '../../data/recettesData';
 
+// --- Nouveau Styled Component pour les messages d'état ---
+import styled from 'styled-components'; // Assurez-vous d'importer styled ici aussi
+const StatusMessage = styled.p`
+  text-align: center;
+  color: ${props => props.$isError ? 'var(--color-error)' : 'var(--color-neutral-700)'};
+  font-size: var(--text-lg);
+  padding: var(--space-4); /* Ajoute un peu de padding autour du texte */
+  max-width: 600px; /* Largeur maximale pour desktop */
+  margin: auto; /* Centre le bloc de texte */
 
+  @media (max-width: 768px) {
+    font-size: var(--text-base);
+    max-width: 85vw; /* Limite à 85vw sur mobile */
+    /* Assurez-vous que le texte reste centré malgré le max-width */
+    margin-left: auto;
+    margin-right: auto;
+  }
+`;
 
-// --- Importez toutes vos images décoratives ici ---
-// J'ai sélectionné celles qui semblent les plus adaptées pour un fond décoratif
-// N'hésitez pas à ajuster cette liste selon vos préférences pour le style "décoratif"
-import Carrot from '../../assets/images/Carrot.jpg';
-import Dish1 from '../../assets/images/Dish1.jpg';
-import EvieSab from '../../assets/images/evie-s-aBvM_cKYMxc-unsplash.jpg';
-import FoodItems from '../../assets/images/FoodItems.jpg';
-import FruitsVegetables from '../../assets/images/FruitsVegetables.jpg';
-import HerbsGarlic from '../../assets/images/HerbsGarlic.jpg';
-import NotebookRecipe from '../../assets/images/NotebookRecipe.jpg';
-import NotebookSpaghetti from '../../assets/images/NotebookSpaghetti.jpg';
-import NotebookTomato from '../../assets/images/NotebookTomato.jpg';
-import Pomegranate from '../../assets/images/Pomegranate.jpg';
-import SomeDish from '../../assets/images/SomeDish.jpg';
-import SomeSalad from '../../assets/images/SomeSalad.jpg';
-import Tomato from '../../assets/images/Tomato.jpg';
-import TomatoNav from '../../assets/images/TomatoNav.jpg';
-import Vegetables from '../../assets/images/Vegetables.jpg';
-import WhiteBackground2 from '../../assets/images/WhiteBackground2.jpg';
-import WhiteBackground3 from '../../assets/images/WhiteBackground3.jpg';
-import WhiteBackground6 from '../../assets/images/WhiteBackground6.jpg';
-
-// Array de toutes les images décoratives importées
-const decorativeImages = [
- Carrot, Dish1, EvieSab, FoodItems, FruitsVegetables, HerbsGarlic,
-  NotebookRecipe, NotebookSpaghetti, NotebookTomato, Pomegranate,
-  SomeDish, SomeSalad, Tomato, TomatoNav, Vegetables,
-  WhiteBackground2, WhiteBackground3, WhiteBackground6,
-];
-
+// --- Composant Recettes ---
 const Recettes = () => {
   const [recettes, setRecettes] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isCardHovered, setIsCardHovered] = useState(false);
-
+ 
   const controls = useAnimation();
-  const blobControls = useAnimation();
+ 
 
   const mainContainerVariants = {
     hidden: { opacity: 0 },
@@ -129,8 +112,7 @@ const Recettes = () => {
     const fetchRecettes = async () => {
       try {
         console.log("🔄 Chargement des recettes...");
-        // MODIFICATION ICI : Appel à la nouvelle route /api/recettes/all
-        const res = await axios.get("/recettes/all"); // <-- LIGNE MODIFIÉE
+        const res = await axios.get("/recettes/all");
         const data = res.data;
         console.log("✅ Données reçues:", data);
         const regroupées = {};
@@ -164,42 +146,11 @@ const Recettes = () => {
     fetchRecettes();
   }, [controls]);
 
-  useEffect(() => {
-    if (isCardHovered) {
-      blobControls.start({
-        scale: [0.1, 3],
-        x: ['-50%', '10%'],
-        y: ['-50%', '20%'],
-        opacity: [0.5, 0.8],
-        rotate: [0, 360],
-        transition: {
-          duration: 2,
-          ease: "easeOut",
-          repeat: Infinity,
-          repeatType: "reverse",
-          when: "beforeChildren"
-        }
-      });
-    } else {
-      blobControls.stop();
-      blobControls.start({
-        scale: 0.1,
-        x: '-50%',
-        y: '-50%',
-        opacity: 0,
-        rotate: 0,
-        transition: {
-          duration: 1,
-          ease: "easeIn"
-        }
-      });
-    }
-  }, [isCardHovered, blobControls]);
-
+    
   if (loading) {
     return (
       <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <p>Chargement des recettes...</p>
+        <StatusMessage>Chargement des recettes...</StatusMessage>
       </RecettesContainer>
     );
   }
@@ -207,7 +158,7 @@ const Recettes = () => {
   if (error) {
     return (
       <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <p style={{ color: 'var(--accent-red)' }}>Erreur: {error}</p>
+        <StatusMessage $isError>{error}</StatusMessage> {/* Utilisation de la prop $isError */}
       </RecettesContainer>
     );
   }
@@ -215,7 +166,7 @@ const Recettes = () => {
   if (Object.keys(recettes).length === 0) {
     return (
       <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <p>Aucune recette trouvée pour le moment.</p>
+        <StatusMessage>Aucune recette trouvée pour le moment.</StatusMessage>
       </RecettesContainer>
     );
   }
@@ -225,9 +176,7 @@ const Recettes = () => {
       variants={mainContainerVariants}
       initial="hidden"
       animate={controls}
-    >
-      {/* L'élément vide ici semble être un vestige, vous pouvez le retirer si ce n'est pas intentionnel */}
-      {/* */} 
+    > 
 
       <PageTitle variants={itemVariants}>Toutes les Recettes</PageTitle>
 
@@ -264,8 +213,7 @@ const Recettes = () => {
                   </SubCategoryTitle>
                   <RecipeGrid>
                     {listeRecettes.map((recette) => {
-                      // Sélectionne une image décorative aléatoire de la liste
-                      const randomDecorativeImage = decorativeImages[Math.floor(Math.random() * decorativeImages.length)];
+                      
                       const randomHoverAnimation = hoverAnimations[Math.floor(Math.random() * hoverAnimations.length)];
 
                       return (
@@ -276,9 +224,7 @@ const Recettes = () => {
                           animate="visible"
                           whileHover={randomHoverAnimation}
                           whileTap={{ scale: 0.98 }}
-                          onMouseEnter={() => setIsCardHovered(true)}
-                          onMouseLeave={() => setIsCardHovered(false)}
-                          $backgroundImage={randomDecorativeImage} // <-- PASSE L'IMAGE ALÉATOIRE
+                          
                         >
                           <div className="recipe-card-content">
                             <RecipeName>{recette.nom}</RecipeName>
