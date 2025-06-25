@@ -1,0 +1,231 @@
+/* Inscription.module.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - var(--navbar-height, 60px)); /* Ajustez si votre Navbar a une hauteur fixe */
+    padding: var(--space-8);
+    background: linear-gradient(135deg, var(--soft-green-50) 0%, var(--soft-blue-50) 100%); /* Arrière-plan doux et dégradé */
+    background-size: 200% 200%; /* Important pour l'animation de fond */
+    animation: fadeIn 0.8s ease-out, backgroundPan 15s linear infinite alternate; /* Ajout de backgroundPan */
+}
+
+.card {
+    background-color: var(--neutral-50);
+    padding: var(--space-10) var(--space-8);
+    border-radius: var(--radius-xl); /* Coins plus arrondis */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Ombre douce */
+    width: 100%;
+    max-width: var(--max-width-sm); /* Largeur max pour le formulaire */
+    animation: scaleIn 0.5s ease-out; /* Animation d'apparition du formulaire */
+}
+
+.titre {
+    font-family: var(--font-display);
+    font-size: var(--text-5xl); /* Plus grand et plus impactant */
+    color: var(--soft-green-700);
+    text-align: center;
+    margin-bottom: var(--space-2);
+    animation: slideUp 0.6s ease-out;
+}
+
+.subtitle {
+    font-family: var(--font-body);
+    font-size: var(--text-lg);
+    color: var(--neutral-700);
+    text-align: center;
+    margin-bottom: var(--space-8); /* Plus d'espace sous le sous-titre */
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6); /* Espacement entre les groupes de champs */
+}
+
+.formGroup {
+    margin-bottom: var(--space-4); /* Espacement entre chaque champ de formulaire */
+}
+
+.label {
+    display: block;
+    margin-bottom: var(--space-2); /* Espacement sous le label */
+    font-weight: 600; /* Plus de poids pour les labels */
+    color: var(--neutral-800);
+    font-size: var(--text-sm);
+}
+
+.input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--neutral-300); /* Bordure neutre */
+    border-radius: var(--radius-md); /* Arrondi doux */
+    font-size: var(--text-base);
+    color: var(--neutral-900);
+    transition: all var(--transition-fast); /* Transition pour focus et erreur */
+    background-color: var(--neutral-100); /* Légèrement grisé */
+}
+
+.input::placeholder {
+    color: var(--neutral-500); /* Couleur du placeholder */
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--soft-blue-500); /* Bordure bleue au focus */
+    box-shadow: 0 0 0 3px rgba(66, 152, 208, 0.2); /* Ombre douce au focus */
+    background-color: var(--neutral-50); /* Blanc au focus */
+    transform: translateY(-1px); /* Léger déplacement vers le haut */
+}
+
+.input.error {
+    border-color: var(--accent-red); /* Bordure rouge en cas d'erreur */
+    animation: shake 0.5s ease-in-out; /* Animation "secouer" sur erreur */
+}
+
+.errorMessage {
+    color: var(--accent-red);
+    font-size: var(--text-xs); /* Plus petit pour les messages d'erreur */
+    margin-top: var(--space-1);
+    animation: fadeIn 0.3s ease-out, slideDown 0.3s ease-out; /* Animation d'apparition des erreurs */
+}
+
+.bouton {
+    padding: var(--space-4) var(--space-6);
+    background: linear-gradient(135deg, var(--soft-green-500), var(--soft-green-700)); /* Dégradé vert */
+    color: var(--neutral-50); /* Texte blanc */
+    border-radius: var(--radius-md);
+    font-size: var(--text-lg); /* Plus grande taille de police */
+    font-weight: 700; /* Plus gras */
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-transform: uppercase; /* Texte en majuscules */
+    letter-spacing: 0.05em; /* Espacement entre les lettres */
+    box-shadow: 0 4px 15px rgba(42, 195, 117, 0.3); /* Ombre douce pour le bouton */
+    display: flex; /* Permet d'aligner le spinner et le texte */
+    align-items: center;
+    justify-content: center;
+}
+
+.bouton:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--soft-green-600), var(--soft-green-800)); /* Assombrir au survol */
+    transform: translateY(-2px); /* Léger déplacement vers le haut */
+    box-shadow: 0 6px 20px rgba(42, 195, 117, 0.4);
+}
+
+.bouton:active:not(:disabled) {
+    transform: translateY(1px) scale(0.98); /* Effet "pressé" au clic */
+    box-shadow: 0 2px 8px rgba(42, 195, 117, 0.2);
+}
+
+.bouton:disabled {
+    background: var(--neutral-400); /* Gris désactivé */
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid var(--neutral-50); /* La couleur du spinner lui-même */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: var(--space-2);
+}
+
+.linkContainer {
+    margin-top: var(--space-8);
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+}
+
+.link {
+    color: var(--accent-orange); /* Couleur accent pour le lien */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--transition-fast);
+    position: relative;
+    display: inline-block; /* Nécessaire pour le pseudo-élément */
+    padding-bottom: 2px; /* Espace pour le soulignement */
+}
+
+.link::after { /* Pseudo-élément pour le soulignement animé */
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--soft-green-700); /* Couleur du soulignement au survol */
+    transform: scaleX(0); /* Cache le soulignement par défaut */
+    transform-origin: bottom left;
+    transition: transform var(--transition-fast) ease-out;
+}
+
+.link:hover::after {
+    transform: scaleX(1); /* Fait apparaître le soulignement */
+}
+
+
+.networkError {
+    margin-bottom: var(--space-6);
+    padding: var(--space-4);
+    background-color: var(--accent-red); /* Rouge vif pour les erreurs */
+    color: var(--neutral-50); /* Texte blanc */
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    border: none; /* Pas de bordure pour les messages d'erreur */
+    animation: fadeIn 0.4s ease-out;
+}
+
+.networkError h3 {
+    font-size: var(--text-lg); /* Titre du message d'erreur plus grand */
+    font-weight: bold;
+    margin-bottom: var(--space-2);
+    font-family: var(--font-body); /* Utiliser la police du corps pour le titre d'erreur */
+}
+
+.networkError p, .networkError ul {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+}
+
+.networkError ul {
+    list-style-type: disc;
+    margin-left: var(--space-6);
+}
+
+.networkError code {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    font-family: monospace;
+    color: var(--neutral-50);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card {
+        padding: var(--space-6) var(--space-4);
+        border-radius: var(--radius-lg);
+    }
+
+    .titre {
+        font-size: var(--text-4xl);
+    }
+
+    .subtitle {
+        font-size: var(--text-base);
+    }
+
+    .bouton {
+        font-size: var(--text-base);
+        padding: var(--space-3) var(--space-4);
+    }
+}
