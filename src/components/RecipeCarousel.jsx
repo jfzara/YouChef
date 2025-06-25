@@ -1,5 +1,3 @@
-
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
@@ -14,81 +12,116 @@ const CarouselContainer = styled(motion.div)`
   max-width: 1200px; /* Largeur maximale pour le desktop */
   margin: 0 auto;
   overflow: hidden; /* Cache les cartes en dehors de la vue */
-  padding: var(--space-4) 0; /* Padding vertical pour le contenu */
+  padding-top: var(--space-4); /* Padding vertical pour le contenu */
+  padding-bottom: var(--space-4);
+  
+  /* Les paddings latéraux seront calculés dynamiquement */
+  
   border-radius: var(--radius-xl);
 
-  /* Glassmorphisme */
-  background: rgba(255, 255, 255, 0.2); /* Fond blanc translucide */
-  border: 1px solid rgba(255, 255, 255, 0.3); /* Bordure légère */
-  backdrop-filter: blur(10px); /* Effet de flou */
-  -webkit-backdrop-filter: blur(10px); /* Pour Safari */
-  box-shadow: var(--shadow-xl); /* Ombre plus prononcée pour l'effet de profondeur */
+  /* Glassmorphisme général pour le conteneur principal */
+  background: rgba(255, 255, 255, 0.2); 
+  border: 1px solid rgba(255, 255, 255, 0.3); 
+  backdrop-filter: blur(10px); 
+  -webkit-backdrop-filter: blur(10px); 
+  box-shadow: var(--shadow-xl); 
 
   /* Tablette */
   @media (max-width: 1024px) {
     max-width: 800px;
-    padding: var(--space-3) 0;
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3);
   }
 
   /* Mobile */
   @media (max-width: 768px) {
-    width: 95%; /* Prend plus de place sur mobile */
-    max-width: unset; /* Supprime la limite max-width pour laisser le 95% s'appliquer */
-    padding: var(--space-2) 0;
+    width: 95%; 
+    max-width: unset; 
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
   }
 `;
+
+// Styles pour les wrappers de boutons glassmorphiques
+const NavButtonWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /* ✅ Utilisation d'une variable CSS pour la largeur qui sera calculée dynamiquement */
+  width: var(--side-cover-width, 25%); /* Une portion de la largeur du CarouselContainer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 15; 
+
+  /* Réplication du glassmorphisme du CarouselContainer */
+  background: rgba(255, 255, 255, 0.2); 
+  border: 1px solid rgba(255, 255, 255, 0.3); 
+  backdrop-filter: blur(10px); 
+  -webkit-backdrop-filter: blur(10px); 
+  box-shadow: var(--shadow-xl); 
+
+  /* Styles spécifiques pour le wrapper de gauche */
+  &.left {
+    left: 0;
+    border-top-left-radius: var(--radius-xl);
+    border-bottom-left-radius: var(--radius-xl);
+    border-right: none; 
+  }
+
+  /* Styles spécifiques pour le wrapper de droite */
+  &.right {
+    right: 0;
+    border-top-right-radius: var(--radius-xl);
+    border-bottom-right-radius: var(--radius-xl);
+    border-left: none; 
+  }
+`;
+
 
 const CarouselInner = styled(motion.div)`
   display: flex;
   align-items: center;
   gap: var(--space-4); /* Espace entre les cartes */
-  padding-left: var(--space-6); 
-  padding-right: var(--space-6); 
   
   /* Tablette */
   @media (max-width: 1024px) {
     gap: var(--space-3);
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
   }
 
   /* Mobile */
   @media (max-width: 768px) {
     gap: var(--space-2);
-    padding-left: var(--space-3); 
-    padding-right: var(--space-3); 
     flex-shrink: 0;
   }
 `;
 
 const CarouselItemWrapper = styled(motion.div)`
-  flex: 0 0 auto; /* Empêche la flexbox de redimensionner les éléments */
-  /* Ajustement de la largeur pour que les cartes soient entières et que les gaps soient inclus dans le calcul */
-  width: calc((100% / var(--items-per-page)) - (var(--gap) * (var(--items-per-page) - 1) / var(--items-per-page)));
+  flex: 0 0 auto; 
+  /* ✅ Toujours 1 seule carte entièrement visible, donc items-per-page est 1 */
+  --items-per-page: 1; 
+  --gap: var(--space-4); 
 
-  /* Ces variables seront définies dynamiquement via CSS custom properties */
-  --items-per-page: 3; /* Valeur par défaut */
-  --gap: var(--space-4); /* Valeur par défaut */
+  /* La largeur de la carte est 100% de l'espace disponible entre les wrappers. */
+  /* La largeur réelle sera ajustée par le JS pour s'assurer qu'elle soit parfaite. */
+  width: var(--card-display-width);
 
   /* Tablette */
   @media (max-width: 1024px) {
-    --items-per-page: 2;
     --gap: var(--space-3);
+    width: var(--card-display-width-tablet);
   }
 
   /* Mobile */
   @media (max-width: 768px) {
-    --items-per-page: 1;
     --gap: var(--space-2);
-    width: calc(100% - (var(--space-3) * 2)); /* Ajustement pour mobile pour occuper toute la largeur visible moins les paddings du CarouselInner */
+    width: var(--card-display-width-mobile);
   }
 `;
 
 const NavButton = styled(motion.button)`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  /* ✅ Couleur rose vif corrigée et appliquée */
+  margin: 5px; 
+
   background: var(--color-bright-pink-crayola); 
   color: var(--color-neutral-0);
   border: none;
@@ -98,46 +131,24 @@ const NavButton = styled(motion.button)`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-bottom: 2px; /* Pousse le contenu (flèche) de 2px vers le bas pour le remonter visuellement */
+
   font-size: var(--text-2xl);
   cursor: pointer;
   box-shadow: var(--shadow-md);
   z-index: 10;
-  opacity: 0.9;
+  /* ✅ Ne pas modifier l'opacité ni la couleur pour l'état désactivé */
+  opacity: 1; /* Toujours visible */
   transition: opacity 0.2s ease, background 0.2s ease, transform 0.2s ease;
 
   &:hover {
     opacity: 1;
-    /* J'ai utilisé une nuance légèrement plus foncée pour le hover. */
-    /* Si vous préférez une couleur exacte de votre palette, ajoutez-la à GlobalStyles.js */
-    background: #e04566; /* Un rose légèrement plus foncé pour le hover */
-    transform: translateY(-50%) scale(1.05);
+    background: #e04566; 
+    transform: scale(1.05); 
   }
-  &:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    background: var(--color-neutral-400);
-    transform: translateY(-50%) scale(1);
-  }
-
-  &.prev {
-    left: var(--space-2);
-  }
-  &.next {
-    right: var(--space-2);
-  }
-
-  /* Mobile: Plus petits boutons, positionnement ajusté */
-  @media (max-width: 768px) {
-    width: 40px;
-    height: 40px;
-    font-size: var(--text-xl);
-    &.prev {
-      left: var(--space-1);
-    }
-    &.next {
-      right: var(--space-1);
-    }
-  }
+  /* ✅ Suppression du style &:disabled pour garder la couleur rose vif */
+  /* Nous pourrions ajouter un effet visuel subtil si on le souhaite, comme une ombre */
+  /* ou une bordure, mais pas un changement de couleur ou d'opacité drastique. */
 `;
 
 const DotsContainer = styled.div`
@@ -146,10 +157,7 @@ const DotsContainer = styled.div`
   gap: var(--space-2);
   margin-top: var(--space-4);
 
-  /* Pas de points sur desktop si 3+ cartes sont toujours visibles */
-  @media (min-width: 1025px) {
-    display: none;
-  }
+  /* ✅ Toujours afficher les dots si plus d'une carte existe */
 `;
 
 const Dot = styled(motion.div)`
@@ -161,13 +169,13 @@ const Dot = styled(motion.div)`
   transition: background 0.2s ease;
 
   &:hover {
-    background: #e04566; /* Match le hover du bouton */
+    background: #e04566; 
   }
 `;
 
 const NoRecipesMessage = styled(motion.div)`
   padding: var(--space-8);
-  background: rgba(255, 255, 255, 0.4); /* Glassmorphisme aussi pour le message */
+  background: rgba(255, 255, 255, 0.4); 
   border-radius: var(--radius-xl);
   text-align: center;
   color: var(--color-neutral-700);
@@ -177,14 +185,13 @@ const NoRecipesMessage = styled(motion.div)`
   border: 1px dashed rgba(255, 255, 255, 0.5);
   margin: var(--space-8) auto;
   width: 80%;
-  max-width: 600px; /* Limite la largeur du message */
+  max-width: 600px; 
   backdrop-filter: blur(5px);
 
   p {
     margin: 0;
   }
 
-  /* Ajustements pour mobile */
   @media (max-width: 768px) {
     padding: var(--space-6);
     font-size: var(--text-base);
@@ -196,47 +203,78 @@ const NoRecipesMessage = styled(motion.div)`
 
 const RecipeCarousel = ({ recipes }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const carouselRef = useRef(null); // Ref pour le CarouselInner
-  const containerRef = useRef(null); // Ref pour le CarouselContainer pour les contraintes de drag
+  const carouselRef = useRef(null); 
+  const containerRef = useRef(null); 
+  // Nous allons calculer dynamiquement la largeur d'une carte entièrement visible
+  const [cardDisplayWidth, setCardDisplayWidth] = useState('0px'); 
+  const [sideCoverWidth, setSideCoverWidth] = useState('0px');
 
-  // Détermine le nombre de cartes visibles en fonction de la largeur de l'écran
+
   const getItemsPerPage = useCallback(() => {
-    if (window.innerWidth <= 768) return 1; // Mobile
-    if (window.innerWidth <= 1024) return 2; // Tablette
-    return 3; // Desktop
+    return 1; // Toujours une seule carte entièrement visible
   }, []);
 
-  const [itemsPerPage, setItemsPerPage] = useState(getItemsPerPage());
-
-  // Ref pour le contrôle du drag de Framer Motion
-  // J'ai laissé cette ligne commentée dans le code précédent, elle doit être décommentée.
-  const x = useRef(0);
+  const [itemsPerPage] = useState(getItemsPerPage()); // itemsPerPage est toujours 1
+  const x = useRef(0); 
 
   useEffect(() => {
-    const handleResize = () => {
-      setItemsPerPage(getItemsPerPage());
-      // Réinitialiser l'index à 0 lors du redimensionnement pour éviter les cartes partielles
-      setCurrentIndex(0); 
+    const calculateLayout = () => {
+      if (!containerRef.current || !carouselRef.current) return;
+
+      const totalContainerWidth = containerRef.current.offsetWidth;
+      const gap = parseFloat(getComputedStyle(carouselRef.current).gap); // Gap entre les cartes
+
+      // Largeur de la carte centrale visible (par exemple, 60% de la largeur du CarouselInner)
+      // Ajustez cette valeur si vous voulez une carte plus ou moins grande au centre
+      let centralCardPercentage = 0.6; // 60% de la largeur de la zone défilante
+      if (window.innerWidth <= 1024) centralCardPercentage = 0.7; // 70% sur tablette
+      if (window.innerWidth <= 768) centralCardPercentage = 0.8; // 80% sur mobile
+
+      // La largeur de la zone défilante (CarouselInner) est la largeur du CarouselContainer moins le padding latéral
+      const carouselInnerVisibleWidth = totalContainerWidth - (parseFloat(getComputedStyle(containerRef.current).paddingLeft) * 2);
+
+      const calculatedCardDisplayWidth = carouselInnerVisibleWidth * centralCardPercentage;
+      setCardDisplayWidth(`${calculatedCardDisplayWidth}px`);
+
+      // La largeur du recouvrement latéral est le reste de l'espace divisé par 2
+      const calculatedSideCoverWidth = (totalContainerWidth - calculatedCardDisplayWidth - (gap * (itemsPerPage -1))) / 2;
+      setSideCoverWidth(`${calculatedSideCoverWidth}px`);
+
+      // Ajuster le padding du CarouselContainer dynamiquement pour s'adapter à la largeur calculée
+      containerRef.current.style.paddingLeft = `${calculatedSideCoverWidth}px`;
+      containerRef.current.style.paddingRight = `${calculatedSideCoverWidth}px`;
+
+      // Mettre à jour la variable CSS pour CarouselItemWrapper
+      carouselRef.current.style.setProperty('--card-display-width', `${calculatedCardDisplayWidth}px`);
+      // Pour les media queries
+      carouselRef.current.style.setProperty('--card-display-width-tablet', `${carouselInnerVisibleWidth * 0.7}px`);
+      carouselRef.current.style.setProperty('--card-display-width-mobile', `${carouselInnerVisibleWidth * 0.8}px`);
+
+
+      // Assurez-vous que l'index actuel est valide après redimensionnement
+      setCurrentIndex(prevIndex => Math.min(prevIndex, recipes.length - itemsPerPage));
     };
+
+    const handleResize = () => {
+      calculateLayout();
+    };
+
     window.addEventListener('resize', handleResize);
+    calculateLayout(); // Calculer au montage initial et après chaque redimensionnement
+
     return () => window.removeEventListener('resize', handleResize);
-  }, [getItemsPerPage]);
+  }, [recipes.length, itemsPerPage]);
 
-  // Logique pour le défilement par "page" de cartes entières
+
   const scroll = (direction) => {
-    const totalPages = Math.ceil(recipes.length / itemsPerPage);
-    let currentPage = Math.floor(currentIndex / itemsPerPage);
-    
-    let newPageIndex = currentPage + direction;
+    const totalPages = recipes.length; // Chaque carte est une "page" maintenant
+    let newIndex = currentIndex + direction;
 
-    newPageIndex = Math.max(0, Math.min(newPageIndex, totalPages - 1));
-    
-    const newIndex = newPageIndex * itemsPerPage;
+    newIndex = Math.max(0, Math.min(newIndex, totalPages - 1));
     
     setCurrentIndex(newIndex);
   };
 
-  // Calcul de la translation X pour l'animation du carrousel
   const calculateXOffset = useCallback(() => {
     if (!carouselRef.current || recipes.length === 0) return 0;
 
@@ -245,22 +283,44 @@ const RecipeCarousel = ({ recipes }) => {
     
     const cardWidth = firstItem.offsetWidth;
     const gap = parseFloat(getComputedStyle(carouselRef.current).gap);
-
-    const offset = currentIndex * (cardWidth + gap);
-
-    const totalContentWidth = recipes.length * (cardWidth + gap) - gap; 
-    const visibleWidth = carouselRef.current.offsetWidth - parseFloat(getComputedStyle(carouselRef.current).paddingLeft) - parseFloat(getComputedStyle(carouselRef.current).paddingRight);
     
-    if (totalContentWidth <= visibleWidth) {
-        return 0;
+    // Le décalage est pour aligner la carte centrale
+    // La position de départ de la carte actuelle
+    const currentCardStartPosition = currentIndex * (cardWidth + gap);
+
+    // Largeur de la zone visible du CarouselInner (entre les wrappers glassmorphiques)
+    const carouselInnerWidth = carouselRef.current.offsetWidth;
+    
+    // Pour centrer la carte actuelle, on veut que son milieu soit au milieu de carouselInnerWidth
+    // Milieu de la carte = currentCardStartPosition + cardWidth / 2
+    // Milieu du CarouselInner = carouselInnerWidth / 2
+    // Offset nécessaire = (carouselInnerWidth / 2) - (currentCardStartPosition + cardWidth / 2)
+    const offsetToCenter = (carouselInnerWidth / 2) - (currentCardStartPosition + cardWidth / 2);
+
+    // Calcul de la largeur totale scrollable du contenu (toutes les cartes + tous les gaps)
+    const totalScrollableContentWidth = recipes.length * (cardWidth + gap) - gap; 
+    
+    // Limites de défilement pour éviter les zones vides
+    const maxScrollLeft = 0; // On ne peut pas scroller plus à droite que 0 (position initiale)
+    const maxScrollRight = -(totalScrollableContentWidth - carouselInnerWidth); // Max vers la gauche
+
+    // Appliquer l'offset en s'assurant de ne pas dépasser les limites
+    let finalOffset = offsetToCenter;
+
+    // Si le contenu est plus petit que la zone visible, centrer tout le contenu
+    if (totalScrollableContentWidth <= carouselInnerWidth) {
+        return (carouselInnerWidth - totalScrollableContentWidth) / 2; // Centrer le bloc de cartes
     }
 
-    const maxOffset = totalContentWidth - visibleWidth;
-    return -Math.min(offset, maxOffset);
+    // Limiter l'offset pour ne pas afficher de vide aux extrémités
+    finalOffset = Math.min(maxScrollLeft, finalOffset); // Ne pas aller trop à droite
+    finalOffset = Math.max(maxScrollRight, finalOffset); // Ne pas aller trop à gauche
+
+    return finalOffset;
 
   }, [currentIndex, recipes.length]);
 
-  // Logic for swipe (drag)
+
   const handleDragEnd = useCallback((event, info) => {
     if (!carouselRef.current || recipes.length === 0) return;
 
@@ -271,17 +331,21 @@ const RecipeCarousel = ({ recipes }) => {
     const gap = parseFloat(getComputedStyle(carouselRef.current).gap);
     const itemFullWidth = cardWidth + gap;
 
-    const dragDistance = -info.offset.x; 
+    const currentX = x.current; // Position actuelle après le drag initial
 
-    const currentAbsoluteOffset = currentIndex * itemFullWidth;
-    const newAbsoluteOffset = currentAbsoluteOffset + dragDistance;
+    // Calcul du nouvel index basé sur la position finale du drag
+    // On prend la position actuelle du carrousel, on la "décentrifuge" en ajoutant la moitié de la largeur du CarouselInner
+    // puis on la normalise par la largeur d'un item complet.
+    const carouselInnerWidth = carouselRef.current.offsetWidth;
+    const centerOffset = carouselInnerWidth / 2;
     
-    let newIndex = Math.round(newAbsoluteOffset / itemFullWidth);
+    const dragEndPosition = -currentX + centerOffset; // Position relative à partir du début (0)
+    let newIndex = Math.round((dragEndPosition - (cardWidth / 2)) / itemFullWidth);
 
     newIndex = Math.max(0, Math.min(newIndex, recipes.length - itemsPerPage));
     
     setCurrentIndex(newIndex);
-  }, [currentIndex, recipes.length, itemsPerPage]);
+  }, [recipes.length, itemsPerPage]);
 
   if (recipes.length === 0) {
     return (
@@ -295,12 +359,8 @@ const RecipeCarousel = ({ recipes }) => {
     );
   }
 
-  const totalPages = Math.ceil(recipes.length / itemsPerPage);
-
-  // Logique pour la visibilité des boutons
-  const canScrollLeft = currentIndex > 0;
-  const canScrollRight = currentIndex < recipes.length - itemsPerPage;
-
+  // totalPages est maintenant le nombre de cartes, car on gère carte par carte
+  const totalPages = recipes.length; 
 
   return (
     <CarouselContainer
@@ -308,15 +368,35 @@ const RecipeCarousel = ({ recipes }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
+      // ✅ Application des variables CSS pour la largeur des wrappers de boutons
+      style={{ '--side-cover-width': `${sideCoverWidth}px` }} 
     >
+      {/* Boutons toujours visibles */}
+      <NavButtonWrapper className="left" style={{ '--side-cover-width': `${sideCoverWidth}px` }}>
+          <NavButton 
+            onClick={() => scroll(-1)} 
+            whileTap={{ scale: 0.9 }}
+            // ✅ Désactiver le clic visuellement seulement si on est au début
+            // En gardant le bouton rose vif
+            style={{ opacity: currentIndex === 0 ? 0.5 : 1, cursor: currentIndex === 0 ? 'not-allowed' : 'pointer' }}
+          >
+            &larr;
+          </NavButton>
+        </NavButtonWrapper>
+
       <CarouselInner
         ref={carouselRef}
         drag="x"
-        dragConstraints={containerRef}
+        dragConstraints={{
+          // Les contraintes de drag doivent être dynamiques et précises
+          left: -((carouselRef.current?.scrollWidth || 0) - (carouselRef.current?.offsetWidth || 0)),
+          right: 0
+        }}
         onDragEnd={handleDragEnd}
         animate={{ x: calculateXOffset() }} 
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        style={{ x: x }} 
+        // La propriété 'x' est contrôlée par animate, on n'a plus besoin de useRef pour ça
+        // style={{ x: x }} 
       >
         <AnimatePresence>
           {recipes.map((recipe) => (
@@ -330,34 +410,26 @@ const RecipeCarousel = ({ recipes }) => {
         </AnimatePresence>
       </CarouselInner>
 
-      {/* Boutons de navigation - Visibilité conditionnelle */}
-      {totalPages > 1 && canScrollLeft && (
-        <NavButton 
-          className="prev" 
-          onClick={() => scroll(-1)} 
-          whileTap={{ scale: 0.9 }}
-        >
-          &larr;
-        </NavButton>
-      )}
-      {totalPages > 1 && canScrollRight && (
-        <NavButton 
-          className="next" 
-          onClick={() => scroll(1)} 
-          whileTap={{ scale: 0.9 }}
-        >
-          &rarr;
-        </NavButton>
-      )}
+      {/* Boutons toujours visibles */}
+      <NavButtonWrapper className="right" style={{ '--side-cover-width': `${sideCoverWidth}px` }}>
+          <NavButton 
+            onClick={() => scroll(1)} 
+            whileTap={{ scale: 0.9 }}
+            // ✅ Désactiver le clic visuellement seulement si on est à la fin
+            style={{ opacity: currentIndex >= recipes.length - itemsPerPage ? 0.5 : 1, cursor: currentIndex >= recipes.length - itemsPerPage ? 'not-allowed' : 'pointer' }}
+          >
+            &rarr;
+          </NavButton>
+        </NavButtonWrapper>
 
-      {/* Points indicateurs (pour mobile/tablette si plus d'une "page" de cartes) */}
+      {/* Points indicateurs (toujours affichés si plus d'une carte) */}
       {totalPages > 1 && (
         <DotsContainer>
           {Array.from({ length: totalPages }).map((_, index) => (
             <Dot
               key={index}
-              active={index === Math.floor(currentIndex / itemsPerPage)}
-              onClick={() => setCurrentIndex(index * itemsPerPage)}
+              active={index === currentIndex} // Actif pour la carte actuellement centrée
+              onClick={() => setCurrentIndex(index)}
               whileTap={{ scale: 0.9 }}
             />
           ))}
