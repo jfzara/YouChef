@@ -1,16 +1,13 @@
-// C:\Users\Jeff\Desktop\PROJETS VS CODE\JAVASCRIPT\REACT\recettesreact\src\pages\Dashboard\Dashboard.jsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
-import { toast } from 'react-toastify'; // Assurez-vous que ToastContainer est dans App.js
+import { toast } from 'react-toastify';
 
-// Importe les composants du dashboard
 import RecipeFormModal from './RecipeFormModal';
 import UserRecipeList from './UserRecipeList';
 import RecentRecipes from './RecentRecipes';
 import StatsBubble from './StatsBubble';
 
-// Importe TOUS les styled-components depuis Dashboard.styles.js
 import {
   DashboardContainer,
   WelcomeSection,
@@ -28,13 +25,8 @@ const Dashboard = () => {
   const handleOpenRecipeFormModal = () => setIsRecipeFormModalOpen(true);
   const handleCloseRecipeFormModal = () => setIsRecipeFormModalOpen(false);
 
-  // Callback pour rafraîchir les listes après ajout/modification
   const handleRecipeFormSuccess = () => {
     setIsRecipeFormModalOpen(false);
-    // Ici, vous devrez probablement déclencher un rafraîchissement dans UserRecipeList
-    // Vous pouvez le faire en passant une fonction à UserRecipeList ou en utilisant un état global/contexte si plus complexe.
-    // Pour l'instant, UserRecipeList a son propre useEffect qui devrait se déclencher
-    // si son prop `user` change, ou si vous lui passez une prop `refreshTrigger`.
   };
 
   return (
@@ -84,9 +76,9 @@ const Dashboard = () => {
       <RecipeFormModal
         isOpen={isRecipeFormModalOpen}
         onClose={handleCloseRecipeFormModal}
-        onRecipeAdded={handleRecipeFormSuccess} // Passez le callback pour rafraîchir
-        onRecipeUpdated={handleRecipeFormSuccess} // Passez le callback pour rafraîchir
-        recipeToEdit={null} // Initialement pour l'ajout, pas d'édition
+        onRecipeAdded={handleRecipeFormSuccess}
+        onRecipeUpdated={handleRecipeFormSuccess}
+        recipeToEdit={null}
       />
     </DashboardContainer>
   );

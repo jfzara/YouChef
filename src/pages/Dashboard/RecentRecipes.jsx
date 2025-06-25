@@ -1,15 +1,15 @@
 // src/pages/Dashboard/RecentRecipes.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import styled, { keyframes } from 'styled-components'; // Importation de keyframes
+import styled, { keyframes } from 'styled-components';
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 
-// --- Styles pour le Rolodex (INTACTS) ---
+// --- Styles pour le Rolodex ---
 
 const RolodexContainer = styled(motion.div)`
   position: relative;
-  width: 100%;
+  width: 100%; /* Par défaut, pleine largeur */
   height: 480px;
   display: flex;
   flex-direction: column;
@@ -28,23 +28,43 @@ const RolodexContainer = styled(motion.div)`
   &:hover {
     transform: rotate(0deg) scale(1.005);
   }
+
+  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
+  @media (max-width: 880px) {
+    width: 95%; /* Réduit la largeur du conteneur pour laisser un peu de marge sur les bords du viewport */
+    max-width: 500px; /* Limite la largeur sur des écrans un peu plus grands mais toujours "mobiles" */
+    height: 550px; /* Augmente légèrement la hauteur pour accommoder la carte plus grande */
+    margin: 0 auto; /* Centre le conteneur */
+  }
+
+  @media (max-width: 550px) {
+    width: 98%; /* Presque pleine largeur sur les très petits mobiles */
+    height: 500px; /* Ajustement de la hauteur pour les plus petits écrans */
+    padding: var(--space-3); /* Un peu moins de padding sur les très petits écrans */
+  }
 `;
 
 const RolodexCardArea = styled.div`
   position: relative;
-  width: 95%;
+  width: 95%; /* Laissera une petite marge par rapport aux bords du conteneur */
   height: 85%;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
+  @media (max-width: 880px) {
+    width: 100%; /* La carte prendra plus de place dans la zone */
+    height: 90%; /* La carte prendra plus de hauteur dans la zone */
+  }
 `;
 
 const RolodexCard = styled(motion.div)`
   position: absolute;
   transform: translate(-50%, -50%); /* Centrage parfait */
 
-  width: 85%;
-  height: 90%;
+  width: 85%; /* Par défaut, 85% de RolodexCardArea */
+  height: 90%; /* Par défaut, 90% de RolodexCardArea */
   background: var(--color-neutral-50);
   border-radius: var(--radius-lg);
   display: flex;
@@ -55,21 +75,51 @@ const RolodexCard = styled(motion.div)`
   box-shadow: var(--shadow-md);
   backface-visibility: hidden;
   text-align: center;
+  overflow: hidden;
+
+  /* Min/Max pour le desktop (valeurs existantes) */
+  min-width: 280px;
+  max-width: 350px;
+  min-height: 380px;
+  max-height: 450px;
+  
+  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
+  @media (max-width: 880px) {
+    width: 95%; /* La carte prend plus de largeur dans son conteneur (RolodexCardArea) */
+    height: 95%; /* La carte prend plus de hauteur dans son conteneur */
+    min-width: 280px; /* Conserver une taille minimale raisonnable */
+    max-width: 380px; /* Peut être un peu plus grande sur mobile si le conteneur le permet */
+    min-height: 400px; /* Augmenter la hauteur min/max pour mobile */
+    max-height: 500px;
+    padding: var(--space-5); /* Augmenter le padding pour un meilleur espacement interne */
+  }
+
+  @media (max-width: 550px) {
+    width: 98%; /* Sur les très petits écrans, la carte prend presque toute la largeur */
+    height: 98%; /* Et presque toute la hauteur */
+    padding: var(--space-4); /* Réduire un peu le padding sur les très petits écrans si nécessaire */
+  }
 `;
 
-// Nouveau style pour l'image de placeholder (emoji ou icône)
 const CardPlaceholderImage = styled.div`
   width: 120px;
   height: 120px;
   border-radius: var(--radius-md);
   margin-bottom: var(--space-2);
-  background: var(--color-neutral-200); /* Fond léger pour le placeholder */
+  background: var(--color-neutral-200);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: var(--text-6xl); /* Grande taille pour l'emoji/icône */
-  color: var(--color-primary-600); /* Couleur sympa pour l'emoji/icône */
-  border: 2px dashed var(--color-primary-300); /* Bordure en pointillés fun */
+  font-size: var(--text-6xl);
+  color: var(--color-primary-600);
+  border: 2px dashed var(--color-primary-300);
+
+  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
+  @media (max-width: 880px) {
+    width: 150px; /* Plus grande sur mobile */
+    height: 150px;
+    font-size: var(--text-7xl); /* Emoji plus grand */
+  }
 `;
 
 const CardImage = styled.img`
@@ -78,8 +128,13 @@ const CardImage = styled.img`
   object-fit: cover;
   border-radius: var(--radius-md);
   margin-bottom: var(--space-2);
-  /* Optionnel: Ajoutez une transition pour un effet doux lors du chargement */
   transition: opacity 0.3s ease-in-out;
+
+  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
+  @media (max-width: 880px) {
+    width: 150px; /* Plus grande sur mobile */
+    height: 150px;
+  }
 `;
 
 const CardTitle = styled.h4`
@@ -89,12 +144,67 @@ const CardTitle = styled.h4`
   margin: 0;
   line-height: 1.2;
   text-shadow: var(--shadow-text-sm);
+  
+  padding-left: 3rem;
+  text-align: left;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+
+  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
+  @media (max-width: 880px) {
+    font-size: var(--text-3xl); /* Titre plus grand sur mobile pour la lisibilité */
+    padding-left: 1.5rem; /* Réduire un peu le padding sur les écrans plus petits si 3rem est trop grand */
+    /* Vous pourriez augmenter le -webkit-line-clamp si vous voulez plus de lignes sur mobile */
+    -webkit-line-clamp: 3; /* Permettre 3 lignes sur mobile si le contenu est dense */
+  }
+
+  @media (max-width: 550px) {
+    font-size: var(--text-2xl); /* Revenir à une taille normale sur très petit écran */
+    padding-left: 1rem; /* Réduire encore le padding si l'espace est très limité */
+  }
 `;
+
+const CardDescription = styled.p`
+  font-size: var(--text-base);
+  color: var(--color-neutral-800);
+  margin: var(--space-2) 0;
+  flex-grow: 1;
+  line-height: 1.4;
+  text-align: center;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+
+  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
+  @media (max-width: 880px) {
+    font-size: var(--text-lg); /* Description plus grande sur mobile */
+    -webkit-line-clamp: 4; /* Permettre plus de lignes sur mobile si nécessaire */
+  }
+  @media (max-width: 550px) {
+    font-size: var(--text-base); /* Revenir à la taille de base sur très petits écrans */
+  }
+`;
+
 
 const CardAuthor = styled.p`
   font-size: var(--text-md);
   color: var(--color-neutral-600);
   margin-top: var(--space-1);
+  margin-bottom: 0;
+
+  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
+  @media (max-width: 880px) {
+    font-size: var(--text-lg); /* Auteur plus grand sur mobile */
+  }
 `;
 
 const RolodexNavigation = styled.div`
@@ -104,10 +214,15 @@ const RolodexNavigation = styled.div`
   gap: var(--space-6);
   z-index: 2;
   padding-bottom: var(--space-2);
+
+  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
+  @media (max-width: 880px) {
+    gap: var(--space-4); /* Réduire l'espace entre les boutons */
+    padding-bottom: var(--space-4); /* Plus de padding en bas si le conteneur est plus haut */
+  }
 `;
 
-// --- Keyframes pour les animations des boutons ---
-
+// --- Keyframes et NavButton (inchangés ou ajustements mineurs si nécessaires) ---
 const bounceAndWiggle = keyframes`
   0%, 100% { transform: translateY(0) rotate(0deg); }
   25% { transform: translateY(-3px) rotate(1deg); }
@@ -117,20 +232,19 @@ const bounceAndWiggle = keyframes`
 
 const glitchEffect = keyframes`
   0% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(0px); filter: hue-rotate(0deg); }
-  20% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(3px) skewX(3deg); filter: hue-rotate(8deg); } /* Réduit de 15deg à 8deg */
+  20% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(3px) skewX(3deg); filter: hue-rotate(8deg); }
   40% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(-4px) skewX(-2deg); filter: hue-rotate(0deg); }
-  60% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(2px) skewX(2deg); filter: hue-rotate(4deg); } /* Réduit de 8deg à 4deg */
+  60% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(2px) skewX(2deg); filter: hue-rotate(4deg); }
   80% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(-3px) skewX(-3deg); filter: hue-rotate(0deg); }
   100% { transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)) translateX(0px); filter: hue-rotate(0deg); }
 `;
 
 const pulseBorder = keyframes`
   0% { border-color: var(--color-bright-pink-crayola); }
-  50% { border-color: var(--color-dark-purple); } /* Pulsation vers une couleur différente et contrastante */
+  50% { border-color: var(--color-dark-purple); }
   100% { border-color: var(--color-bright-pink-crayola); }
 `;
 
-// Nouvelle animation pour le hover des flèches
 const hoverWiggle = keyframes`
   0%, 100% { transform: translateY(0) scale(1.1) rotate(0deg); }
   25% { transform: translateY(-5px) scale(1.2) rotate(3deg); }
@@ -138,92 +252,83 @@ const hoverWiggle = keyframes`
   75% { transform: translateY(-2px) scale(1.15) rotate(1deg); }
 `;
 
-// --- Bouton de Navigation (NavButton) AMÉLIORÉ et centré ---
 export const NavButton = styled(motion.button)`
-  background: var(--color-bright-pink-crayola); /* Conserve votre couleur de base vibrante */
+  background: var(--color-bright-pink-crayola);
   color: var(--color-neutral-0);
   border: 3px solid var(--color-bright-pink-crayola);
-  border-radius: var(--radius-full); /* Parfaitement rond */
-  width: 60px; /* Légèrement plus grand pour plus d'impact */
-  height: 60px; /* Gardez-le un cercle parfait */
+  border-radius: var(--radius-full);
+  width: 60px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: var(--font-bold); /* CORRECTION ICI */
+  font-weight: var(--font-bold);
   cursor: pointer;
   box-shadow: var(--shadow-md);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Transition rebondissante */
-  transform: rotate(calc((Math.random() - 0.5) * 8deg)); /* Inclinaison initiale aléatoire légèrement augmentée */
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: rotate(calc((Math.random() - 0.5) * 8deg));
   text-shadow: var(--shadow-text-sm);
   outline: none;
   position: relative;
   overflow: hidden;
-  z-index: 1; /* Assurez-vous que le contenu est au-dessus de ::before */
-  font-family: 'Comic Sans MS', cursive; /* Ajout d'une police excentrique si disponible, ou une de secours */
+  z-index: 1;
+  font-family: 'Comic Sans MS', cursive;
 
   span {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: var(--text-3xl); /* Remis à 4xl pour plus d'impact */
+    font-size: var(--text-3xl);
     line-height: 1;
-    
-    position: relative; /* Garder relative pour translateY */
+    position: relative;
     top: -3px;
     z-index: 2;
-    /* AJUSTEMENT ICI POUR LE CENTRAGE VISUEL */
-    transform: translateY(-2px); /* Ajustez cette valeur (ex: -1px, -2px, 1px) jusqu'à ce que ce soit parfait */
-    
-    /* L'animation constante n'est plus ici, elle sera ajoutée/retirée par JS */
-    
-    /* Animation au survol */
-    transition: transform 0.2s ease-out; /* Transition douce pour le scale/rotate */
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-out;
   }
 
-  /* Classe pour l'animation occasionnelle */
   span.occasional-wiggle {
     animation: ${bounceAndWiggle} 2s infinite ease-in-out;
   }
 
-  /* Amélioration de ::before pour un effet "étincelant" ou "lumineux" plus dynamique */
   &::before {
     content: '';
     position: absolute;
-    top: 50%; /* Centre l'effet */
-    left: 50%; /* Centre l'effet */
-    width: 0%; /* Commence petit */
-    height: 0%; /* Commence petit */
-    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 70%); /* Éclat plus fort et mieux défini */
-    border-radius: 50%; /* En faire un cercle */
-    transform: translate(-50%, -50%) scale(0); /* Commence caché et centré */
-    transition: transform 0.4s ease-out, opacity 0.4s ease-out; /* Transition plus douce */
+    top: 50%;
+    left: 50%;
+    width: 0%;
+    height: 0%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
     opacity: 0;
-    z-index: -1; /* Garder derrière le contenu du bouton */
+    z-index: -1;
   }
 
   &:hover {
-    background: var(--color-salmon); /* Reste avec votre saumon ludique au survol */
+    background: var(--color-salmon);
     border-color: var(--color-bright-pink-crayola);
-    transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg)); /* Saut et inclinaison plus exagérés */
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4); /* Ombre plus profonde et prononcée */
-    animation: ${glitchEffect} 0.4s 1 alternate, ${pulseBorder} 1s 1 alternate; /* Garde le glitch, ajoute une bordure pulsante */
+    transform: scale(1.2) translateY(-10px) rotate(calc((Math.random() - 0.5) * -18deg));
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    animation: ${glitchEffect} 0.4s 1 alternate, ${pulseBorder} 1s 1 alternate;
     
     span {
-      animation: ${hoverWiggle} 0.8s 1 ease-in-out; /* Nouvelle animation au survol */
-      transform: translateY(-2px) scale(1.1); /* Conserve le centrage et la petite croissance */
+      animation: ${hoverWiggle} 0.8s 1 ease-in-out;
+      transform: translateY(-2px) scale(1.1);
     }
 
     &::before {
-      transform: translate(-50%, -50%) scale(2); /* L'éclat s'étend considérablement */
-      opacity: 1; /* L'éclat devient entièrement visible */
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 1;
     }
   }
 
   &:active {
     background: var(--color-bright-pink-crayola);
-    transform: scale(0.85) translateY(2px) rotate(calc((Math.random() - 0.5) * 5deg)); /* État actif plus "écrasé" */
+    transform: scale(0.85) translateY(2px) rotate(calc((Math.random() - 0.5) * 5deg));
     box-shadow: var(--shadow-sm);
-    animation: none; /* Pas de glitch en état actif */
+    animation: none;
   }
 
   &:disabled {
@@ -235,11 +340,11 @@ export const NavButton = styled(motion.button)`
     transform: none;
     animation: none;
     pointer-events: none;
-    opacity: 0.7; /* Légèrement estompé lorsque désactivé */
+    opacity: 0.7;
     
     span {
-      animation: none; /* Arrête le rebond */
-      transform: translateY(-2px); /* Garde le centrage même désactivé */
+      animation: none;
+      transform: translateY(-2px);
     }
   }
 `;
@@ -273,7 +378,6 @@ const RecentRecipes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  // État pour contrôler l'animation occasionnelle de la flèche
   const [wiggleClass, setWiggleClass] = useState('');
 
   const fetchRecentRecipes = useCallback(async () => {
@@ -294,23 +398,19 @@ const RecentRecipes = () => {
   useEffect(() => {
     fetchRecentRecipes();
 
-    // Logique pour l'animation occasionnelle du wiggle
     const startWiggleInterval = () => {
-      // Déclenche le wiggle pendant 2 secondes, puis le retire
       setWiggleClass('occasional-wiggle');
       const wiggleTimeout = setTimeout(() => {
         setWiggleClass('');
-      }, 2000); // Durée de l'animation
+      }, 2000);
 
-      // Planifie le prochain wiggle dans 15 à 20 secondes (après la fin du wiggle actuel)
-      const nextWiggleTime = 15000 + Math.random() * 5000; // entre 15 et 20 secondes
+      const nextWiggleTime = 15000 + Math.random() * 5000;
       return setTimeout(startWiggleInterval, nextWiggleTime);
     };
 
     let intervalId = startWiggleInterval();
 
     return () => {
-      // Nettoyage à la désinitialisation du composant
       clearTimeout(intervalId);
     };
   }, [fetchRecentRecipes]);
@@ -351,10 +451,10 @@ const RecentRecipes = () => {
   const paginate = (newDirection) => {
     setDirection(newDirection);
     setCurrentIndex((prevIndex) => {
-      if (recipes.length === 0) return 0; // Prevent errors if no recipes
-      if (newDirection > 0) { // Next
+      if (recipes.length === 0) return 0;
+      if (newDirection > 0) {
         return (prevIndex + 1) % recipes.length;
-      } else { // Previous
+      } else {
         return (prevIndex - 1 + recipes.length) % recipes.length;
       }
     });
@@ -406,16 +506,17 @@ const RecentRecipes = () => {
               animate="center"
               exit="exit"
             >
-              {/* Condition pour afficher l'image réelle ou le placeholder */}
               {recipes[currentIndex].imageUrl ? (
                 <CardImage src={recipes[currentIndex].imageUrl} alt={recipes[currentIndex].nom} />
               ) : (
                 <CardPlaceholderImage>
-                  😋 {/* Un emoji sympa pour la nourriture ! */}
+                  😋
                 </CardPlaceholderImage>
               )}
               <CardTitle>{recipes[currentIndex].nom}</CardTitle>
               <CardAuthor>par {recipes[currentIndex].auteur || 'Un Chef Inconnu'}</CardAuthor>
+              {/* Si vous voulez afficher la description, décommentez ceci et assurez-vous que `description` est disponible dans `recipes` */}
+              {/* <CardDescription>{recipes[currentIndex].description}</CardDescription> */}
             </RolodexCard>
           )}
         </AnimatePresence>
@@ -433,7 +534,6 @@ const RecentRecipes = () => {
 
       {recipes.length > 1 && (
         <RolodexNavigation>
-          {/* Les flèches reçoivent la classe dynamique */}
           <NavButton onClick={() => paginate(-1)} whileTap={{ scale: 0.85 }}>
             <span className={wiggleClass}>&larr;</span>
           </NavButton>

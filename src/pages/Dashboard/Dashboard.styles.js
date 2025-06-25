@@ -1,21 +1,22 @@
-// src/pages/Dashboard/Dashboard.styles.js
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
 export const RecipeImage = styled.img`
   width: 100%;
-  height: 150px; /* Hauteur fixe pour uniformité */
-  object-fit: cover; /* Recadre l'image pour couvrir l'espace */
-  border-radius: var(--radius-md); /* Bords arrondis pour l'image */
-  margin-bottom: var(--space-3); /* Espace sous l'image */
+  height: 150px; /* Hauteur fixe pour l'image */
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  /* Pour le débogage: */
+  /* border: 1px solid red; */ 
 `;
 
 export const DashboardContainer = styled(motion.div)`
   padding: var(--space-8);
-  padding-top: calc(var(--navbar-height) + var(--space-8)); /* Ajustement pour la navbar */
+  padding-top: calc(var(--navbar-height) + var(--space-8));
   min-height: 100vh;
   position: relative;
-  overflow: hidden; /* Empêche le contenu de déborder avec les animations bancales */
+  overflow: hidden;
 
   @media (max-width: 768px) {
     padding: var(--space-4);
@@ -31,7 +32,7 @@ export const WelcomeSection = styled(motion.div)`
   h1 {
     font-size: var(--text-5xl);
     color: var(--color-primary-700);
-    text-shadow: var(--shadow-text-md); /* Ombre de texte subtile */
+    text-shadow: var(--shadow-text-md);
 
     @media (max-width: 768px) {
       font-size: var(--text-4xl);
@@ -47,12 +48,12 @@ export const WelcomeSection = styled(motion.div)`
 
 export const ContentGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Plus d'espace pour les recettes */
+  grid-template-columns: 2fr 1fr;
   gap: var(--space-8);
-  align-items: start; /* Alignement en haut des colonnes */
+  align-items: start;
 
   @media (max-width: 992px) {
-    grid-template-columns: 1fr; /* Une seule colonne sur les petits écrans */
+    grid-template-columns: 1fr;
   }
 `;
 
@@ -68,22 +69,22 @@ export const SidebarContent = styled(motion.div)`
   gap: var(--space-8);
 
   @media (max-width: 992px) {
-    order: -1; /* Place la sidebar au-dessus sur mobile */
+    order: -1;
   }
 `;
 
 export const Card = styled(motion.div)`
-  background: var(--color-neutral-0); /* Blanc pur pour l'opacité maximale */
-  border-radius: var(--radius-2xl); /* Bords plus arrondis pour un aspect plus doux */
+  background: var(--color-neutral-0);
+  border-radius: var(--radius-2xl);
   padding: var(--space-6);
-  box-shadow: var(--shadow-xl); /* Ombre plus prononcée */
+  box-shadow: var(--shadow-xl);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
   position: relative;
-  overflow: hidden; /* Pour gérer les débordements des animations internes */
-  border: 4px solid var(--color-secondary-500); /* Bordure épaisse et criarde */
-  transform: rotate(${(Math.random() - 0.5) * 2}deg); /* Légère inclinaison aléatoire sur toutes les cartes */
+  overflow: hidden;
+  border: 4px solid var(--color-secondary-500);
+  transform: rotate(${(Math.random() - 0.5) * 2}deg);
 `;
 
 export const DashboardTitle = styled.h2`
@@ -94,59 +95,59 @@ export const DashboardTitle = styled.h2`
   text-shadow: var(--shadow-text-sm);
 `;
 
-export const AddRecipeToggleCard = styled(motion.button)` /* Changé en motion.button */
-  background: var(--color-accent-blue); /* Nouvelle couleur qui se détache du jaune */
-  color: var(--color-neutral-0); /* Texte blanc */
-  border: 4px solid var(--color-accent-blue-dark); /* Bordure épaisse qui ressort */
-  border-radius: var(--radius-2xl); /* Bouton rond, ou radius-2xl pour une carte-bouton */
-  padding: var(--space-6) var(--space-6); /* Plus de padding pour le rendre imposant */
+export const AddRecipeToggleCard = styled(motion.button)`
+  background: var(--color-accent-blue);
+  color: var(--color-neutral-0);
+  border: 4px solid var(--color-accent-blue-dark);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6) var(--space-6);
   font-size: var(--text-lg);
   font-weight: var(--font-bold);
   cursor: pointer;
-  transition: all var(--transition-base); /* Transition plus longue pour le hover */
+  transition: all var(--transition-base);
   box-shadow: var(--shadow-md);
   display: flex;
-  flex-direction: column; /* Pour empiler titre et icône */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2); /* Espace entre l'icône et le texte */
-  text-transform: uppercase; /* Texte en majuscules pour plus d'impact */
-  letter-spacing: 1px; /* Espacement des lettres */
+  gap: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
   overflow: hidden;
   position: relative;
   z-index: 1;
   text-align: center;
-  min-height: 180px; /* Hauteur minimale pour que ce soit bien visible */
-  transform: rotate(-5deg); /* Inclinaison initiale plus prononcée */
+  min-height: 180px;
+  transform: rotate(-5deg);
 
   &:before {
-    content: '✨'; /* Un petit éclat fun */
+    content: '✨';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
-    font-size: var(--text-5xl); /* Plus grand */
+    font-size: var(--text-5xl);
     opacity: 0;
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Rebondissant */
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     z-index: -1;
-    pointer-events: none; /* Ne doit pas interférer avec le clic */
+    pointer-events: none;
   }
 
   &:hover {
-    background: var(--color-accent-blue-dark); /* Changement de dégradé au survol */
-    box-shadow: var(--shadow-xl); /* Ombre plus prononcée */
-    transform: translateY(-5px) rotate(0deg) scale(1.02); /* Léger saut, se redresse et grossit */
-    border-color: var(--color-accent-blue-light); /* Changement de couleur de bordure */
+    background: var(--color-accent-blue-dark);
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-5px) rotate(0deg) scale(1.02);
+    border-color: var(--color-accent-blue-light);
 
     &:before {
-      transform: translate(-50%, -50%) scale(1.5); /* L'éclat grossit et devient visible */
+      transform: translate(-50%, -50%) scale(1.5);
       opacity: 1;
       transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
   }
 
   &:active {
-    transform: translateY(0) rotate(0deg) scale(0.98); /* Retour à la normale au clic, léger rétrécissement */
+    transform: translateY(0) rotate(0deg) scale(0.98);
     box-shadow: var(--shadow-sm);
   }
 
@@ -160,7 +161,7 @@ export const AddRecipeToggleCard = styled(motion.button)` /* Changé en motion.b
   }
 
   .add-icon {
-    font-size: var(--text-7xl); /* Très grande taille pour le '+' */
+    font-size: var(--text-7xl);
     line-height: 1;
     text-shadow: var(--shadow-text-lg);
     display: inline-block;
@@ -168,7 +169,7 @@ export const AddRecipeToggleCard = styled(motion.button)` /* Changé en motion.b
   }
 
   &:hover .add-icon {
-    transform: rotate(180deg) scale(1.2); /* Tourne complètement et grossit au survol */
+    transform: rotate(180deg) scale(1.2);
   }
 `;
 
@@ -266,41 +267,6 @@ export const StatusMessage = styled(motion.p)`
   }
 `;
 
-// Ces styles de modale ne sont plus utilisés car RecipeFormModal définit les siens.
-// Je les laisse commentés au cas où vous les utiliseriez ailleurs.
-/*
-export const AddRecipeModalOverlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: var(--z-modal);
-  padding: var(--space-4);
-`;
-
-export const AddRecipeModalContent = styled(motion.div)`
-  background: var(--color-neutral-0);
-  border-radius: var(--radius-2xl);
-  padding: var(--space-8);
-  box-shadow: var(--shadow-2xl);
-  max-width: 600px;
-  width: 100%;
-  position: relative;
-
-  @media (max-width: 768px) {
-    padding: var(--space-6);
-  }
-`;
-*/
-
-// La seule et unique CloseButton pour les modals, maintenant définie dans RecipeFormModal.jsx
-// export const CloseButton = styled(motion.button)`...`;
-
 export const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -346,8 +312,21 @@ export const RecipeListItem = styled(motion.li)`
   padding: var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  
+  /* --- AJUSTEMENT CRUCIAL POUR LA HAUTEUR FIXE DE LA CARTE --- */
+  height: 320px; /* **IMPORTANT : AJUSTEZ CETTE VALEUR** pour qu'elle contienne tout votre contenu sans débordement, mais sans espace vide excessif. */
+  overflow: hidden; /* Cache tout ce qui dépasse de la hauteur fixe */
+  position: relative; /* Pour positionner les éléments de débogage si besoin */
+
+  /* --- Styles de débogage temporaires --- */
+  /* border: 2px solid blue; */ /* Visualise la limite de la carte */
+  /* background-color: rgba(255, 255, 0, 0.1); */ /* Rend la carte légèrement transparente pour voir les superpositions */
+  /* --- FIN Styles de débogage temporaires --- */
+  
   transition: all var(--transition-base);
+  justify-content: flex-start; /* Aligner le contenu en haut */
+  /* justify-content: space-between; */ /* Commenté car il peut créer des espaces variables si un élément flex-grow est déjà présent ou si le contenu est court */
+
 
   &:hover {
     transform: translateY(-3px);
@@ -358,18 +337,42 @@ export const RecipeListItem = styled(motion.li)`
     font-family: var(--font-family-heading);
     font-size: var(--text-xl);
     color: var(--color-primary-700);
-    margin: 0;
+    margin: 0 0 var(--space-2) 0; /* Marge en bas du titre */
+    line-height: 1.3; /* Assurez une ligne-height cohérente */
+    
+    /* Styles pour la troncation du titre sur plusieurs lignes */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limite le titre à 2 lignes */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Ajoute les points de suspension si nécessaire */
+    /* Pour le débogage: */
+    /* border: 1px solid green; */ /* Visualise la boîte du titre */
   }
 
   p {
     font-size: var(--text-sm);
     color: var(--color-neutral-600);
     margin: 0;
+    flex-grow: 1; /* Permet au paragraphe de prendre l'espace restant, poussant la date vers le bas */
+    line-height: 1.4; /* Assurez une ligne-height cohérente */
+    
+    /* Styles pour la troncation de la description sur plusieurs lignes */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Tronque la description à 3 lignes. AJUSTEZ CETTE VALEUR */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Pour le débogage: */
+    /* border: 1px solid orange; */ /* Visualise la boîte de la description */
   }
 
   span {
     font-size: var(--text-xs);
     color: var(--color-neutral-500);
-    align-self: flex-end;
+    /* align-self: flex-end; */ /* Commenté: Si flex-grow sur p est suffisant, ce n'est pas toujours nécessaire */
+    margin-top: var(--space-2); /* Espacement au-dessus de la date */
+    /* Pour le débogage: */
+    /* border: 1px solid purple; */ /* Visualise la boîte de la date */
   }
 `;
