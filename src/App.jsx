@@ -1,7 +1,7 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify'; // Import ToastContainer
+import { ToastContainer, Slide } from 'react-toastify'; // <-- AJOUTEZ 'Slide' ici
 import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
 
 import GlobalStyles from './styles/GlobalStyles';
@@ -41,8 +41,8 @@ const App = () => {
       {/* ToastContainer should be rendered at a high level in your component tree
           to ensure toasts appear above other content. */}
       <ToastContainer
-        position="top-right" // You can change the position (e.g., 'bottom-left', 'top-center')
-        autoClose={5000}     // Toasts will auto-close after 5000ms (5 seconds)
+        position="top-right"
+        autoClose={3000} // J'ai ajusté à 3 secondes pour un effet plus rapide mais doux
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -50,7 +50,8 @@ const App = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="colored"      // Choose a theme: 'light', 'dark', or 'colored'
+        theme="colored"
+        transition={Slide} // <-- C'EST LA LIGNE CLÉ À AJOUTER
       />
     </Router>
   );

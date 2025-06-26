@@ -1,5 +1,6 @@
+ 
 
-
+// src/components/Navbar/Navbar.styles.jsx
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
@@ -17,26 +18,24 @@ export const StyledNavbar = styled(motion.nav)`
 
 export const NavContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Espace entre la marque et les navlinks/menu toggle */
   align-items: center;
   width: 100%;
   max-width: 1200px;
   padding: 0 var(--space-4);
+  height: var(--navbar-height); /* Assurer une hauteur constante pour la navbar */
 
-  @media (max-width: 880px) {
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: calc(var(--space-2));
+  @media (max-width: 978px) {
+    justify-content: space-between; /* La marque à gauche, le burger à droite */
+    padding: var(--space-2) var(--space-4); /* Padding ajusté */
   }
 
   @media (max-width: 490px) {
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row; /* La marque et le toggle restent sur une ligne */
+    justify-content: space-between; /* Espacement optimal */
     align-items: center;
-    padding-top: 5vh;
-    padding-bottom: calc(var(--space-4) + 2rem);
-    height: 14vh;
+    padding: var(--space-2) var(--space-4); /* Padding ajusté */
+    height: var(--navbar-height); /* Hauteur fixe */
   }
 `;
 
@@ -58,8 +57,11 @@ export const Brand = styled.div`
     transform: scale(1.02);
   }
 
-  @media (max-width: 880px) {
-    font-size: var(--text-2xl);
+  @media (max-width: 978px) {
+    font-size: var(--text-xl); /* Taille plus petite pour la marque sur tablette */
+  }
+  @media (max-width: 490px) {
+    font-size: var(--text-lg); /* Encore plus petit sur mobile */
   }
 `;
 
@@ -76,13 +78,16 @@ export const BrandIcon = styled.span`
     color: var(--color-bright-pink-crayola);
   }
 
-  @media (max-width: 880px) {
-    font-size: var(--text-3xl);
+  @media (max-width: 978px) {
+    font-size: var(--text-2xl); /* Ajustement pour tablette */
+  }
+  @media (max-width: 490px) {
+    font-size: var(--text-xl); /* Ajustement pour mobile */
   }
 `;
 
 export const MenuToggle = styled.button`
-  display: none;
+  display: none; /* Masqué par défaut sur desktop */
   background: none;
   border: none;
   cursor: pointer;
@@ -90,19 +95,17 @@ export const MenuToggle = styled.button`
   z-index: var(--z-mid);
   position: relative;
 
-  @media (max-width: 880px) {
+  @media (max-width: 978px) { /* Afficher le bouton hamburger */
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    width: var(--space-8);
-    height: var(--space-8);
+    width: var(--space-9); /* Taille légèrement plus grande */
+    height: var(--space-9); /* Taille légèrement plus grande */
   }
 
   @media (max-width: 490px) {
-    align-self: center;
-    order: 2;
-    width: var(--space-9);
-    height: var(--space-9);
+    width: var(--space-8); /* Revenir à une taille standard sur très petit mobile */
+    height: var(--space-8);
   }
 `;
 
@@ -132,38 +135,29 @@ export const NavLinks = styled.ul`
   margin: 0;
   padding: 0;
   display: flex;
-  gap: var(--space-6); /* Gap entre les liens sur desktop */
+  gap: var(--space-6); /* Espacement entre les liens sur desktop */
 
-  @media (max-width: 880px) {
-    flex-direction: row; /* Affiche les liens en ligne */
-    justify-content: space-around; /* Distribue l'espace entre les liens */
-    align-items: center; /* Centre verticalement les liens */
-    width: 100%; /* LE CONTENEUR PREND 100% DE LA LARGEUR DISPONIBLE */
+  @media (max-width: 978px) {
+    flex-direction: column; /* Les liens s'affichent en colonne */
+    justify-content: flex-start; /* Aligner les éléments en haut */
+    align-items: center; /* Centrer horizontalement les liens */
+    width: 100%;
+    position: fixed; /* Position fixe pour superposer le menu */
+    top: var(--navbar-height); /* Commence sous la navbar */
+    left: 0;
+    height: calc(100vh - var(--navbar-height)); /* Prend le reste de la hauteur */
+    background-color: var(--color-light-sky-blue);
     box-shadow: var(--shadow-lg);
-    
-    /* Styles pour le menu coulissant (si le menu burger est utilisé) */
-    transform: translateX(${props => (props.$isOpen ? '0' : '100%')});
+    transform: translateX(${props => (props.$isOpen ? '0' : '100%')}); /* Glisse de la droite */
     transition: transform 0.3s ease-in-out;
     opacity: ${props => (props.$isOpen ? '1' : '0')};
     pointer-events: ${props => (props.$isOpen ? 'auto' : 'none')};
-    
-    padding: var(--space-2) var(--space-4); /* Padding plus compact du conteneur */
-    height: var(--navbar-height); /* Hauteur fixe pour la ligne de liens */
-    position: relative; /* Réinitialise la position si le menu n'est pas coulissant */
-    top: auto;
-    left: auto;
-    background-color: var(--color-light-sky-blue);
+    padding: var(--space-4) 0; /* Plus de padding vertical pour les éléments de la liste */
+    overflow-y: auto; /* Permet le défilement si le contenu dépasse */
   }
 
   @media (max-width: 490px) {
-    flex-direction: row;
-    justify-content: space-around;
-    width: 100%; /* Également 100% pour les très petits écrans */
-    padding: var(--space-2) var(--space-2); /* Padding ajusté pour les très petits */
-    height: var(--navbar-height);
-    position: absolute; /* Si le menu doit glisser hors de l'écran en largeur */
-    top: var(--navbar-height); /* Positionne sous la navbar si elle a une hauteur fixe */
-    left: 0;
+    padding: var(--space-2) 0;
   }
 `;
 
@@ -179,9 +173,8 @@ export const StyledNavLink = styled(motion.a)`
   display: flex;
   align-items: center;
   position: relative;
-  flex: 1; /* Chaque lien prend une part égale de l'espace disponible */
   justify-content: center; /* Centre le contenu du lien horizontalement */
-  text-align: center; /* Assure que le texte est centré dans sa cellule */
+  text-align: center; /* Assure que le texte est centré */
   white-space: nowrap; /* Empêche le texte de se casser sur plusieurs lignes */
 
   &:hover {
@@ -195,14 +188,16 @@ export const StyledNavLink = styled(motion.a)`
     box-shadow: var(--shadow-sm);
   }
 
-  @media (max-width: 768px) {
-    padding: var(--space-2); /* Un padding plus petit pour les cellules horizontales */
-    font-size: var(--text-lg); /* Peut-être revenir à une taille un peu plus petite pour que ça tienne */
+  @media (max-width: 978px) {
+    width: 80%; /* Prendre une grande partie de la largeur pour les liens du menu */
+    padding: var(--space-3); /* Padding plus généreux */
+    font-size: var(--text-xl); /* Taille de police plus grande */
   }
 
   @media (max-width: 490px) {
-    font-size: var(--text-sm); /* Encore plus petit pour les très petits mobiles si nécessaire */
-    padding: var(--space-1); /* Encore moins de padding pour les très petits mobiles */
+    width: 90%; /* Ajuster la largeur pour les très petits écrans */
+    font-size: var(--text-lg);
+    padding: var(--space-2);
   }
 `;
 
@@ -227,7 +222,7 @@ export const NotificationBadge = styled.span`
 export const LogoutButton = styled(motion.button)`
   background-color: var(--color-bright-pink-crayola);
   color: var(--color-neutral-0);
-  padding: var(--space-3) var(--space-5);
+  padding: 0.6rem var(--space-5); /* Ajustement du padding vertical ici */
   border-radius: var(--radius-full);
   border: none;
   font-family: var(--font-family-sans);
@@ -235,15 +230,23 @@ export const LogoutButton = styled(motion.button)`
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: var(--transition-base);
-
+  
   &:hover {
     background-color: var(--color-salmon);
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
   }
 
-  @media (max-width: 768px) {
-    width: 100%;
-    margin-top: var(--space-4);
+  @media (max-width: 978px) {
+    width: 80%;
+    margin-top: var(--space-6);
+    padding: 0.6rem var(--space-6); /* Ajustement du padding vertical ici également */
+    font-size: var(--text-lg);
+  }
+
+  @media (max-width: 490px) {
+    width: 90%;
+    padding: 0.6rem var(--space-4); /* Et ici pour les petits écrans */
+    font-size: var(--text-base);
   }
 `;

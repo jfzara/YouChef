@@ -1,7 +1,6 @@
-// src/styles/GlobalStyles.js
+// src/styles/GlobalStyles.js (MODIFIÉ avec l'Option 1)
 
 import { createGlobalStyle } from 'styled-components';
-
 
 // Importations des nouvelles polices (exemple avec Google Fonts)
 import QuicksandLightTTF from '../assets/fonts/Quicksand-Light.ttf';
@@ -80,8 +79,8 @@ const GlobalStyles = createGlobalStyle`
     --color-error: #F44336;
     --color-error-dark: #D32F2F;
     --color-error-soft: #fbd6d6;
-    --color-error-500: #EF4444; /* Rouge standard pour la bordure d'erreur */
-    --color-error-800: #991B1B; /* Rouge foncé pour le texte d'erreur */
+    --color-error-500: #EF4444;
+    --color-error-800: #991B1B;
 
 
     --color-warning-light: #FFF8E1;
@@ -91,9 +90,9 @@ const GlobalStyles = createGlobalStyle`
     --color-info-light: #E3F2FD;
     --color-info: #2196F3;
     --color-info-dark: #1976D2;
-    --color-info-700: #0C4A6E; /* Bleu foncé pour les messages d'information */
-    --color-info-300: #90CAF9; /* Bleu clair pour les bordures d'image/info */
-    --color-info-500: #2196F3; /* Bleu standard pour les icônes d'info */
+    --color-info-700: #0C4A6E;
+    --color-info-300: #90CAF9;
+    --color-info-500: #2196F3;
 
 
     /* Couleurs d'accent */
@@ -105,26 +104,26 @@ const GlobalStyles = createGlobalStyle`
     --color-accent-green-dark: #388E3C;
     --color-accent-green-light: #81C784;
 
-    --color-accent-purple: #8A2BE2; /* Un violet vif pour le bouton des stats */
-    --color-accent-purple-dark: #6A1FB6; /* Un violet plus foncé pour la bordure */
-    --color-accent-purple-light: #A052EE; /* Un violet plus clair pour le hover */
+    --color-accent-purple: #8A2BE2;
+    --color-accent-purple-dark: #6A1FB6;
+    --color-accent-purple-light: #A052EE;
 
     /* Couleurs pour les cartes de stats */
-    --color-tertiary-100: #E0F2F7; /* Un bleu très clair pour les cartes de stats */
-    --color-tertiary-300: #B3E5FC; /* Un bleu un peu plus prononcé pour la bordure des cartes de stats */
+    --color-tertiary-100: #E0F2F7;
+    --color-tertiary-300: #B3E5FC;
 
     /* Couleurs pour le Rolodex et ses boutons */
-    --color-primary-100: #FFF3E0; /* Un jaune pâle pour le fond du Rolodex Container */
-    --color-primary-600: #FFA000; /* Un orange plus soutenu pour la bordure du Rolodex Container */
-    --color-primary-800: #E65100; /* Un orange très foncé pour les titres de carte */
+    --color-primary-100: #FFF3E0;
+    --color-primary-600: #FFA000;
+    --color-primary-800: #E65100;
 
-    --color-secondary-50: #F3F9F5; /* Un vert très pâle pour le fond des cartes du Rolodex */
-    --color-secondary-300: #A5D6A7; /* Un vert moyen pour la bordure des cartes du Rolodex */
-    --color-secondary-500: #4CAF50; /* Un vert standard pour d'autres éléments ou bordures */
+    --color-secondary-50: #F3F9F5;
+    --color-secondary-300: #A5D6A7;
+    --color-secondary-500: #4CAF50;
 
-    --color-tertiary-500: #8D6E63; /* Un marron chaud pour les boutons de navigation */
-    --color-tertiary-600: #6D4C41; /* Un marron plus foncé pour le hover des boutons de navigation */
-    --color-tertiary-700: #4E342E; /* Un marron très foncé pour la bordure des boutons de navigation */
+    --color-tertiary-500: #8D6E63;
+    --color-tertiary-600: #6D4C41;
+    --color-tertiary-700: #4E342E;
 
 
     /* Ombres de texte */
@@ -181,9 +180,14 @@ const GlobalStyles = createGlobalStyle`
     --gradient-quirky-2: linear-gradient(135deg, var(--color-salmon), var(--color-bright-pink-crayola));
     --gradient-quirky-3: linear-gradient(90deg, var(--color-cream), var(--color-light-sky-blue));
 
+    /* --- AJOUT/MODIFICATION ICI pour définir --gradient-primary et --gradient-secondary --- */
+    --gradient-primary: var(--gradient-quirky-1); /* Utilisez votre dégradé préféré comme primaire */
+    --gradient-secondary: var(--gradient-quirky-2); /* Utilisez un autre dégradé pour le hover */
+    /* --- FIN AJOUT/MODIFICATION --- */
+
 
     /* Typographie - Mettre à jour avec les nouvelles polices */
-    --font-family-heading: 'Cabin Sketch', cursive; 
+    --font-family-heading: 'Cabin Sketch', cursive;
     --font-family-sans: 'Quicksand', sans-serif;
 
     --text-xs: 0.75rem;
@@ -199,10 +203,10 @@ const GlobalStyles = createGlobalStyle`
 
     --font-light: 300;
     --font-normal: 400;
-    --font-medium: 500; 
+    --font-medium: 500;
     --font-semibold: 600;
     --font-bold: 700;
-    --font-extrabold: 800; 
+    --font-extrabold: 800;
 
     --navbar-height: 5rem;
     --dashboard-blur: 0px;
@@ -220,9 +224,9 @@ const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     font-family: var(--font-family-sans);
-    color: var(--color-neutral-800); 
+    color: var(--color-neutral-800);
     line-height: 1.6;
-    background-color: var(--color-cream); 
+    background-color: var(--color-cream);
     position: relative;
     min-height: 100vh;
     overflow-x: hidden;
@@ -230,7 +234,7 @@ const GlobalStyles = createGlobalStyle`
     font-weight: var(--font-normal);
     font-size: var(--text-lg);
 
-    background-position: center center; 
+    background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
@@ -243,14 +247,14 @@ const GlobalStyles = createGlobalStyle`
     line-height: 1.2;
     margin-top: var(--space-6);
     margin-bottom: var(--space-4);
-    color: var(--color-bright-pink-crayola); 
+    color: var(--color-bright-pink-crayola);
   }
 
   a {
-    color: var(--color-salmon); 
+    color: var(--color-salmon);
     text-decoration: none;
     &:hover {
-      color: var(--color-bright-pink-crayola); 
+      color: var(--color-bright-pink-crayola);
     }
   }
 
