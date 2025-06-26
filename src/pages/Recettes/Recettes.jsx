@@ -3,32 +3,31 @@
 import React, { useEffect, useState } from "react";
 import { useAnimation } from 'framer-motion';
 import axios from "../../api/axiosInstance";
-import { toast } from "react-toastify";
- 
+// import { toast } from "react-toastify"; // Supprimé car le toast n'est plus utilisé
+
 import {
   RecettesContainer, PageTitle, CategorySection, CategoryTitle,
   SubCategoryArticle, SubCategoryTitle, RecipeGrid, RecipeCard,
-  RecipeName, RecipeDescription, Tag 
+  RecipeName, RecipeDescription, Tag
 } from './Recettes.styles';
- 
+
 import {
   categoryColors, sousCategoryColors, hoverAnimations
 } from '../../data/recettesData';
 
 // --- Nouveau Styled Component pour les messages d'état ---
-import styled from 'styled-components'; // Assurez-vous d'importer styled ici aussi
+import styled from 'styled-components';
 const StatusMessage = styled.p`
   text-align: center;
   color: ${props => props.$isError ? 'var(--color-error)' : 'var(--color-neutral-700)'};
   font-size: var(--text-lg);
-  padding: var(--space-4); /* Ajoute un peu de padding autour du texte */
-  max-width: 600px; /* Largeur maximale pour desktop */
-  margin: auto; /* Centre le bloc de texte */
+  padding: var(--space-4);
+  max-width: 600px;
+  margin: auto;
 
   @media (max-width: 768px) {
     font-size: var(--text-base);
-    max-width: 85vw; /* Limite à 85vw sur mobile */
-    /* Assurez-vous que le texte reste centré malgré le max-width */
+    max-width: 85vw;
     margin-left: auto;
     margin-right: auto;
   }
@@ -39,9 +38,9 @@ const Recettes = () => {
   const [recettes, setRecettes] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
- 
+
   const controls = useAnimation();
- 
+
 
   const mainContainerVariants = {
     hidden: { opacity: 0 },
@@ -138,7 +137,9 @@ const Recettes = () => {
         } else {
             setError(`Erreur inattendue: ${err.message}`);
         }
-        toast.error("Erreur de chargement des recettes");
+        // toast.error("Erreur de chargement des recettes", { // Cette ligne a été supprimée
+        //   toastId: "recettes-load-error"
+        // });
       } finally {
         setLoading(false);
       }
@@ -158,7 +159,7 @@ const Recettes = () => {
   if (error) {
     return (
       <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <StatusMessage $isError>{error}</StatusMessage> {/* Utilisation de la prop $isError */}
+        <StatusMessage $isError>{error}</StatusMessage>
       </RecettesContainer>
     );
   }
