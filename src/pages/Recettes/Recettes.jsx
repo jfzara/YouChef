@@ -133,7 +133,7 @@ const Recettes = () => {
         if (err.response) {
             setError(`Erreur du serveur: ${err.response.status} - ${err.response.data.message || 'Quelque chose s\'est mal passé'}`);
         } else if (err.request) {
-            setError('Impossible de se connecter au serveur. Vérifiez votre connexion internet ou que le backend est démarré.');
+            setError('Oups ! Nous n\'arrivons pas à charger les recettes pour le moment. Veuillez vérifier votre connexion internet et réessayer plus tard.');
         } else {
             setError(`Erreur inattendue: ${err.message}`);
         }
