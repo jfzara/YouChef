@@ -1,4 +1,4 @@
-// src/styles/GlobalStyles.js (MODIFIÉ avec l'Option 1)
+// src/styles/GlobalStyles.js (CORRIGÉ)
 
 import { createGlobalStyle } from 'styled-components';
 
@@ -260,6 +260,39 @@ const GlobalStyles = createGlobalStyle`
 
   button, input[type="submit"] {
     cursor: pointer;
+  }
+
+  /* Styles pour React-Toastify - PLACÉ ICI DANS LE MÊME BLOC */
+  .Toastify__toast-container {
+    /* Ajuste la marge par rapport aux bords de l'écran */
+    padding: 1rem; /* Ajoute un padding de 16px sur tous les côtés */
+    box-sizing: border-box; /* S'assure que le padding n'augmente pas la taille totale */
+    width: auto; /* Permet au conteneur de s'adapter à la largeur du contenu */
+    max-width: 90vw; /* Limite la largeur maximale à 90% de la largeur de la vue pour les petits écrans */
+    
+    /* Si top-right cause toujours problème, vous pouvez essayer top-center */
+    /* top: 20px !important; */
+    /* right: 20px !important; */
+    /* Ou, si vous passez à top-center dans le JS: */
+    /* left: 50% !important; */
+    /* transform: translateX(-50%) !important; */
+  }
+
+  /* Optionnel: Styles pour les toasts individuels si vous voulez plus de contrôle */
+  .Toastify__toast {
+    border-radius: var(--radius-md, 8px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Vous pouvez aussi cibler spécifiquement les toasts de succès */
+  .Toastify__toast--success {
+    background-color: var(--color-success-500, #4CAF50);
+    color: var(--color-neutral-0, #FFFFFF);
+  }
+
+  .Toastify__toast--error {
+    background-color: var(--color-error-500, #F44336);
+    color: var(--color-neutral-0, #FFFFFF);
   }
 `;
 

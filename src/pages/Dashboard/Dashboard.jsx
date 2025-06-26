@@ -25,13 +25,18 @@ const Dashboard = () => {
   const [userRecipes, setUserRecipes] = useState([]); // État pour stocker les recettes de l'utilisateur
   const [loadingUserRecipes, setLoadingUserRecipes] = useState(true); // État de chargement
   const [errorUserRecipes, setErrorUserRecipes] = useState(null); // État d'erreur
+  const [recipeToEdit, setRecipeToEdit] = useState(null); // NOUVEAU : État pour la recette à éditer
 
   const handleOpenRecipeFormModal = () => setIsRecipeFormModalOpen(true);
-  const handleCloseRecipeFormModal = () => setIsRecipeFormModalOpen(false);
+  const handleCloseRecipeFormModal = () => {
+    setIsRecipeFormModalOpen(false);
+    setRecipeToEdit(null); // IMPORTANT : Réinitialiser la recette à éditer à la fermeture
+  };
 
   // Fonction pour recharger les recettes après ajout/modification
   const handleRecipeFormSuccess = () => {
     setIsRecipeFormModalOpen(false);
+    setRecipeToEdit(null); // IMPORTANT : Réinitialiser après succès
     fetchUserRecipes(); // Recharger les recettes après une action réussie
   };
 
@@ -40,24 +45,41 @@ const Dashboard = () => {
     setLoadingUserRecipes(true);
     setErrorUserRecipes(null);
     try {
-      // ✅ Correction de l'URL pour correspondre à votre backend : /api/recettes/
-      const response = await api.get('/recettes/'); 
+      const response = await api.get('/recettes/');
       setUserRecipes(response.data);
-      console.log("Recettes utilisateur chargées :", response.data.length); // Log pour vérification
+      console.log("Recettes utilisateur chargées :", response.data.length);
     } catch (err) {
       console.error('Erreur lors de la récupération des recettes de l\'utilisateur:', err);
-      // Afficher un message d'erreur plus convivial à l'utilisateur
       setErrorUserRecipes('Impossible de charger vos recettes. Veuillez réessayer.');
       toast.error('Erreur de chargement de vos recettes.');
     } finally {
       setLoadingUserRecipes(false);
     }
-  }, []); // `fetchUserRecipes` ne dépend d'aucune variable de l'extérieur pour ne pas recréer la fonction à chaque rendu.
+  }, []);
+
+  // NOUVELLES FONCTIONS : Pour la modification et la suppression
+  const handleEditRecipe = useCallback((recipe) => {
+    setRecipeToEdit(recipe); // Définit la recette à pré-remplir dans la modale
+    setIsRecipeFormModalOpen(true); // Ouvre la modale en mode édition
+  }, []);
+
+  const handleDeleteRecipe = useCallback(async (recipeId) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette recette ?")) {
+      try {
+        await api.delete(`/recettes/${recipeId}`); // Appel API pour supprimer
+        toast.success('Recette supprimée avec succès !');
+        fetchUserRecipes(); // Recharger la liste des recettes
+      } catch (err) {
+        console.error('Erreur lors de la suppression de la recette:', err);
+        toast.error('Erreur lors de la suppression de la recette.');
+      }
+    }
+  }, [fetchUserRecipes]); // Dépend de fetchUserRecipes pour le rechargement
 
   // Charger les recettes de l'utilisateur au montage du composant
   useEffect(() => {
     fetchUserRecipes();
-  }, [fetchUserRecipes]); // Le tableau de dépendances inclut `fetchUserRecipes` pour éviter les avertissements ESLint
+  }, [fetchUserRecipes]);
 
   return (
     <DashboardContainer
@@ -90,8 +112,12 @@ const Dashboard = () => {
               {errorUserRecipes}
             </p>
           ) : (
-            // Passage des recettes au composant RecipeCarousel
-            <RecipeCarousel recipes={userRecipes} />
+            // MODIFICATION CRUCIALE : Passage des fonctions d'édition et suppression
+            <RecipeCarousel
+              recipes={userRecipes}
+              onEditRecipe={handleEditRecipe} // La prop s'appelle onEditRecipe dans RecipeCarousel
+              onDeleteRecipe={handleDeleteRecipe} // La prop s'appelle onDeleteRecipe dans RecipeCarousel
+            />
           )}
         </MainContent>
 
@@ -117,9 +143,9 @@ const Dashboard = () => {
       <RecipeFormModal
         isOpen={isRecipeFormModalOpen}
         onClose={handleCloseRecipeFormModal}
-        onRecipeAdded={handleRecipeFormSuccess} // Appel de fetchUserRecipes après ajout
-        onRecipeUpdated={handleRecipeFormSuccess} // Appel de fetchUserRecipes après modification
-        recipeToEdit={null}
+        onRecipeAdded={handleRecipeFormSuccess}
+        onRecipeUpdated={handleRecipeFormSuccess}
+        recipeToEdit={recipeToEdit} // NOUVEAU : Passez la recette à éditer à la modale
       />
     </DashboardContainer>
   );
