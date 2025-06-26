@@ -14,7 +14,7 @@ const RecipeCardStyled = styled(motion.div)`
   gap: var(--space-4);
   position: relative;
   overflow: hidden;
-  cursor: pointer;
+  cursor: pointer; /* Indique que la carte est cliquable */
   border: 4px dashed var(--color-primary-500);
   transform: rotate(calc((Math.random() - 0.5) * 3deg));
 
@@ -69,11 +69,13 @@ const RecipeTitle = styled.h3`
   box-sizing: border-box; /* Inclut le padding dans la largeur totale */
 `;
 
-const RecipeCard = React.forwardRef(({ recipe, ...props }, ref) => {
+// Ajout de la prop 'onCardClick'
+const RecipeCard = React.forwardRef(({ recipe, onEdit, onDelete, onCardClick, ...props }, ref) => {
   return (
     <RecipeCardStyled
       ref={ref}
       {...props}
+      onClick={() => onCardClick(recipe)} // Appel de onCardClick avec la recette
       whileHover="hover"
       variants={{
         hover: {
@@ -87,9 +89,9 @@ const RecipeCard = React.forwardRef(({ recipe, ...props }, ref) => {
       }}
     >
       <RecipeImage src={recipe.imageUrl || DefaultRecipeImage} alt={recipe.nom} />
-
       <RecipeTitle title={recipe.nom}>{recipe.nom}</RecipeTitle>
-
+      {/* Vous pouvez ajouter ici les boutons d'édition/suppression si vous voulez qu'ils soient sur la carte elle-même,
+          mais pour l'instant, ils sont gérés par le parent via les props onEdit/onDelete */}
     </RecipeCardStyled>
   );
 });

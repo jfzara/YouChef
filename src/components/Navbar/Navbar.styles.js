@@ -1,6 +1,3 @@
- 
-
-// src/components/Navbar/Navbar.styles.jsx
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
@@ -152,12 +149,14 @@ export const NavLinks = styled.ul`
     transition: transform 0.3s ease-in-out;
     opacity: ${props => (props.$isOpen ? '1' : '0')};
     pointer-events: ${props => (props.$isOpen ? 'auto' : 'none')};
-    padding: var(--space-4) 0; /* Plus de padding vertical pour les éléments de la liste */
+    padding: var(--space-3) 0; /* Réduit le padding vertical général du menu pour tablette */
+    gap: var(--space-3); /* Réduit l'espace entre les liens pour les tablettes */
     overflow-y: auto; /* Permet le défilement si le contenu dépasse */
   }
 
   @media (max-width: 490px) {
-    padding: var(--space-2) 0;
+    padding: var(--space-2) 0; /* Garde le padding réduit pour les très petits écrans */
+    gap: var(--space-2); /* Espacement encore plus réduit pour les mobiles très étroits */
   }
 `;
 
@@ -190,14 +189,14 @@ export const StyledNavLink = styled(motion.a)`
 
   @media (max-width: 978px) {
     width: 80%; /* Prendre une grande partie de la largeur pour les liens du menu */
-    padding: var(--space-3); /* Padding plus généreux */
-    font-size: var(--text-xl); /* Taille de police plus grande */
+    padding: var(--space-2); /* Réduit le padding des liens individuels pour tablette */
+    font-size: var(--text-lg); /* Réduit la taille de police pour les tablettes */
   }
 
   @media (max-width: 490px) {
     width: 90%; /* Ajuster la largeur pour les très petits écrans */
-    font-size: var(--text-lg);
-    padding: var(--space-2);
+    font-size: var(--text-base); /* Réduit encore la taille de police pour les mobiles étroits */
+    padding: var(--space-2); /* Garde le padding réduit pour les très petits écrans */
   }
 `;
 
@@ -217,6 +216,13 @@ export const NotificationBadge = styled.span`
   ${props => props.$hasNotificationBadge && `
     display: block;
   `}
+
+  @media (max-width: 978px) {
+    top: 0.2rem; /* Ajuster la position si nécessaire */
+    right: 0.2rem;
+    font-size: var(--text-xs); /* Assurer que la taille reste petite */
+    padding: 0.05rem 0.3rem; /* Réduire le padding */
+  }
 `;
 
 export const LogoutButton = styled(motion.button)`
@@ -239,14 +245,15 @@ export const LogoutButton = styled(motion.button)`
 
   @media (max-width: 978px) {
     width: 80%;
-    margin-top: var(--space-6);
-    padding: 0.6rem var(--space-6); /* Ajustement du padding vertical ici également */
-    font-size: var(--text-lg);
+    margin-top: var(--space-4); /* Réduit l'espace au-dessus du bouton de déconnexion pour tablette */
+    padding: 0.5rem var(--space-4); /* Ajuste légèrement le padding du bouton pour tablette */
+    font-size: var(--text-base); /* Réduit la taille de police du bouton pour tablette */
   }
 
   @media (max-width: 490px) {
     width: 90%;
-    padding: 0.6rem var(--space-4); /* Et ici pour les petits écrans */
-    font-size: var(--text-base);
+    margin-top: var(--space-3); /* Encore plus réduit pour les mobiles */
+    padding: 0.4rem var(--space-3); /* Et le padding du bouton pour les petits écrans */
+    font-size: var(--text-sm); /* Et la taille de police pour les petits écrans */
   }
 `;

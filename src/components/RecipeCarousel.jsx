@@ -1,5 +1,3 @@
-
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled, { keyframes } from 'styled-components';
@@ -254,7 +252,8 @@ const Dot = styled.span`
   }
 `;
 
-const RecipeCarousel = ({ recipes, onEditRecipe, onDeleteRecipe }) => {
+// Ajout de la prop 'onViewRecipeDetails'
+const RecipeCarousel = ({ recipes, onEditRecipe, onDeleteRecipe, onViewRecipeDetails }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const containerRef = useRef(null);
   const [direction, setDirection] = useState(0);
@@ -362,11 +361,12 @@ const RecipeCarousel = ({ recipes, onEditRecipe, onDeleteRecipe }) => {
               dragConstraints={{ left: 0, right: 0 }}
               className={recipes.length === 1 ? wiggleClass : ''}
             >
-              {/* IMPORTANT : Transmet les fonctions onEdit et onDelete au RecipeCard */}
+              {/* IMPORTANT : Transmet les fonctions onEdit, onDelete ET onViewRecipeDetails au RecipeCard */}
               <RecipeCard
                 recipe={recipes[currentIndex]}
                 onEdit={onEditRecipe}
                 onDelete={onDeleteRecipe}
+                onCardClick={onViewRecipeDetails} // Nouvelle prop passée à RecipeCard
               />
             </CarouselItemWrapper>
           )}

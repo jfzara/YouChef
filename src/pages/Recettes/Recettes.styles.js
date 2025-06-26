@@ -125,7 +125,7 @@ export const RecipeGrid = styled(motion.div)`
 // NOUVEAU: RecipeMiniCard (remplace RecipeCard)
 export const RecipeMiniCard = styled(motion.div)`
   background: white;
-  border-radius: var(--radius-xl); /* Légèrement plus petit que 3xl pour un look plus compact */
+  border-radius: var(--radius-xl) ; /* Légèrement plus petit que 3xl pour un look plus compact */
   overflow: hidden;
   box-shadow: var(--shadow-sm); /* Ombre plus subtile */
   position: relative;
@@ -152,7 +152,7 @@ export const RecipeMiniCard = styled(motion.div)`
     width: 100%;
     height: 100%;
     object-fit: cover; /* Assure que l'image couvre l'espace sans distorsion */
-    border-radius: var(--radius-xl); /* Rayon sur l'image aussi */
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0; /* Rayon sur l'image aussi */
   }
 
   .recipe-info {

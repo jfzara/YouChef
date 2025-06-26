@@ -1,13 +1,25 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion'; // Import de AnimatePresence
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import api from '../../api/axiosInstance'; // Import de l'instance Axios pour les appels API
 
 import RecipeFormModal from './RecipeFormModal';
-import RecipeCarousel from '../../components/RecipeCarousel'; // Chemin mis à jour pour le nouveau composant
+import RecipeCarousel from '../../components/RecipeCarousel';
 import RecentRecipes from './RecentRecipes';
-import StatsBubble from './StatsBubble';
+import StatsBubble from './StatsBubble'; // Assurez-vous que ce chemin est correct
+
+// Import des composants de style de la modale depuis Recettes.styles.js
+import {
+  ModalOverlay,
+  ModalContent,
+  CloseButton,
+  ModalImage,
+  RecipeNameDetail,
+  RecipeDescriptionDetail,
+  RecipeDetailsSection,
+  Tag,
+} from '../Recettes/Recettes.styles'; // Assurez-vous que ce chemin est correct
 
 import {
   DashboardContainer,
@@ -22,25 +34,26 @@ import {
 const Dashboard = () => {
   const { user } = useAuth();
   const [isRecipeFormModalOpen, setIsRecipeFormModalOpen] = useState(false);
-  const [userRecipes, setUserRecipes] = useState([]); // État pour stocker les recettes de l'utilisateur
-  const [loadingUserRecipes, setLoadingUserRecipes] = useState(true); // État de chargement
-  const [errorUserRecipes, setErrorUserRecipes] = useState(null); // État d'erreur
-  const [recipeToEdit, setRecipeToEdit] = useState(null); // NOUVEAU : État pour la recette à éditer
+  const [userRecipes, setUserRecipes] = useState([]);
+  const [loadingUserRecipes, setLoadingUserRecipes] = useState(true);
+  const [errorUserRecipes, setErrorUserRecipes] = useState(null);
+  const [recipeToEdit, setRecipeToEdit] = useState(null);
+
+  // NOUVEAU : État pour la recette sélectionnée pour l'affichage des détails
+  const [selectedRecipe, setSelectedRecipe] = useState(null); 
 
   const handleOpenRecipeFormModal = () => setIsRecipeFormModalOpen(true);
   const handleCloseRecipeFormModal = () => {
     setIsRecipeFormModalOpen(false);
-    setRecipeToEdit(null); // IMPORTANT : Réinitialiser la recette à éditer à la fermeture
+    setRecipeToEdit(null);
   };
 
-  // Fonction pour recharger les recettes après ajout/modification
   const handleRecipeFormSuccess = () => {
     setIsRecipeFormModalOpen(false);
-    setRecipeToEdit(null); // IMPORTANT : Réinitialiser après succès
-    fetchUserRecipes(); // Recharger les recettes après une action réussie
+    setRecipeToEdit(null);
+    fetchUserRecipes();
   };
 
-  // Fonction pour récupérer les recettes de l'utilisateur
   const fetchUserRecipes = useCallback(async () => {
     setLoadingUserRecipes(true);
     setErrorUserRecipes(null);
@@ -57,26 +70,34 @@ const Dashboard = () => {
     }
   }, []);
 
-  // NOUVELLES FONCTIONS : Pour la modification et la suppression
   const handleEditRecipe = useCallback((recipe) => {
-    setRecipeToEdit(recipe); // Définit la recette à pré-remplir dans la modale
-    setIsRecipeFormModalOpen(true); // Ouvre la modale en mode édition
+    setRecipeToEdit(recipe);
+    setIsRecipeFormModalOpen(true);
   }, []);
 
   const handleDeleteRecipe = useCallback(async (recipeId) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer cette recette ?")) {
       try {
-        await api.delete(`/recettes/${recipeId}`); // Appel API pour supprimer
+        await api.delete(`/recettes/${recipeId}`);
         toast.success('Recette supprimée avec succès !');
-        fetchUserRecipes(); // Recharger la liste des recettes
+        fetchUserRecipes();
       } catch (err) {
         console.error('Erreur lors de la suppression de la recette:', err);
         toast.error('Erreur lors de la suppression de la recette.');
       }
     }
-  }, [fetchUserRecipes]); // Dépend de fetchUserRecipes pour le rechargement
+  }, [fetchUserRecipes]);
 
-  // Charger les recettes de l'utilisateur au montage du composant
+  // NOUVELLES FONCTIONS : Gestion de l'ouverture et fermeture de la modale de détails
+  const handleViewRecipeDetails = useCallback((recipe) => {
+    setSelectedRecipe(recipe); // Définit la recette à afficher dans la modale
+  }, []);
+
+  const handleCloseDetailsModal = useCallback(() => {
+    setSelectedRecipe(null); // Réinitialise pour fermer la modale
+  }, []);
+
+
   useEffect(() => {
     fetchUserRecipes();
   }, [fetchUserRecipes]);
@@ -96,6 +117,9 @@ const Dashboard = () => {
         <p>Préparez vos papilles, c'est l'heure de créer de nouvelles saveurs !</p>
       </WelcomeSection>
 
+      {/* PLACEMENT DU COMPOSANT STATSBUBBLE ICI */}
+      <StatsBubble /> 
+
       <ContentGrid
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -112,11 +136,11 @@ const Dashboard = () => {
               {errorUserRecipes}
             </p>
           ) : (
-            // MODIFICATION CRUCIALE : Passage des fonctions d'édition et suppression
             <RecipeCarousel
               recipes={userRecipes}
-              onEditRecipe={handleEditRecipe} // La prop s'appelle onEditRecipe dans RecipeCarousel
-              onDeleteRecipe={handleDeleteRecipe} // La prop s'appelle onDeleteRecipe dans RecipeCarousel
+              onEditRecipe={handleEditRecipe}
+              onDeleteRecipe={handleDeleteRecipe}
+              onViewRecipeDetails={handleViewRecipeDetails} 
             />
           )}
         </MainContent>
@@ -138,15 +162,69 @@ const Dashboard = () => {
         </SidebarContent>
       </ContentGrid>
 
-      <StatsBubble />
-
       <RecipeFormModal
         isOpen={isRecipeFormModalOpen}
         onClose={handleCloseRecipeFormModal}
         onRecipeAdded={handleRecipeFormSuccess}
         onRecipeUpdated={handleRecipeFormSuccess}
-        recipeToEdit={recipeToEdit} // NOUVEAU : Passez la recette à éditer à la modale
+        recipeToEdit={recipeToEdit}
       />
+
+      {/* MODALE DE DÉTAIL DE RECETTE - Copiée de Recettes.jsx */}
+      <AnimatePresence>
+        {selectedRecipe && (
+          <ModalOverlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleCloseDetailsModal} // Fermer en cliquant sur l'overlay
+          >
+            <ModalContent
+              initial={{ y: "-100vh", opacity: 0 }}
+              animate={{ y: "0", opacity: 1, transition: { type: "spring", stiffness: 100, damping: 20 } }}
+              exit={{ y: "100vh", opacity: 0, transition: { duration: 0.2 } }}
+              onClick={(e) => e.stopPropagation()} // Empêche la fermeture si on clique dans la modale
+            >
+              <CloseButton onClick={handleCloseDetailsModal}>×</CloseButton>
+              {selectedRecipe.imageUrl && (
+                <ModalImage src={selectedRecipe.imageUrl} alt={selectedRecipe.nom} />
+              )}
+              <RecipeNameDetail>{selectedRecipe.nom}</RecipeNameDetail>
+
+              <div style={{ marginBottom: 'var(--space-4)', textAlign: 'center' }}>
+                {selectedRecipe.categorie && <Tag $isCategory>{selectedRecipe.categorie}</Tag>}
+                {selectedRecipe.sousCategorie && <Tag>{selectedRecipe.sousCategorie}</Tag>}
+              </div>
+
+              {selectedRecipe.description && (
+                <RecipeDescriptionDetail>{selectedRecipe.description}</RecipeDescriptionDetail>
+              )}
+
+              {selectedRecipe.ingredients && selectedRecipe.ingredients.length > 0 && (
+                <RecipeDetailsSection>
+                  <h3>Ingrédients</h3>
+                  <ul>
+                    {selectedRecipe.ingredients.map((ing, index) => (
+                      <li key={index}>{ing}</li>
+                    ))}
+                  </ul>
+                </RecipeDetailsSection>
+              )}
+
+              {selectedRecipe.etapes && selectedRecipe.etapes.length > 0 && (
+                <RecipeDetailsSection>
+                  <h3>Préparation</h3>
+                  <ol>
+                    {selectedRecipe.etapes.map((etape, index) => (
+                      <li key={index}>{etape}</li>
+                    ))}
+                  </ol>
+                </RecipeDetailsSection>
+              )}
+            </ModalContent>
+          </ModalOverlay>
+        )}
+      </AnimatePresence>
     </DashboardContainer>
   );
 };
