@@ -21,7 +21,7 @@ const RecipeCardStyled = styled(motion.div)`
   transform: rotate(calc((Math.random() - 0.5) * 3deg));
 
   width: 20vw;   
-  height: 30vw;  
+  height: 28vw;  
   min-width: 280px; 
   max-width: 350px; 
   min-height: 400px; 

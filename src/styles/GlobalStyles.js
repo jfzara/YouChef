@@ -70,7 +70,7 @@ const GlobalStyles = createGlobalStyle`
     --color-neutral-800: #222222;
     --color-neutral-900: #000000;
 
-    /* Adapter les couleurs de feedback si nécessaire, ou les garder comme des couleurs utilitaires */
+    /* Couleurs de feedback */
     --color-success-light: #E8F5E9;
     --color-success: #4CAF50;
     --color-success-dark: #2E7D32;
@@ -80,6 +80,9 @@ const GlobalStyles = createGlobalStyle`
     --color-error: #F44336;
     --color-error-dark: #D32F2F;
     --color-error-soft: #fbd6d6;
+    --color-error-500: #EF4444; /* Rouge standard pour la bordure d'erreur */
+    --color-error-800: #991B1B; /* Rouge foncé pour le texte d'erreur */
+
 
     --color-warning-light: #FFF8E1;
     --color-warning: #FFC107;
@@ -88,67 +91,49 @@ const GlobalStyles = createGlobalStyle`
     --color-info-light: #E3F2FD;
     --color-info: #2196F3;
     --color-info-dark: #1976D2;
- --color-accent-blue: #3E82F7; /* Un bleu vif */
-  --color-accent-blue-dark: #2A6DCF; /* Un bleu plus foncé pour la bordure/hover */
-  --color-accent-blue-light: #6BA8FF; /* Un bleu plus clair pour l'effet de bordure au survol */
+    --color-info-700: #0C4A6E; /* Bleu foncé pour les messages d'information */
+    --color-info-300: #90CAF9; /* Bleu clair pour les bordures d'image/info */
+    --color-info-500: #2196F3; /* Bleu standard pour les icônes d'info */
 
-   --color-accent-blue: #3E82F7;
-  --color-accent-blue-dark: #2A6DCF;
-  --color-accent-blue-light: #6BA8FF;
 
-  --color-accent-green: #4CAF50; /* Un vert vif */
-  --color-accent-green-dark: #388E3C; /* Un vert plus foncé */
-  --color-accent-green-light: #81C784; /* Un vert plus clair */
+    /* Couleurs d'accent */
+    --color-accent-blue: #3E82F7;
+    --color-accent-blue-dark: #2A6DCF;
+    --color-accent-blue-light: #6BA8FF;
 
-   --color-accent-purple: #8A2BE2; /* Un violet vif pour le bouton des stats */
-  --color-accent-purple-dark: #6A1FB6; /* Un violet plus foncé pour la bordure */
-  --color-accent-purple-light: #A052EE; /* Un violet plus clair pour le hover */
+    --color-accent-green: #4CAF50;
+    --color-accent-green-dark: #388E3C;
+    --color-accent-green-light: #81C784;
 
-  --color-tertiary-100: #E0F2F7; /* Un bleu très clair pour les cartes de stats */
-  --color-tertiary-300: #B3E5FC; /* Un bleu un peu plus prononcé pour la bordure des cartes de stats */
+    --color-accent-purple: #8A2BE2; /* Un violet vif pour le bouton des stats */
+    --color-accent-purple-dark: #6A1FB6; /* Un violet plus foncé pour la bordure */
+    --color-accent-purple-light: #A052EE; /* Un violet plus clair pour le hover */
 
-  /* Ajoutez également ces si vous ne les avez pas déjà, car elles sont utilisées par les "Cards" du Dashboard */
-  --color-accent-blue: #3E82F7;
-  --color-accent-blue-dark: #2A6DCF;
-  --color-accent-blue-light: #6BA8FF;
-  --color-accent-green: #4CAF50;
-  --color-accent-green-dark: #388E3C;
-  --color-accent-green-light: #81C784;
+    /* Couleurs pour les cartes de stats */
+    --color-tertiary-100: #E0F2F7; /* Un bleu très clair pour les cartes de stats */
+    --color-tertiary-300: #B3E5FC; /* Un bleu un peu plus prononcé pour la bordure des cartes de stats */
 
-    --color-error-soft: #FDECEC; /* Un rouge très pâle pour le fond du message d'erreur */
-  --color-error-500: #EF4444; /* Rouge standard pour la bordure d'erreur */
-  --color-error-800: #991B1B; /* Rouge foncé pour le texte d'erreur */
+    /* Couleurs pour le Rolodex et ses boutons */
+    --color-primary-100: #FFF3E0; /* Un jaune pâle pour le fond du Rolodex Container */
+    --color-primary-600: #FFA000; /* Un orange plus soutenu pour la bordure du Rolodex Container */
+    --color-primary-800: #E65100; /* Un orange très foncé pour les titres de carte */
 
-  --color-info-700: #0C4A6E; /* Bleu foncé pour les messages d'information */
+    --color-secondary-50: #F3F9F5; /* Un vert très pâle pour le fond des cartes du Rolodex */
+    --color-secondary-300: #A5D6A7; /* Un vert moyen pour la bordure des cartes du Rolodex */
+    --color-secondary-500: #4CAF50; /* Un vert standard pour d'autres éléments ou bordures */
 
- /* Couleurs pour le Rolodex et ses boutons */
-  --color-primary-100: #FFF3E0; /* Un jaune pâle pour le fond du Rolodex Container */
-  --color-primary-600: #FFA000; /* Un orange plus soutenu pour la bordure du Rolodex Container */
-  --color-primary-800: #E65100; /* Un orange très foncé pour les titres de carte */
+    --color-tertiary-500: #8D6E63; /* Un marron chaud pour les boutons de navigation */
+    --color-tertiary-600: #6D4C41; /* Un marron plus foncé pour le hover des boutons de navigation */
+    --color-tertiary-700: #4E342E; /* Un marron très foncé pour la bordure des boutons de navigation */
 
-  --color-secondary-50: #F3F9F5; /* Un vert très pâle pour le fond des cartes du Rolodex */
-  --color-secondary-300: #A5D6A7; /* Un vert moyen pour la bordure des cartes du Rolodex */
-  --color-secondary-500: #4CAF50; /* Un vert standard pour d'autres éléments ou bordures */
 
-  --color-tertiary-500: #8D6E63; /* Un marron chaud pour les boutons de navigation */
-  --color-tertiary-600: #6D4C41; /* Un marron plus foncé pour le hover des boutons de navigation */
-  --color-tertiary-700: #4E342E; /* Un marron très foncé pour la bordure des boutons de navigation */
+    /* Ombres de texte */
+    --shadow-text-xs: 0 1px 0px rgba(0,0,0,0.05);
+    --shadow-text-sm: 0 1px 1px rgba(0,0,0,0.1);
+    --shadow-text-md: 0 2px 2px rgba(0,0,0,0.15);
+    --shadow-text-lg: 0 3px 3px rgba(0,0,0,0.2);
 
-  --color-info-300: #90CAF9; /* Bleu clair pour les bordures d'image/info */
-  --color-info-500: #2196F3; /* Bleu standard pour les icônes d'info */
-  --color-info-700: #1976D2; /* Bleu foncé pour le texte d'info */
-
-  /* Couleurs d'erreur (assurez-vous qu'elles sont définies) */
-  --color-error-soft: #FDECEC;
-  --color-error-dark: #B91C1C; /* S'assurer que le texte d'erreur est bien lisible */
-
-  /* Ombres de texte */
-  --shadow-text-xs: 0 1px 0px rgba(0,0,0,0.05);
-  --shadow-text-sm: 0 1px 1px rgba(0,0,0,0.1);
-  --shadow-text-md: 0 2px 2px rgba(0,0,0,0.15);
-  --shadow-text-lg: 0 3px 3px rgba(0,0,0,0.2);
-
-    /* Espacement, Rayons, Ombres, Transitions, Z-index - Gardez-les, ils sont excellents */
+    /* Espacement, Rayons, Ombres, Transitions, Z-index */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;
@@ -198,7 +183,7 @@ const GlobalStyles = createGlobalStyle`
 
 
     /* Typographie - Mettre à jour avec les nouvelles polices */
-    --font-family-heading: 'Cabin Sketch', cursive; /* Ou 'Quicksand', sans-serif; si vous préférez */
+    --font-family-heading: 'Cabin Sketch', cursive; 
     --font-family-sans: 'Quicksand', sans-serif;
 
     --text-xs: 0.75rem;
@@ -214,10 +199,10 @@ const GlobalStyles = createGlobalStyle`
 
     --font-light: 300;
     --font-normal: 400;
-    --font-medium: 500; /* Quicksand n'a pas ce poids, utilisez semi-bold */
+    --font-medium: 500; 
     --font-semibold: 600;
     --font-bold: 700;
-    --font-extrabold: 800; /* Quicksand n'a pas ce poids */
+    --font-extrabold: 800; 
 
     --navbar-height: 5rem;
     --dashboard-blur: 0px;
@@ -235,9 +220,9 @@ const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     font-family: var(--font-family-sans);
-    color: var(--color-neutral-800); /* Garder un texte foncé pour la lisibilité */
+    color: var(--color-neutral-800); 
     line-height: 1.6;
-    background-color: var(--color-cream); /* Utilisation de votre nouvelle couleur crème pour le fond */
+    background-color: var(--color-cream); 
     position: relative;
     min-height: 100vh;
     overflow-x: hidden;
@@ -245,13 +230,10 @@ const GlobalStyles = createGlobalStyle`
     font-weight: var(--font-normal);
     font-size: var(--text-lg);
 
-    /* Gestion de l'image de fond pour un look plus "quirky" */
-   
-    background-position: center center; /* Ajusté */
+    background-position: center center; 
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
-    /* Pour un look "quirky", le flou peut être plus prononcé ou l'image plus abstraite/graphique */
     filter: blur(var(--dashboard-blur)) brightness(var(--dashboard-opacity));
     transition: filter 0.5s ease-in-out;
   }
@@ -261,14 +243,14 @@ const GlobalStyles = createGlobalStyle`
     line-height: 1.2;
     margin-top: var(--space-6);
     margin-bottom: var(--space-4);
-    color: var(--color-bright-pink-crayola); /* Utilisez une couleur plus vive pour les titres ! */
+    color: var(--color-bright-pink-crayola); 
   }
 
   a {
-    color: var(--color-salmon); /* Utilisez Salmon pour les liens */
+    color: var(--color-salmon); 
     text-decoration: none;
     &:hover {
-      color: var(--color-bright-pink-crayola); /* Un joli effet au survol */
+      color: var(--color-bright-pink-crayola); 
     }
   }
 
