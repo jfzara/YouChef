@@ -1,3 +1,5 @@
+
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled, { keyframes } from 'styled-components';
@@ -48,7 +50,7 @@ const hoverWiggle = keyframes`
 
 const NavButtonWrapper = styled.div`
   position: absolute;
-  top: 50%;
+  top: calc(50% - 2rem); /* Déplacé de 2rem vers le haut par rapport au centre */
   transform: translateY(-50%);
   z-index: 5;
   ${(props) => (props.direction === 'left' ? 'left: var(--space-4);' : 'right: var(--space-4);')}
@@ -159,7 +161,7 @@ const CarouselContainer = styled(motion.div)`
   width: 100%;
   max-width: 800px;
   margin: var(--space-8) auto;
-  min-height: 500px; 
+  min-height: 500px;
   
   display: flex;
   flex-direction: column;
