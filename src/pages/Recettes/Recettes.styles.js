@@ -134,7 +134,7 @@ export const RecipeMiniCard = styled(motion.div)`
   flex-direction: column;
   z-index: 1;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.5); /* Bordure légère */
+   
 
   /* Conteneur de l'image pour forcer le rapport d'aspect carré */
   .image-container {
@@ -166,7 +166,7 @@ export const RecipeMiniCard = styled(motion.div)`
   &:hover {
     transform: translateY(-5px) scale(1.02); /* Animation de survol plus légère */
     box-shadow: var(--shadow-md); /* Ombre au survol */
-    border-color: var(--color-primary-300); /* Changement de couleur de bordure au survol */
+    
   }
 
   @media (max-width: 768px) {
@@ -277,27 +277,44 @@ export const ModalContent = styled(motion.div)`
   }
 `;
 
+
+
+
+
 export const CloseButton = styled(motion.button)`
   position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
-  background: var(--color-neutral-200);
+  top: var(--space-3);
+  right: var(--space-3);
+  background: none;
   border: none;
-  border-radius: var(--radius-full);
-  width: 40px;
-  height: 40px;
+  font-size: 2rem;
+  font-weight: 600;
+  color: black; // Couleur par défaut du bouton/X si pas d'image
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
-  font-size: var(--text-xl);
-  color: var(--color-neutral-700);
-  transition: all 0.2s ease;
+  width:2.5rem;
+  height:2.5rem;
+  margin: 1rem;
+  text-align: center;
 
   &:hover {
-    background: var(--color-error);
-    color: white;
-    transform: rotate(90deg);
+    background: var(--color-error-light);
+     
+    transform: rotate(90deg)  ;
+  }
+
+  img {
+    width: 28px; /* Taille de l'icône - pour qu'elle soit carrée, gardez la même valeur pour width et height */
+    height: 28px; /* Taille de l'icône */
+    /* MODIFICATION ICI : Enlever ou ajuster le filtre pour un X noir */
+    filter: brightness(0) invert(1); /* Filtre pour rendre n'importe quelle icône blanche sur noir, ou inversement. Pour un X noir, c'est ce qu'il faut. */
+    /* OU si votre icône est déjà noire et que vous voulez la garder noire : */
+    /* filter: none; */
   }
 `;
 
