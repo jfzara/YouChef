@@ -1,42 +1,69 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components'; // Importez keyframes de styled-components !
 
-import RecipeCard from '../pages/Dashboard/RecipeCard';
+import RecipeCard from '../pages/Dashboard/RecipeCard'; // Assurez-vous que RecipeCard est bien ce que vous voulez afficher
+
+// --- Keyframes pour les animations des boutons ---
+// AUCUN MATH.RANDOM() DANS LES DÉFINITIONS KEYFRAMES pour éviter le TypeError !
+const bounceAndWiggle = keyframes`
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-3px) rotate(1deg); }
+  50% { transform: translateY(0) rotate(-1deg); }
+  75% { transform: translateY(-1px) rotate(0.5deg); }
+`;
+
+// Valeurs fixes pour le glitch, pas de Math.random() ici.
+const glitchEffect = keyframes`
+  0% { transform: scale(1.2) translateY(-10px) rotate(0deg) translateX(0px); filter: hue-rotate(0deg); }
+  20% { transform: scale(1.2) translateY(-10px) rotate(3deg) translateX(3px) skewX(3deg); filter: hue-rotate(8deg); }
+  40% { transform: scale(1.2) translateY(-10px) rotate(-2deg) translateX(-4px) skewX(-2deg); filter: hue-rotate(0deg); }
+  60% { transform: scale(1.2) translateY(-10px) rotate(1deg) translateX(2px) skewX(2deg); filter: hue-rotate(4deg); }
+  80% { transform: scale(1.2) translateY(-10px) rotate(-3deg) translateX(-3px) skewX(-3deg); filter: hue-rotate(0deg); }
+  100% { transform: scale(1.2) translateY(-10px) rotate(0deg) translateX(0px); filter: hue-rotate(0deg); }
+`;
+
+const pulseBorder = keyframes`
+  0% { border-color: var(--color-bright-pink-crayola); }
+  50% { border-color: var(--color-dark-purple); }
+  100% { border-color: var(--color-bright-pink-crayola); }
+`;
+
+const hoverWiggle = keyframes`
+  0%, 100% { transform: translateY(0) scale(1.1) rotate(0deg); }
+  25% { transform: translateY(-5px) scale(1.2) rotate(3deg); }
+  50% { transform: translateY(0) scale(1.1) rotate(-3deg); }
+  75% { transform: translateY(-2px) scale(1.15) rotate(1deg); }
+`;
 
 // --- Styles pour le Carrousel ---
 
 const CarouselContainer = styled(motion.div)`
   position: relative;
   width: 100%;
-  max-width: 1200px; /* Largeur maximale pour le desktop */
+  max-width: 1200px; 
   margin: 0 auto;
-  overflow: hidden; /* Important pour cacher les cartes en dehors de la vue */
-
+  overflow: hidden; 
+  padding: var(--space-3) 0; 
   
   border-radius: var(--radius-xl);
-
-  /* Glassmorphisme général pour le conteneur principal */
   background: rgba(255, 255, 255, 0.2); 
   border: 1px solid rgba(255, 255, 255, 0.3); 
   backdrop-filter: blur(10px); 
   -webkit-backdrop-filter: blur(10px); 
   box-shadow: var(--shadow-xl); 
 
-  /* Nouvelle structure en grille à 3 colonnes */
   display: grid;
   grid-template-columns: var(--button-column-width) 1fr var(--button-column-width); 
   gap: 0; 
   align-items: stretch; 
   justify-content: center; 
 
-  /* Tablette */
   @media (max-width: 1024px) {
     max-width: 800px;
-    padding: var(--space-2) 0; /* Réduit le padding vertical pour tablette */
+    padding: var(--space-2) 0;
   }
 
-  /* Mobile: une seule colonne, les boutons sont cachés */
   @media (max-width: 880px) {
     width: 95%; 
     max-width: unset; 
@@ -45,11 +72,113 @@ const CarouselContainer = styled(motion.div)`
   }
 `;
 
+// --- Definition du NavButton directement dans ce fichier ---
+const NavButton = styled(motion.button)`
+  background: var(--color-bright-pink-crayola);
+  color: var(--color-neutral-0);
+  border: 3px solid var(--color-bright-pink-crayola);
+  border-radius: var(--radius-full);
+  width: 60px; 
+  height: 60px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: var(--font-bold);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Rotation aléatoire initiale du bouton (ok ici car évalué une fois) */
+  transform: rotate(${(Math.random() - 0.5) * 8}deg); 
+  text-shadow: var(--shadow-text-sm);
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  font-family: 'Comic Sans MS', cursive;
+
+  span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--text-3xl); 
+    line-height: 1;
+    position: relative;
+    top: -3px;
+    z-index: 2;
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-out;
+  }
+
+  /* La classe occasional-wiggle est commentée/retirée des spans dans le JSX */
+  /* span.occasional-wiggle {
+    animation: ${bounceAndWiggle} 2s infinite ease-in-out;
+  } */
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0%;
+    height: 0%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+    opacity: 0;
+    z-index: -1;
+  }
+
+  &:hover {
+    background: var(--color-salmon);
+    border-color: var(--color-bright-pink-crayola);
+    /* Rotation aléatoire au survol (ok ici car évalué à chaque hover) */
+   
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    animation:  ${pulseBorder} 1s 1 alternate;
+    
+    span {
+      animation: ${hoverWiggle} 0.8s 1 ease-in-out;
+      transform: translateY(-2px) scale(1.1);
+    }
+
+    &::before {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    background: var(--color-bright-pink-crayola);
+    /* Rotation aléatoire au clic (ok ici car évalué à chaque active) */
+    transform: scale(0.85) translateY(2px) rotate(${(Math.random() - 0.5) * 5}deg);
+    box-shadow: var(--shadow-sm);
+    animation: none;
+  }
+
+  &:disabled {
+    background: var(--color-neutral-300);
+    color: var(--color-neutral-500);
+    border-color: var(--color-neutral-400);
+    cursor: not-allowed;
+    box-shadow: var(--shadow-sm);
+    transform: none;
+    animation: none;
+    pointer-events: none;
+    opacity: 0.7;
+    
+    span {
+      animation: none;
+      transform: translateY(-2px);
+    }
+  }
+`;
+
 const NavButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem; /* Réduit le padding interne des wrappers de boutons */
+  padding: 1rem;
   height: 100%; 
 
   background: rgba(255, 255, 255, 0.2); 
@@ -58,7 +187,6 @@ const NavButtonWrapper = styled.div`
   -webkit-backdrop-filter: blur(10px); 
   box-shadow: var(--shadow-xl); 
 
-  /* Styles de bordure pour les coins du conteneur principal */
   &.left {
     border-right: none; 
     border-top-left-radius: var(--radius-xl);
@@ -77,19 +205,18 @@ const NavButtonWrapper = styled.div`
 `;
 
 const CarouselInner = styled.div`
-  display: flex; 
-  justify-content: center; 
-  align-items: center;
-  padding: 1rem; /* Réduit le padding interne de la zone de la carte */
-  overflow: hidden; 
+  position: relative; /* Important pour positionner les cartes absolument */
   width: 100%; 
   min-height: 47vh; 
+  display: flex; /* Utilisez flexbox pour le centrage si nécessaire, mais absolute prend le dessus */
+  justify-content: center;
+  align-items: center;
+  padding: 1rem; 
+  overflow: hidden; 
 
-@media (max-width: 880px){
-   min-height: 31vh; 
-}
-
-
+  @media (max-width: 880px){
+    min-height: 31vh; 
+  }
 `;
 
 const CarouselItemWrapper = styled(motion.div)`
@@ -100,34 +227,7 @@ const CarouselItemWrapper = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Assure que la carte ne se décale pas si son opacité est 0 */
-  position: absolute; 
-`;
-
-const NavButton = styled(motion.button)`
-  margin: 5px; 
-  background: var(--color-bright-pink-crayola); 
-  color: var(--color-neutral-0);
-  border: none;
-  border-radius: var(--radius-full); 
-  width: 50px;
-  height: 50px; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 2px; 
-
-  font-size: var(--text-2xl);
-  cursor: pointer;
-  box-shadow: var(--shadow-md);
-  z-index: 10;
-  opacity: 1; 
-  transition: opacity 0.2s ease, background 0.2s ease, transform 0.2s ease;
-
-  &:hover {
-    background: #e04566; 
-    transform: scale(1.05); 
-  }
+  position: absolute; /* Permet aux cartes de se superposer pour l'animation */
 `;
 
 const DotsContainer = styled.div`
@@ -184,52 +284,79 @@ const RecipeCarousel = ({ recipes }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const containerRef = useRef(null); 
   const [direction, setDirection] = useState(0); 
+  // [wiggleClass, setWiggleClass] est maintenu pour le cas où vous le réactiveriez plus tard
+  // mais il n'est plus utilisé dans le JSX des NavButton.
+  const [wiggleClass, setWiggleClass] = useState(''); 
 
-  // Variants pour l'animation d'entrée/sortie des cartes - SEULEMENT OPACITÉ (Fondu)
+  // Effet pour déclencher le "wiggle" occasionnel sur les boutons (logique maintenue au cas où)
+  useEffect(() => {
+    // Cette fonction ne sera plus appelée si occasional-wiggle n'est pas utilisé dans le JSX
+    const startWiggleInterval = () => {
+      setWiggleClass('occasional-wiggle');
+      const wiggleTimeout = setTimeout(() => {
+        setWiggleClass('');
+      }, 2000); 
+
+      const nextWiggleTime = 10000 + Math.random() * 5000; 
+      return setTimeout(startWiggleInterval, nextWiggleTime);
+    };
+
+    let intervalId = startWiggleInterval();
+
+    return () => {
+      clearTimeout(intervalId);
+    };
+  }, []); 
+
+  // --- Variants pour l'animation d'entrée/sortie des cartes (du Rolodex) ---
   const cardVariants = {
-    // La carte "entre" en fondu
-    enter: {
+    enter: (direction) => ({
       opacity: 0,
-    },
-    // La carte est au centre de l'écran
+      rotateY: direction > 0 ? 90 : -90, 
+      scale: 0.8,
+      x: direction > 0 ? 200 : -200, 
+    }),
     center: {
       opacity: 1,
+      rotateY: 0,
+      scale: 1,
+      x: 0,
       transition: {
-        type: "tween", 
-        duration: 0.3, 
-        ease: "easeOut", 
+        type: "spring", 
+        stiffness: 200,
+        damping: 15
       }
     },
-    // La carte "sort" en fondu
-    exit: {
+    exit: (direction) => ({
       opacity: 0,
+      rotateY: direction > 0 ? -90 : 90, 
+      scale: 0.8,
+      x: direction > 0 ? -200 : 200, 
       transition: {
-        type: "tween", 
-        duration: 0.3, 
-        ease: "easeIn", 
+        type: "spring", 
+        stiffness: 200,
+        damping: 15
       }
-    }
+    })
   };
 
   const calculateLayout = useCallback(() => {
     if (!containerRef.current) return;
 
-    // Utilisation de vw pour la largeur de la carte
     let targetCardWidthVW; 
     let buttonColumnWidth;
 
-    if (window.innerWidth <= 880) { // Mobile
-      targetCardWidthVW = 75; // 75% de la largeur du viewport pour mobile
+    if (window.innerWidth <= 880) { 
+      targetCardWidthVW = 75; 
       buttonColumnWidth = 0; 
-    } else if (window.innerWidth <= 1024) { // Tablette
-      targetCardWidthVW = 35; // 35% de la largeur du viewport pour tablette
+    } else if (window.innerWidth <= 1024) { 
+      targetCardWidthVW = 35; 
       buttonColumnWidth = 100; 
-    } else { // Desktop
-      targetCardWidthVW = 25; // 25% de la largeur du viewport pour desktop
+    } else { 
+      targetCardWidthVW = 25; 
       buttonColumnWidth = 120; 
     }
 
-    // Convertir vw en une chaîne CSS valide
     containerRef.current.style.setProperty('--card-actual-width', `${targetCardWidthVW}vw`);
     containerRef.current.style.setProperty('--button-column-width', `${buttonColumnWidth}px`);
 
@@ -249,6 +376,8 @@ const RecipeCarousel = ({ recipes }) => {
   const scroll = (newDirection) => {
     const totalItems = recipes.length;
     let newIndex = currentIndex + newDirection;
+
+    if (totalItems === 0) return; 
 
     if (newIndex < 0) {
       newIndex = totalItems - 1; 
@@ -295,11 +424,9 @@ const RecipeCarousel = ({ recipes }) => {
       transition={{ duration: 0.5, delay: 0.3 }}
     >
       <NavButtonWrapper className="left">
-        <NavButton 
-          onClick={() => scroll(-1)} 
-          whileTap={{ scale: 0.9 }}
-        >
-          &larr;
+        <NavButton onClick={() => scroll(-1)} whileTap={{ scale: 0.85 }}>
+          {/* Supprimé : className={wiggleClass} */}
+          <span>&larr;</span>
         </NavButton>
       </NavButtonWrapper>
 
@@ -313,10 +440,9 @@ const RecipeCarousel = ({ recipes }) => {
               initial="enter" 
               animate="center" 
               exit="exit" 
-              // drag="x"  
-              // dragConstraints={{ left: 0, right: 0 }} 
-              // onDragEnd={handleDragEnd} 
-              dragElastic={0.5} 
+              drag="x" 
+              onDragEnd={handleDragEnd} 
+              dragConstraints={{ left: 0, right: 0 }} 
             >
               <RecipeCard recipe={recipes[currentIndex]} />
             </CarouselItemWrapper>
@@ -325,11 +451,9 @@ const RecipeCarousel = ({ recipes }) => {
       </CarouselInner>
 
       <NavButtonWrapper className="right">
-        <NavButton 
-          onClick={() => scroll(1)} 
-          whileTap={{ scale: 0.9 }}
-        >
-          &rarr;
+        <NavButton onClick={() => scroll(1)} whileTap={{ scale: 0.85 }}>
+          {/* Supprimé : className={wiggleClass} */}
+          <span>&rarr;</span>
         </NavButton>
       </NavButtonWrapper>
 

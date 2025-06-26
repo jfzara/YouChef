@@ -213,7 +213,7 @@ const RolodexNavigation = styled.div`
   justify-content: center;
   gap: var(--space-6);
   z-index: 2;
-  padding-bottom: var(--space-2);
+
 
   /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
   @media (max-width: 880px) {
