@@ -65,7 +65,7 @@ const MainTitle = styled(motion.h1)`
   color: var(--color-bright-pink-crayola);
   margin-bottom: var(--space-4);
   line-height: 1.1;
-  text-shadow: 4px 4px 0px var(--color-salmon);
+
 
   @media (max-width: 1024px) {
     font-size: var(--text-5xl);

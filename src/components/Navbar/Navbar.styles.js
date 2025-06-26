@@ -1,14 +1,13 @@
-// src/components/Navbar/Navbar.styles.js
+
+
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
 export const StyledNavbar = styled(motion.nav)`
   background-color: var(--color-light-sky-blue);
-  height: var(--navbar-height);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 var(--space-4);
   box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
@@ -24,10 +23,20 @@ export const NavContainer = styled.div`
   max-width: 1200px;
   padding: 0 var(--space-4);
 
-  @media (max-width: 768px) {
+  @media (max-width: 880px) {
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+    padding-bottom: calc(var(--space-2));
+  }
+
+  @media (max-width: 490px) {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 5vh;
+    padding-bottom: calc(var(--space-4) + 2rem);
+    height: 14vh;
   }
 `;
 
@@ -42,14 +51,15 @@ export const Brand = styled.div`
   cursor: pointer;
   transition: var(--transition-fast);
   padding: var(--space-2);
+  white-space: nowrap;
 
   &:hover {
     color: var(--color-salmon);
     transform: scale(1.02);
   }
 
-  @media (max-width: 768px) {
-    font-size: var(--text-xl);
+  @media (max-width: 880px) {
+    font-size: var(--text-2xl);
   }
 `;
 
@@ -65,6 +75,10 @@ export const BrandIcon = styled.span`
     transform: rotate(10deg) scale(1.1);
     color: var(--color-bright-pink-crayola);
   }
+
+  @media (max-width: 880px) {
+    font-size: var(--text-3xl);
+  }
 `;
 
 export const MenuToggle = styled.button`
@@ -74,13 +88,21 @@ export const MenuToggle = styled.button`
   cursor: pointer;
   padding: var(--space-2);
   z-index: var(--z-mid);
+  position: relative;
 
-  @media (max-width: 768px) {
+  @media (max-width: 880px) {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     width: var(--space-8);
     height: var(--space-8);
+  }
+
+  @media (max-width: 490px) {
+    align-self: center;
+    order: 2;
+    width: var(--space-9);
+    height: var(--space-9);
   }
 `;
 
@@ -92,7 +114,6 @@ export const ToggleSpan = styled.span`
   border-radius: var(--radius-full);
   transition: all 0.3s ease-in-out;
 
-  /* Correction ici : Utilisez les props directement sur ToggleSpan */
   ${props => props.$isOpen && `
     &:nth-child(1) {
       transform: rotate(45deg) translate(5px, 5px);
@@ -111,21 +132,38 @@ export const NavLinks = styled.ul`
   margin: 0;
   padding: 0;
   display: flex;
-  gap: var(--space-6);
+  gap: var(--space-6); /* Gap entre les liens sur desktop */
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    width: 100%;
-    background-color: var(--color-light-sky-blue);
-    position: absolute;
-    top: var(--navbar-height);
-    left: 0;
-    padding: var(--space-8) var(--space-4);
+  @media (max-width: 880px) {
+    flex-direction: row; /* Affiche les liens en ligne */
+    justify-content: space-around; /* Distribue l'espace entre les liens */
+    align-items: center; /* Centre verticalement les liens */
+    width: 100%; /* LE CONTENEUR PREND 100% DE LA LARGEUR DISPONIBLE */
     box-shadow: var(--shadow-lg);
+    
+    /* Styles pour le menu coulissant (si le menu burger est utilisé) */
     transform: translateX(${props => (props.$isOpen ? '0' : '100%')});
     transition: transform 0.3s ease-in-out;
     opacity: ${props => (props.$isOpen ? '1' : '0')};
     pointer-events: ${props => (props.$isOpen ? 'auto' : 'none')};
+    
+    padding: var(--space-2) var(--space-4); /* Padding plus compact du conteneur */
+    height: var(--navbar-height); /* Hauteur fixe pour la ligne de liens */
+    position: relative; /* Réinitialise la position si le menu n'est pas coulissant */
+    top: auto;
+    left: auto;
+    background-color: var(--color-light-sky-blue);
+  }
+
+  @media (max-width: 490px) {
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%; /* Également 100% pour les très petits écrans */
+    padding: var(--space-2) var(--space-2); /* Padding ajusté pour les très petits */
+    height: var(--navbar-height);
+    position: absolute; /* Si le menu doit glisser hors de l'écran en largeur */
+    top: var(--navbar-height); /* Positionne sous la navbar si elle a une hauteur fixe */
+    left: 0;
   }
 `;
 
@@ -141,6 +179,10 @@ export const StyledNavLink = styled(motion.a)`
   display: flex;
   align-items: center;
   position: relative;
+  flex: 1; /* Chaque lien prend une part égale de l'espace disponible */
+  justify-content: center; /* Centre le contenu du lien horizontalement */
+  text-align: center; /* Assure que le texte est centré dans sa cellule */
+  white-space: nowrap; /* Empêche le texte de se casser sur plusieurs lignes */
 
   &:hover {
     color: var(--color-bright-pink-crayola);
@@ -154,8 +196,13 @@ export const StyledNavLink = styled(motion.a)`
   }
 
   @media (max-width: 768px) {
-    padding: var(--space-4);
-    font-size: var(--text-xl);
+    padding: var(--space-2); /* Un padding plus petit pour les cellules horizontales */
+    font-size: var(--text-lg); /* Peut-être revenir à une taille un peu plus petite pour que ça tienne */
+  }
+
+  @media (max-width: 490px) {
+    font-size: var(--text-sm); /* Encore plus petit pour les très petits mobiles si nécessaire */
+    padding: var(--space-1); /* Encore moins de padding pour les très petits mobiles */
   }
 `;
 
@@ -172,7 +219,6 @@ export const NotificationBadge = styled.span`
   transform: translate(50%, -50%);
   display: none;
 
-  /* Correction ici : Utilisez les props directement sur NotificationBadge */
   ${props => props.$hasNotificationBadge && `
     display: block;
   `}
