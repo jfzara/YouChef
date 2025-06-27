@@ -175,6 +175,9 @@ export const StyledNavLink = styled(motion.a)`
   justify-content: center; /* Centre le contenu du lien horizontalement */
   text-align: center; /* Assure que le texte est centré */
   white-space: nowrap; /* Empêche le texte de se casser sur plusieurs lignes */
+  min-width: fit-content; /* S'assure que le background contient le texte */
+  min-width: -moz-fit-content; /* Pour compatibilité Firefox */
+
 
   &:hover {
     color: var(--color-bright-pink-crayola);
@@ -189,14 +192,14 @@ export const StyledNavLink = styled(motion.a)`
 
   @media (max-width: 978px) {
     width: 80%; /* Prendre une grande partie de la largeur pour les liens du menu */
-    padding: var(--space-2); /* Réduit le padding des liens individuels pour tablette */
+    padding: var(--space-2) var(--space-4); /* Ajuste le padding, en s'assurant d'un minimum de 1rem inline */
     font-size: var(--text-lg); /* Réduit la taille de police pour les tablettes */
   }
 
   @media (max-width: 490px) {
     width: 90%; /* Ajuster la largeur pour les très petits écrans */
     font-size: var(--text-base); /* Réduit encore la taille de police pour les mobiles étroits */
-    padding: var(--space-2); /* Garde le padding réduit pour les très petits écrans */
+    padding: var(--space-2) var(--space-4); /* Garde le padding avec un minimum de 1rem inline */
   }
 `;
 
@@ -236,6 +239,8 @@ export const LogoutButton = styled(motion.button)`
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: var(--transition-base);
+  min-width: fit-content; /* S'assure que le background contient le texte */
+  min-width: -moz-fit-content; /* Pour compatibilité Firefox */
   
   &:hover {
     background-color: var(--color-salmon);
@@ -246,14 +251,14 @@ export const LogoutButton = styled(motion.button)`
   @media (max-width: 978px) {
     width: 80%;
     margin-top: var(--space-4); /* Réduit l'espace au-dessus du bouton de déconnexion pour tablette */
-    padding: 0.5rem var(--space-4); /* Ajuste légèrement le padding du bouton pour tablette */
+    padding: 0.5rem var(--space-4); /* Ajuste le padding du bouton, en s'assurant d'un minimum de 1rem inline */
     font-size: var(--text-base); /* Réduit la taille de police du bouton pour tablette */
   }
 
   @media (max-width: 490px) {
     width: 90%;
     margin-top: var(--space-3); /* Encore plus réduit pour les mobiles */
-    padding: 0.4rem var(--space-3); /* Et le padding du bouton pour les petits écrans */
+    padding: 0.4rem var(--space-4); /* Et le padding du bouton avec un minimum de 1rem inline */
     font-size: var(--text-sm); /* Et la taille de police pour les petits écrans */
   }
 `;
