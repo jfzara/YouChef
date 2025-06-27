@@ -1,25 +1,24 @@
+
 // src/pages/Recettes/Recettes.styles.js
 
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
-// --- Styled Components pour la Page de Recettes ---
-
 export const RecettesContainer = styled(motion.div)`
   min-height: 100vh;
   padding: var(--space-8) 0;
-  background: var(--gradient-mesh); /* Votre fond mesh existant */
+  background: var(--gradient-mesh);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centrer horizontalement */
+  align-items: center;
 
-  /* --- MODIFICATION ICI : Application conditionnelle du filtre et des événements de pointeur --- */
-  filter: ${props => props.$isModalOpen ? 'blur(5px) brightness(0.7)' : 'none'};
-  transition: filter 0.5s ease-in-out;
-  pointer-events: ${props => props.$isModalOpen ? 'none' : 'auto'};
-  /* ----------------------------------------------------------------------------------------- */
+  /* --- MODIFICATION ICI : Suppression des styles de filtre et de pointer-events --- */
+  /* filter: ${props => props.$isModalOpen ? 'blur(5px) brightness(0.7)' : 'none'}; */
+  /* transition: filter 0.5s ease-in-out; */
+  /* pointer-events: ${props => props.$isModalOpen ? 'none' : 'auto'}; */
+  /* --------------------------------------------------------------------------------- */
 `;
 
 export const PageTitle = styled(motion.h1)`
@@ -54,12 +53,11 @@ export const PageTitle = styled(motion.h1)`
   }
 `;
 
-// NOUVEAU: Conteneur pour les boutons de catégorie/filtres
 export const CategoryFilterContainer = styled(motion.div)`
   display: flex;
-  flex-wrap: wrap; /* Permet aux boutons de passer à la ligne sur petits écrans */
+  flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-3); /* Espacement entre les boutons */
+  gap: var(--space-3);
   margin: var(--space-8) auto;
   padding: 0 var(--space-4);
   max-width: 1200px;
@@ -73,7 +71,6 @@ export const CategoryFilterContainer = styled(motion.div)`
   }
 `;
 
-// NOUVEAU: Bouton de catégorie/filtre
 export const CategoryButton = styled(motion.button)`
   background-color: ${props => props.$isActive ? 'var(--color-primary-500)' : 'rgba(255, 255, 255, 0.7)'};
   color: ${props => props.$isActive ? 'white' : 'var(--color-neutral-700)'};
@@ -106,36 +103,31 @@ export const CategoryButton = styled(motion.button)`
   }
 `;
 
-
-// ANCIEN: CategorySection et CategoryTitle sont supprimés ou non exportés car la navigation change
-// ANCIEN: SubCategoryArticle et SubCategoryTitle sont supprimés
-
 export const RecipeGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Plus petit pour voir plus de cartes */
-  gap: var(--space-6); /* Espacement légèrement réduit */
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-6);
   width: 100%;
   max-width: 1200px;
   padding: 0 var(--space-4);
-  margin: var(--space-8) auto; /* Ajustez la marge pour l'espacement après les filtres */
+  margin: var(--space-8) auto;
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: var(--space-5);
   }
   @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Encore plus petit sur mobile */
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: var(--space-4);
     padding: 0 var(--space-3);
   }
 `;
 
-// NOUVEAU: RecipeMiniCard (remplace RecipeCard)
 export const RecipeMiniCard = styled(motion.div)`
   background: white;
-  border-radius: var(--radius-xl) ; /* Légèrement plus petit que 3xl pour un look plus compact */
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: var(--shadow-sm); /* Ombre plus subtile */
+  box-shadow: var(--shadow-sm);
   position: relative;
   cursor: pointer;
   display: flex;
@@ -143,14 +135,12 @@ export const RecipeMiniCard = styled(motion.div)`
   z-index: 1;
   text-align: center;
     
-
-  /* Conteneur de l'image pour forcer le rapport d'aspect carré */
   .image-container {
     width: 100%;
-    padding-bottom: 100%; /* Rapport 1:1 pour une image carrée */
+    padding-bottom: 100%;
     position: relative;
     overflow: hidden;
-    background-color: var(--color-neutral-200); /* Couleur de fond si l'image ne charge pas */
+    background-color: var(--color-neutral-200);
   }
 
   .image-container img {
@@ -159,22 +149,21 @@ export const RecipeMiniCard = styled(motion.div)`
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Assure que l'image couvre l'espace sans distorsion */
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0; /* Rayon sur l'image aussi */
+    object-fit: cover;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   }
 
   .recipe-info {
-    padding: var(--space-3) var(--space-2); /* Padding réduit pour plus de compacité */
+    padding: var(--space-3) var(--space-2);
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centrer le contenu verticalement */
-    flex-grow: 1; /* Permet au contenu de prendre l'espace restant */
+    justify-content: center;
+    flex-grow: 1;
   }
 
   &:hover {
-    transform: translateY(-5px) scale(1.02); /* Animation de survol plus légère */
-    box-shadow: var(--shadow-md); /* Ombre au survol */
-    
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--shadow-md);
   }
 
   @media (max-width: 768px) {
@@ -185,42 +174,35 @@ export const RecipeMiniCard = styled(motion.div)`
   }
 `;
 
-// NOUVEAU: RecipeName pour la mini-carte (plus petit)
 export const RecipeMiniName = styled.h4`
   font-family: var(--font-family-heading);
-  font-size: var(--text-base); /* Taille réduite */
-  font-weight: var(--font-semibold); /* Moins gras pour la compacité */
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
   color: var(--color-neutral-800);
-  margin-bottom: 0; /* Pas de marge en bas */
+  margin-bottom: 0;
   line-height: 1.3;
-  display: -webkit-box; /* Pour tronquer le texte si trop long */
-  -webkit-line-clamp: 2; /* Limiter à 2 lignes */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis; /* Ajouter des points de suspension */
+  text-overflow: ellipsis;
 
   @media (max-width: 768px) {
     font-size: var(--text-sm);
   }
 `;
 
-// NOUVEAU: Composant pour les images des recettes (à utiliser dans RecipeMiniCard)
 export const RecipeImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-xl); /* Bords légèrement arrondis pour l'image */
+  border-radius: var(--radius-xl);
   
   @media (max-width: 768px) {
     border-radius: var(--radius-lg);
   }
 `;
 
-
-// ANCIEN: RecipeName, RecipeDescription, Tag restent, mais seront utilisés DANS LA MODALE.
-// Pour la mini-carte, on utilise RecipeMiniName.
-
-// EXPORTATIONS DES ANCIENS ÉLÉMENTS QUI POURRAIENT ÊTRE UTILISÉS DANS LA MODALE
 export const RecipeNameDetail = styled.h2`
   font-family: var(--font-display);
   font-size: var(--text-4xl);
@@ -250,21 +232,21 @@ export const Tag = styled.span`
   text-transform: capitalize;
   background-color: ${props => props.$isCategory ? 'var(--soft-green-100)' : 'var(--soft-blue-100)'};
   color: ${props => props.$isCategory ? 'var(--soft-green-700)' : 'var(--soft-blue-700)'};
-  white-space: nowrap; /* Empêche le tag de se casser sur plusieurs lignes */
+  white-space: nowrap;
 `;
 
 export const ModalOverlay = styled(motion.div)`
-  position: fixed; /* TRÈS IMPORTANT : Doit être fixed */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.6); /* L'assombrissement doit venir de l'overlay lui-même */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(5px);
+  z-index: var(--z-modal); /* Assurez-vous que c'est une valeur élevée */
+  /* backdrop-filter: blur(5px); // On ne le met pas ici, car il est sur le body maintenant */
 `;
 
 export const ModalContent = styled(motion.div)`
@@ -276,30 +258,8 @@ export const ModalContent = styled(motion.div)`
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: var(--shadow-xl);
-  position: relative; /* Changez ceci pour 'relative' si l'overlay gère déjà le centrage, ou 'absolute' avec top/left/transform pour centrage auto */
-
-  /* --- AJOUTS / MODIFICATIONS CLÉS POUR LE CENTRAGE --- */
-  /* Si ModalOverlay a display: flex et align-items/justify-content: center,
-     ModalContent n'a pas besoin de position: fixed/absolute ou de top/left/transform pour le centrage.
-     Il sera centré par son parent flex.
-     Cependant, l'animation vient perturber ce centrage si elle utilise y: "..."
-  */
-
-  /* Si vous voulez que la modale sorte et rentre du centre, ajustez les variantes dans Recettes.jsx */
-  /* Pour un centrage parfait et que l'animation de Framer Motion se fasse DUPUIS le centre,
-     on va ajuster les VARIANTS dans Recettes.jsx et s'assurer que ModalContent est centré de base.
-  */
-  
-  /* Retirons les propriétés de centrage qui peuvent entrer en conflit si le parent est flex */
-  /* Les propriétés suivantes sont souvent utilisées pour centrer un élément ABSOLUTE/FIXED,
-     mais si le parent (ModalOverlay) est un conteneur flex qui centre ses enfants,
-     elles peuvent être redondantes ou causer des conflits avec Framer Motion. */
-  /*
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  */
+  position: relative;
+  /* On ne met pas de filter ou transform ici, l'overlay gère le centrage */
 
   @media (max-width: 768px) {
     padding: var(--space-6);
@@ -315,7 +275,7 @@ export const CloseButton = styled(motion.button)`
   border: none;
   font-size: 2rem;
   font-weight: 600;
-  color: black; // Couleur par défaut du bouton/X si pas d'image
+  color: black;
   cursor: pointer;
   padding: var(--space-2);
   border-radius: var(--radius-md);
@@ -330,23 +290,19 @@ export const CloseButton = styled(motion.button)`
 
   &:hover {
     background: var(--color-error-light);
-      
-    transform: rotate(90deg)  ;
+    transform: rotate(90deg);
   }
 
   img {
-    width: 28px; /* Taille de l'icône - pour qu'elle soit carrée, gardez la même valeur pour width et height */
-    height: 28px; /* Taille de l'icône */
-    /* MODIFICATION ICI : Enlever ou ajuster le filtre pour un X noir */
-    filter: brightness(0) invert(1); /* Filtre pour rendre n'importe quelle icône blanche sur noir, ou inversement. Pour un X noir, c'est ce qu'il faut. */
-    /* OU si votre icône est déjà noire et que vous voulez la garder noire : */
-    /* filter: none; */
+    width: 28px;
+    height: 28px;
+    filter: brightness(0) invert(1);
   }
 `;
 
 export const ModalImage = styled.img`
   width: 100%;
-  height: 300px; /* Hauteur fixe pour l'image en modale */
+  height: 300px;
   object-fit: cover;
   border-radius: var(--radius-xl);
   margin-bottom: var(--space-6);

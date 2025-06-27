@@ -1,17 +1,16 @@
 // src/pages/Recettes/Recettes.jsx
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { useAnimation, AnimatePresence } from 'framer-motion'; // Importe AnimatePresence
+import { useAnimation, AnimatePresence } from 'framer-motion';
 import axios from "../../api/axiosInstance";
 
 import {
   RecettesContainer,
   PageTitle,
   RecipeGrid,
-  RecipeMiniCard, // Nouveau nom pour les cartes compactes
-  RecipeMiniName, // Nouveau nom pour le titre compact
-  RecipeImage,    // Nouveau pour les images de carte
-  // Importation des éléments pour la modale
+  RecipeMiniCard,
+  RecipeMiniName,
+  RecipeImage,
   ModalOverlay,
   ModalContent,
   CloseButton,
@@ -20,7 +19,6 @@ import {
   RecipeDescriptionDetail,
   RecipeDetailsSection,
   Tag,
-  // Nouveaux imports pour les filtres de catégorie
   CategoryFilterContainer,
   CategoryButton,
 } from './Recettes.styles';
@@ -28,10 +26,9 @@ import {
 import {
   categoryColors,
   hoverAnimations,
-  cardBackgroundImages // Utilisé comme fallback si pas d'image spécifique
+  cardBackgroundImages
 } from '../../data/recettesData';
 
-// --- Nouveau Styled Component pour les messages d'état (inchangé) ---
 import styled from 'styled-components';
 const StatusMessage = styled.p`
   text-align: center;
@@ -49,18 +46,16 @@ const StatusMessage = styled.p`
   }
 `;
 
-// --- Composant Recettes ---
 const Recettes = () => {
-  const [recettes, setRecettes] = useState({}); // Les recettes regroupées par catégorie
-  const [allRecettesFlat, setAllRecettesFlat] = useState([]); // Toutes les recettes à plat
+  const [recettes, setRecettes] = useState({});
+  const [allRecettesFlat, setAllRecettesFlat] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeCategory, setActiveCategory] = useState("Toutes"); // Nouvelle état pour la catégorie active
-  const [selectedRecipe, setSelectedRecipe] = useState(null); // Pour la modale de détail
+  const [activeCategory, setActiveCategory] = useState("Toutes");
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   const controls = useAnimation();
 
-  // Animations (conservées et adaptées si besoin)
   const mainContainerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
@@ -71,7 +66,7 @@ const Recettes = () => {
     visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100, damping: 15 } },
   };
 
-  const cardVariants = { // Adaptées pour les mini-cartes
+  const cardVariants = {
     hidden: { opacity: 0, scale: 0.8, y: 20 },
     visible: {
       opacity: 1, scale: 1, y: 0,
@@ -79,7 +74,6 @@ const Recettes = () => {
     },
   };
 
-  // Variantes pour la modale
   const modalOverlayVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.3 } },
@@ -92,7 +86,6 @@ const Recettes = () => {
     exit: { y: "100vh", opacity: 0, transition: { duration: 0.2 } }
   };
 
-
   useEffect(() => {
     const fetchRecettes = async () => {
       try {
@@ -102,7 +95,6 @@ const Recettes = () => {
         console.log("✅ Données reçues:", data);
 
         const regroupées = {};
-        // Initialiser "Toutes" comme une catégorie contenant toutes les recettes
         const allRecipesArray = [];
 
         data.forEach(recette => {
@@ -113,12 +105,11 @@ const Recettes = () => {
           if (!regroupées[cat][sousCat]) regroupées[cat][sousCat] = [];
           regroupées[cat][sousCat].push(recette);
 
-          allRecipesArray.push(recette); // Ajouter à la liste "Toutes"
+          allRecipesArray.push(recette);
         });
 
-        // Ajout de la catégorie "Toutes" au début de l'objet regroupées
         setRecettes({ "Toutes": { "Tous": allRecipesArray }, ...regroupées });
-        setAllRecettesFlat(allRecipesArray); // Stocke la liste à plat pour un filtrage facile
+        setAllRecettesFlat(allRecipesArray);
         controls.start("visible");
 
       } catch (err) {
@@ -137,32 +128,57 @@ const Recettes = () => {
     fetchRecettes();
   }, [controls]);
 
+  // --- NOUVEAU useEffect pour gérer le style du body ---
+  useEffect(() => {
+    if (selectedRecipe) {
+      document.body.style.overflow = 'hidden'; // Cache la barre de défilement
+      document.body.style.filter = 'blur(5px) brightness(0.7)'; // Applique le flou et l'assombrissement
+      document.body.style.transition = 'filter 0.3s ease-in-out'; // Transition douce
+      document.body.style.pointerEvents = 'none'; // Désactive les événements sur le fond flouté
 
-  // Fonction pour gérer le clic sur une catégorie
+      // Calculer la largeur de la barre de défilement pour éviter le "saut" de contenu
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+    } else {
+      document.body.style.overflow = ''; // Rétablit le défilement
+      document.body.style.filter = ''; // Retire le flou
+      document.body.style.transition = ''; // Retire la transition
+      document.body.style.pointerEvents = ''; // Rétablit les événements
+      document.body.style.paddingRight = ''; // Retire le padding
+    }
+    // Nettoyage à l'unmount ou si la recette est désélectionnée
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.filter = '';
+      document.body.style.transition = '';
+      document.body.style.pointerEvents = '';
+      document.body.style.paddingRight = '';
+    };
+  }, [selectedRecipe]);
+  // ----------------------------------------------------
+
+
   const handleCategoryChange = useCallback((category) => {
     setActiveCategory(category);
   }, []);
 
-  // Fonction pour ouvrir la modale de détail
   const openRecipeModal = useCallback((recipe) => {
     setSelectedRecipe(recipe);
   }, []);
 
-  // Fonction pour fermer la modale de détail
   const closeRecipeModal = useCallback(() => {
     setSelectedRecipe(null);
   }, []);
 
-  // Filtrer les recettes basées sur la catégorie active
   const filteredRecettes = useMemo(() => {
     if (activeCategory === "Toutes") {
-      // Retourne une structure similaire pour la catégorie "Toutes"
       return { "Toutes": { "Tous": allRecettesFlat } };
     }
     return { [activeCategory]: recettes[activeCategory] || {} };
   }, [activeCategory, recettes, allRecettesFlat]);
 
-  // Récupérer toutes les catégories uniques pour les boutons de filtre
   const availableCategories = useMemo(() => {
     return Object.keys(recettes);
   }, [recettes]);
@@ -197,12 +213,11 @@ const Recettes = () => {
       variants={mainContainerVariants}
       initial="hidden"
       animate={controls}
-      // --- MODIFICATION ICI : Passe la prop $isModalOpen pour le style conditionnel ---
-      $isModalOpen={!!selectedRecipe}
+      // --- MODIFICATION ICI : On enlève la prop $isModalOpen de RecettesContainer ---
+      // Elle est désormais gérée directement sur le body via useEffect
     >
       <PageTitle variants={itemVariants}>Toutes les Recettes</PageTitle>
 
-      {/* NOUVEAU: Boutons de filtre par catégorie */}
       <CategoryFilterContainer>
         {availableCategories.map((category) => (
           <CategoryButton
@@ -217,23 +232,19 @@ const Recettes = () => {
         ))}
       </CategoryFilterContainer>
 
-      {/* Affichage de la grille de recettes pour la catégorie active */}
       {Object.entries(filteredRecettes).map(([categorie, sousCategoriesMap]) => {
-        // Ignorer la sous-catégorie si on est sur "Toutes" et prendre directement la liste plate
         const recipesToDisplay = activeCategory === "Toutes"
           ? sousCategoriesMap["Tous"]
-          : Object.values(sousCategoriesMap).flat(); // Utilise flat pour toutes les sous-catégories
+          : Object.values(sousCategoriesMap).flat();
 
         if (!recipesToDisplay || recipesToDisplay.length === 0) {
           return <StatusMessage key={categorie}>Aucune recette dans cette catégorie.</StatusMessage>;
         }
 
         return (
-          // Pas de CategorySection/SubCategoryArticle comme avant, directement la grille
           <RecipeGrid key={categorie}>
             {recipesToDisplay.map((recette) => {
               const randomHoverAnimation = hoverAnimations[Math.floor(Math.random() * hoverAnimations.length)];
-              // Utilise une image aléatoire si recette.imageUrl n'existe pas
               const imageUrl = recette.imageUrl || cardBackgroundImages[Math.floor(Math.random() * cardBackgroundImages.length)];
 
               return (
@@ -244,7 +255,7 @@ const Recettes = () => {
                   animate="visible"
                   whileHover={randomHoverAnimation}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => openRecipeModal(recette)} // Ouvre la modale au clic
+                  onClick={() => openRecipeModal(recette)}
                 >
                   <div className="image-container">
                     <RecipeImage src={imageUrl} alt={recette.nom} />
@@ -259,7 +270,6 @@ const Recettes = () => {
         );
       })}
 
-      {/* Modale de détail de recette */}
       <AnimatePresence>
         {selectedRecipe && (
           <ModalOverlay
@@ -267,11 +277,11 @@ const Recettes = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            onClick={closeRecipeModal} // Fermer en cliquant sur l'overlay
+            onClick={closeRecipeModal}
           >
             <ModalContent
               variants={modalContentVariants}
-              onClick={(e) => e.stopPropagation()} // Empêche la fermeture si on clique dans la modale
+              onClick={(e) => e.stopPropagation()}
             >
               <CloseButton onClick={closeRecipeModal}>×</CloseButton>
               {selectedRecipe.imageUrl && (
