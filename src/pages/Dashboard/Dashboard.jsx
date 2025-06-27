@@ -34,13 +34,7 @@ import {
 const Dashboard = () => {
     const { user } = useAuth();
 
-    // --- CONSOLE.LOGS DE DÉBOGAGE AJOUTÉS ICI ---
-    console.log("------------------------------------------");
-    console.log("Dans Dashboard.jsx:");
-    console.log("Objet user récupéré de useAuth():", user);
-    console.log("user.identifiant:", user?.identifiant); // Utilise le chaînage optionnel (?) pour éviter l'erreur si user est null
-    console.log("------------------------------------------");
-    // ---------------------------------------------
+  
 
     const [isRecipeFormModalOpen, setIsRecipeFormModalOpen] = useState(false);
     const [userRecipes, setUserRecipes] = useState([]);

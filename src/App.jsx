@@ -19,7 +19,7 @@ import Inscription from './pages/Inscription';
 import Recettes from './pages/Recettes/Recettes';
 import DetailRecette from './pages/DetailRecette';
 import Dashboard from './pages/Dashboard/Dashboard';
-import AdminDashboard from './pages/AdminDashboard.jsx'; // Importez la page AdminDashboard
+import AdminDashboard from './components/AdminDashboard/AdminDashboard.jsx'; // Importez la page AdminDashboard
 
 // Contextes
 import { AuthProvider } from './contexts/AuthContext'; // Assurez-vous que AuthProvider est bien importé
