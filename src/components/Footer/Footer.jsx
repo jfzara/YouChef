@@ -17,11 +17,7 @@ const Footer = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 120, damping: 10, delay: 0.5 }}
     >
-      <LinksColumn>
-        <FooterNavLink href="/mentions-legales">Mentions Légales</FooterNavLink>
-        <FooterNavLink href="/politique-confidentialite">Politique de Confidentialité</FooterNavLink>
-        <FooterNavLink href="/contact">Contact</FooterNavLink>
-      </LinksColumn>
+      
 
       <FooterText>
         © {new Date().getFullYear()} Mon Carnet de Recettes. Tous droits réservés.
