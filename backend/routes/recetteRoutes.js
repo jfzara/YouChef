@@ -2,14 +2,14 @@
 import express from 'express';
 import Recette from '../models/recetteModel.js';
 import authMiddleware from '../middleware/authMiddleware.js';
+import adminMiddleware from '../middleware/adminMiddleware.js'; // Importez le middleware admin
 
 const router = express.Router();
 
-// --- NOUVELLE ROUTE : LIRE TOUTES LES RECETTES (sans protection, pour la page "Recettes") ---
-// Cet endpoint sera utilisé par votre composant Recettes.jsx ou équivalent
+// --- LIRE TOUTES LES RECETTES (sans protection, pour la page "Recettes" publique) ---
 router.get('/all', async (req, res) => {
   try {
-    const recettes = await Recette.find().sort({ createdAt: -1 }); // Récupère toutes les recettes
+    const recettes = await Recette.find().sort({ createdAt: -1 });
     res.json(recettes);
   } catch (error) {
     console.error('Erreur lors de la récupération de toutes les recettes publiques:', error);
@@ -17,11 +17,9 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// --- ROUTE EXISTANTE : LIRE LES RECETTES DE L'UTILISATEUR CONNECTÉ (pour le Dashboard) ---
-// Cette route est parfaite pour UserRecipeList.jsx. Elle utilise req.user.id du token.
+// --- LIRE LES RECETTES DE L'UTILISATEUR CONNECTÉ (pour le Dashboard personnel) ---
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    // req.user.id est ajouté par authMiddleware après la vérification du token JWT
     const recettes = await Recette.find({ owner: req.user.id }).sort({ createdAt: -1 });
     console.log(`Backend: ${recettes.length} recettes trouvées pour l'utilisateur ${req.user.id}`);
     res.json(recettes);
@@ -34,7 +32,7 @@ router.get('/', authMiddleware, async (req, res) => {
 // Route pour AJOUTER une recette (protégée)
 router.post('/', authMiddleware, async (req, res) => {
   const { nom, description, categorie, sousCategorie, imageUrl } = req.body;
-  const owner = req.user.id; // L'ID de l'utilisateur authentifié (vient de req.user après authMiddleware)
+  const owner = req.user.id; // L'ID de l'utilisateur authentifié
 
   try {
     const nouvelleRecette = new Recette({
@@ -53,17 +51,24 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-// Route pour MODIFIER une recette (protégée et avec vérification de l'owner)
+// Route pour MODIFIER une recette (protégée)
+// Un admin peut modifier N'IMPORTE QUELLE recette, un utilisateur ne peut modifier que LES SIENNES.
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
-    // Trouve et met à jour la recette seulement si l'ID correspond ET si l'utilisateur est le propriétaire
-    const recette = await Recette.findOneAndUpdate(
-      { _id: req.params.id, owner: req.user.id }, // Critères de recherche
-      req.body, // Données à mettre à jour
-      { new: true } // Retourne la version mise à jour du document
-    );
+    let recette;
+    // Si l'utilisateur est un admin, il peut modifier n'importe quelle recette par son ID
+    if (req.user.role === 'admin') {
+      recette = await Recette.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    } else {
+      // Sinon, un utilisateur normal ne peut modifier que ses propres recettes
+      recette = await Recette.findOneAndUpdate(
+        { _id: req.params.id, owner: req.user.id },
+        req.body,
+        { new: true }
+      );
+    }
+
     if (!recette) {
-      // Si la recette n'est pas trouvée OU que l'utilisateur n'est pas le propriétaire
       return res.status(404).json({ message: "Recette non trouvée ou vous n'êtes pas autorisé à la modifier" });
     }
     res.json(recette);
@@ -73,13 +78,20 @@ router.put('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Route pour SUPPRIMER une recette (protégée et avec vérification de l'owner)
+// Route pour SUPPRIMER une recette (protégée)
+// Un admin peut supprimer N'IMPORTE QUELLE recette, un utilisateur ne peut supprimer que LES SIENNES.
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
-    // Trouve et supprime la recette seulement si l'ID correspond ET si l'utilisateur est le propriétaire
-    const recette = await Recette.findOneAndDelete({ _id: req.params.id, owner: req.user.id });
+    let recette;
+    // Si l'utilisateur est un admin, il peut supprimer n'importe quelle recette par son ID
+    if (req.user.role === 'admin') {
+      recette = await Recette.findByIdAndDelete(req.params.id);
+    } else {
+      // Sinon, un utilisateur normal ne peut supprimer que ses propres recettes
+      recette = await Recette.findOneAndDelete({ _id: req.params.id, owner: req.user.id });
+    }
+
     if (!recette) {
-      // Si la recette n'est pas trouvée OU que l'utilisateur n'est pas le propriétaire
       return res.status(404).json({ message: "Recette non trouvée ou vous n'êtes pas autorisé à la supprimer" });
     }
     res.status(204).send(); // 204 No Content pour une suppression réussie sans corps de réponse

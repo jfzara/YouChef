@@ -1,4 +1,3 @@
-// src/components/Navbar/Navbar.jsx
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useHover } from '../../contexts/HoverContext';
@@ -7,10 +6,10 @@ import { useAuth } from '../../contexts/AuthContext';
 import {
     StyledNavbar,
     NavContainer,
-    Brand,
+    Brand,          // Brand est déjà un NavLink de motion
     BrandIcon,
     NavLinks,
-    StyledNavLink,
+    StyledNavLink,  // StyledNavLink est déjà un NavLink de motion
     MenuToggle,
     ToggleSpan,
     NotificationBadge,
@@ -20,7 +19,7 @@ import {
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { setIsNavbarHovered } = useHover();
-    const { token, logout } = useAuth();
+    const { token, logout, isAdmin } = useAuth(); // Assurez-vous d'importer isAdmin
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -38,10 +37,10 @@ const Navbar = () => {
             transition={{ type: "spring", stiffness: 120, damping: 10 }}
         >
             <NavContainer $isOpen={isOpen}>
-                {/* MODIFICATION ICI : On englobe tout le contenu de Brand avec Brand */}
-                <Brand as={NavLink} to="/"> 
+                {/* MODIFIÉ : Retiré as={NavLink} car Brand est déjà stylisé comme motion(NavLink) */}
+                <Brand to="/">
                     <BrandIcon>🍽️</BrandIcon>
-                    <span>Mon Carnet de Recettes</span> {/* Ajout d'un <span> pour englober le texte */}
+                    <span>Mon Carnet de Recettes</span>
                 </Brand>
 
                 <MenuToggle onClick={toggleMenu} $isOpen={isOpen}>
@@ -52,8 +51,8 @@ const Navbar = () => {
 
                 <NavLinks $isOpen={isOpen}>
                     <li>
+                        {/* MODIFIÉ : Retiré as={NavLink} car StyledNavLink est déjà stylisé comme motion(NavLink) */}
                         <StyledNavLink
-                            as={NavLink}
                             to="/"
                             $isActive={({ isActive }) => isActive}
                             onClick={() => setIsOpen(false)}
@@ -64,8 +63,8 @@ const Navbar = () => {
                         </StyledNavLink>
                     </li>
                     <li>
+                        {/* MODIFIÉ : Retiré as={NavLink} */}
                         <StyledNavLink
-                            as={NavLink}
                             to="/recettes"
                             $isActive={({ isActive }) => isActive}
                             onClick={() => setIsOpen(false)}
@@ -80,8 +79,8 @@ const Navbar = () => {
                     {token ? (
                         <>
                             <li>
+                                {/* MODIFIÉ : Retiré as={NavLink} */}
                                 <StyledNavLink
-                                    as={NavLink}
                                     to="/dashboard"
                                     $isActive={({ isActive }) => isActive}
                                     onClick={() => setIsOpen(false)}
@@ -91,6 +90,20 @@ const Navbar = () => {
                                     <span>Dashboard</span>
                                 </StyledNavLink>
                             </li>
+                            {isAdmin && ( // Condition pour afficher le lien admin
+                                <li>
+                                    {/* MODIFIÉ : Retiré as={NavLink} */}
+                                    <StyledNavLink
+                                        to="/admin-dashboard"
+                                        $isActive={({ isActive }) => isActive}
+                                        onClick={() => setIsOpen(false)}
+                                        whileHover={{ scale: 1.05, y: -2 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        <span>Admin</span>
+                                    </StyledNavLink>
+                                </li>
+                            )}
                             <li>
                                 <LogoutButton
                                     onClick={handleLogout}
@@ -104,8 +117,8 @@ const Navbar = () => {
                     ) : (
                         <>
                             <li>
+                                {/* MODIFIÉ : Retiré as={NavLink} */}
                                 <StyledNavLink
-                                    as={NavLink}
                                     to="/connexion"
                                     $isActive={({ isActive }) => isActive}
                                     onClick={() => setIsOpen(false)}
@@ -116,8 +129,8 @@ const Navbar = () => {
                                 </StyledNavLink>
                             </li>
                             <li>
+                                {/* MODIFIÉ : Retiré as={NavLink} */}
                                 <StyledNavLink
-                                    as={NavLink}
                                     to="/inscription"
                                     $isActive={({ isActive }) => isActive}
                                     onClick={() => setIsOpen(false)}

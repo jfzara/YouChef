@@ -1,5 +1,8 @@
+// src/components/Navbar/Navbar.styles.jsx
+
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { NavLink } from 'react-router-dom'; // <--- Importez NavLink ici
 
 export const StyledNavbar = styled(motion.nav)`
   background-color: var(--color-light-sky-blue);
@@ -36,7 +39,10 @@ export const NavContainer = styled.div`
   }
 `;
 
-export const Brand = styled.div`
+// ATTENTION ICI : Brand DOIT être un composant Framer Motion si vous lui passez des props motion.
+// Si vous l'utilisez comme NavLink dans Navbar.jsx, il doit aussi être stylisé avec NavLink.
+// Je suppose que vous voulez qu'il soit cliquable et qu'il gère les animations.
+export const Brand = styled(motion(NavLink))` /* <--- MODIFIÉ : styled(motion(NavLink)) */
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -55,10 +61,10 @@ export const Brand = styled.div`
   }
 
   @media (max-width: 978px) {
-    font-size: var(--text-xl); /* Taille plus petite pour la marque sur tablette */
+    font-size: var(--text-xl);
   }
   @media (max-width: 490px) {
-    font-size: var(--text-lg); /* Encore plus petit sur mobile */
+    font-size: var(--text-lg);
   }
 `;
 
@@ -76,15 +82,15 @@ export const BrandIcon = styled.span`
   }
 
   @media (max-width: 978px) {
-    font-size: var(--text-2xl); /* Ajustement pour tablette */
+    font-size: var(--text-2xl);
   }
   @media (max-width: 490px) {
-    font-size: var(--text-xl); /* Ajustement pour mobile */
+    font-size: var(--text-xl);
   }
 `;
 
 export const MenuToggle = styled.button`
-  display: none; /* Masqué par défaut sur desktop */
+  display: none;
   background: none;
   border: none;
   cursor: pointer;
@@ -92,16 +98,16 @@ export const MenuToggle = styled.button`
   z-index: var(--z-mid);
   position: relative;
 
-  @media (max-width: 978px) { /* Afficher le bouton hamburger */
+  @media (max-width: 978px) {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    width: var(--space-9); /* Taille légèrement plus grande */
-    height: var(--space-9); /* Taille légèrement plus grande */
+    width: var(--space-9);
+    height: var(--space-9);
   }
 
   @media (max-width: 490px) {
-    width: var(--space-8); /* Revenir à une taille standard sur très petit mobile */
+    width: var(--space-8);
     height: var(--space-8);
   }
 `;
@@ -132,35 +138,36 @@ export const NavLinks = styled.ul`
   margin: 0;
   padding: 0;
   display: flex;
-  gap: var(--space-6); /* Espacement entre les liens sur desktop */
+  gap: var(--space-6);
 
   @media (max-width: 978px) {
-    flex-direction: column; /* Les liens s'affichent en colonne */
-    justify-content: flex-start; /* Aligner les éléments en haut */
-    align-items: center; /* Centrer horizontalement les liens */
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     width: 100%;
-    position: fixed; /* Position fixe pour superposer le menu */
-    top: var(--navbar-height); /* Commence sous la navbar */
+    position: fixed;
+    top: var(--navbar-height);
     left: 0;
-    height: calc(100vh - var(--navbar-height)); /* Prend le reste de la hauteur */
+    height: calc(100vh - var(--navbar-height));
     background-color: var(--color-light-sky-blue);
     box-shadow: var(--shadow-lg);
-    transform: translateX(${props => (props.$isOpen ? '0' : '100%')}); /* Glisse de la droite */
+    transform: translateX(${props => (props.$isOpen ? '0' : '100%')});
     transition: transform 0.3s ease-in-out;
     opacity: ${props => (props.$isOpen ? '1' : '0')};
     pointer-events: ${props => (props.$isOpen ? 'auto' : 'none')};
-    padding: var(--space-3) 0; /* Réduit le padding vertical général du menu pour tablette */
-    gap: var(--space-3); /* Réduit l'espace entre les liens pour les tablettes */
-    overflow-y: auto; /* Permet le défilement si le contenu dépasse */
+    padding: var(--space-3) 0;
+    gap: var(--space-3);
+    overflow-y: auto;
   }
 
   @media (max-width: 490px) {
-    padding: var(--space-2) 0; /* Garde le padding réduit pour les très petits écrans */
-    gap: var(--space-2); /* Espacement encore plus réduit pour les mobiles très étroits */
+    padding: var(--space-2) 0;
+    gap: var(--space-2);
   }
 `;
 
-export const StyledNavLink = styled(motion.a)`
+// ATTENTION ICI : StyledNavLink DOIT être un composant Framer Motion qui enveloppe NavLink.
+export const StyledNavLink = styled(motion(NavLink))` /* <--- MODIFIÉ : styled(motion(NavLink)) */
   font-family: var(--font-family-sans);
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
@@ -172,12 +179,11 @@ export const StyledNavLink = styled(motion.a)`
   display: flex;
   align-items: center;
   position: relative;
-  justify-content: center; /* Centre le contenu du lien horizontalement */
-  text-align: center; /* Assure que le texte est centré */
-  white-space: nowrap; /* Empêche le texte de se casser sur plusieurs lignes */
-  min-width: fit-content; /* S'assure que le background contient le texte */
-  min-width: -moz-fit-content; /* Pour compatibilité Firefox */
-
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  min-width: fit-content;
+  min-width: -moz-fit-content;
 
   &:hover {
     color: var(--color-bright-pink-crayola);
@@ -191,15 +197,15 @@ export const StyledNavLink = styled(motion.a)`
   }
 
   @media (max-width: 978px) {
-    width: 80%; /* Prendre une grande partie de la largeur pour les liens du menu */
-    padding: var(--space-2) var(--space-4); /* Ajuste le padding, en s'assurant d'un minimum de 1rem inline */
-    font-size: var(--text-lg); /* Réduit la taille de police pour les tablettes */
+    width: 80%;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-lg);
   }
 
   @media (max-width: 490px) {
-    width: 90%; /* Ajuster la largeur pour les très petits écrans */
-    font-size: var(--text-base); /* Réduit encore la taille de police pour les mobiles étroits */
-    padding: var(--space-2) var(--space-4); /* Garde le padding avec un minimum de 1rem inline */
+    width: 90%;
+    font-size: var(--text-base);
+    padding: var(--space-2) var(--space-4);
   }
 `;
 
@@ -221,17 +227,18 @@ export const NotificationBadge = styled.span`
   `}
 
   @media (max-width: 978px) {
-    top: 0.2rem; /* Ajuster la position si nécessaire */
+    top: 0.2rem;
     right: 0.2rem;
-    font-size: var(--text-xs); /* Assurer que la taille reste petite */
-    padding: 0.05rem 0.3rem; /* Réduire le padding */
+    font-size: var(--text-xs);
+    padding: 0.05rem 0.3rem;
   }
 `;
 
+// LogoutButton est déjà un composant motion.button
 export const LogoutButton = styled(motion.button)`
   background-color: var(--color-bright-pink-crayola);
   color: var(--color-neutral-0);
-  padding: 0.6rem var(--space-5); /* Ajustement du padding vertical ici */
+  padding: 0.6rem var(--space-5);
   border-radius: var(--radius-full);
   border: none;
   font-family: var(--font-family-sans);
@@ -239,8 +246,8 @@ export const LogoutButton = styled(motion.button)`
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: var(--transition-base);
-  min-width: fit-content; /* S'assure que le background contient le texte */
-  min-width: -moz-fit-content; /* Pour compatibilité Firefox */
+  min-width: fit-content;
+  min-width: -moz-fit-content;
   
   &:hover {
     background-color: var(--color-salmon);
@@ -250,15 +257,15 @@ export const LogoutButton = styled(motion.button)`
 
   @media (max-width: 978px) {
     width: 80%;
-    margin-top: var(--space-4); /* Réduit l'espace au-dessus du bouton de déconnexion pour tablette */
-    padding: 0.5rem var(--space-4); /* Ajuste le padding du bouton, en s'assurant d'un minimum de 1rem inline */
-    font-size: var(--text-base); /* Réduit la taille de police du bouton pour tablette */
+    margin-top: var(--space-4);
+    padding: 0.5rem var(--space-4);
+    font-size: var(--text-base);
   }
 
   @media (max-width: 490px) {
     width: 90%;
-    margin-top: var(--space-3); /* Encore plus réduit pour les mobiles */
-    padding: 0.4rem var(--space-4); /* Et le padding du bouton avec un minimum de 1rem inline */
-    font-size: var(--text-sm); /* Et la taille de police pour les petits écrans */
+    margin-top: var(--space-3);
+    padding: 0.4rem var(--space-4);
+    font-size: var(--text-sm);
   }
 `;
