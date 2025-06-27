@@ -246,15 +246,15 @@ export const Tag = styled.span`
 `;
 
 export const ModalOverlay = styled(motion.div)`
-  position: fixed;
+  position: fixed; /* TRÈS IMPORTANT : Doit être fixed */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
-  display: flex; /* Gardez ceci pour centrer l'overlay globalement */
-  justify-content: center; /* Centrage horizontal pour l'overlay */
-  align-items: center; /* Centrage vertical pour l'overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 1000;
   backdrop-filter: blur(5px);
 `;
