@@ -238,10 +238,7 @@ const GlobalStyles = createGlobalStyle`
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
-    /* --- MODIFICATION ICI : Suppression des lignes `filter` et `transition` --- */
-    /* filter: blur(var(--dashboard-blur)) brightness(var(--dashboard-opacity)); */
-    /* transition: filter 0.5s ease-in-out; */
-    /* -------------------------------------------------------------------------- */
+    
   }
 
   h1, h2, h3, h4, h5, h6 {
