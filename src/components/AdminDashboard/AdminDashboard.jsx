@@ -1,6 +1,3 @@
-
-// src/components/AdminDashboard/AdminDashboard.jsx
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
@@ -19,21 +16,6 @@ import {
 
 // Import de RecipeFormModal
 import RecipeFormModal from '../../pages/Dashboard/RecipeFormModal'; // Assurez-vous que ce chemin est correct
-
-// Import des styles de la modale depuis Recettes.styles.js si vous en avez besoin pour la modale elle-même
-// (Je vais les commenter pour l'instant car RecipeFormModal est un composant séparé qui devrait déjà avoir ses styles)
-/*
-import {
-    ModalOverlay,
-    ModalContent,
-    CloseButton,
-    ModalImage,
-    RecipeNameDetail,
-    RecipeDescriptionDetail,
-    RecipeDetailsSection,
-    Tag,
-} from '../../pages/Recettes/Recettes.styles';
-*/
 
 const AdminDashboard = () => {
     const { token, user: currentUser } = useAuth();
@@ -80,7 +62,8 @@ const AdminDashboard = () => {
     }, [token]);
 
     const handleDeleteUser = async (userId) => {
-        if (currentUser && currentUser.id === userId) {
+        // Correction : Utilisation de currentUser._id pour la comparaison
+        if (currentUser && currentUser._id === userId) {
             toast.error('Vous ne pouvez pas supprimer votre propre compte administrateur.');
             return;
         }
@@ -90,7 +73,8 @@ const AdminDashboard = () => {
                 await axios.delete(`${API_URL}/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setUsers(users.filter(user => user.id !== userId));
+                // Correction : Filtrage par user._id
+                setUsers(users.filter(user => user._id !== userId));
                 toast.success('Utilisateur supprimé avec succès !');
             } catch (err) {
                 console.error('Erreur lors de la suppression de l\'utilisateur:', err);
@@ -100,7 +84,11 @@ const AdminDashboard = () => {
     };
 
     const handleChangeUserRole = async (userId, newRole) => {
-        if (currentUser && currentUser.id === userId) {
+        // --- NOUVEAU LOG ICI ---
+        console.log("handleChangeUserRole appelée avec userId:", userId, "et newRole:", newRole);
+
+        // Correction : Utilisation de currentUser._id pour la comparaison
+        if (currentUser && currentUser._id === userId) {
             toast.error('Vous ne pouvez pas changer votre propre rôle via cette interface.');
             return;
         }
@@ -110,11 +98,14 @@ const AdminDashboard = () => {
         }
 
         try {
+            // --- NOUVEAU LOG ICI ---
+            console.log("URL de la requête PUT:", `${API_URL}/users/${userId}`);
             await axios.put(`${API_URL}/users/${userId}`, { role: newRole }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(users.map(user =>
-                user.id === userId ? { ...user, role: newRole } : user
+                // Correction : Mise à jour par user._id
+                user._id === userId ? { ...user, role: newRole } : user
             ));
             toast.success(`Rôle de l'utilisateur mis à jour en "${newRole}" !`);
         } catch (err) {
@@ -151,13 +142,15 @@ const AdminDashboard = () => {
         fetchAdminData(); // Rafraîchit les données du dashboard après l'ajout/édition
     };
 
-
     if (loading) {
         return <p>Chargement du tableau de bord admin...</p>;
     }
     if (error) {
         return <p className="error-message">{error}</p>;
     }
+
+    // --- LOG POUR LES UTILISATEURS DANS L'ÉTAT (avant le rendu) ---
+    console.log("Utilisateurs dans l'état (avant le rendu):", users);
 
     return (
         <AdminDashboardContainer>
@@ -168,21 +161,31 @@ const AdminDashboard = () => {
                 {users.length > 0 ? (
                     <ul>
                         {users.map(user => (
-                            <li key={user.id}>
+                            // Correction : Utilisation de user._id pour la clé de liste
+                            <li key={user._id}>
                                 <ListItemContent>
                                     {user.identifiant} ({user.email}) - Rôle: **{user.role}**
                                 </ListItemContent>
                                 <ListButtonsContainer>
-                                    {currentUser && currentUser.id !== user.id && (
+                                    {/* Correction : Utilisation de currentUser._id et user._id pour la comparaison et les appels */}
+                                    {currentUser && currentUser._id !== user._id && (
                                         <>
-                                            <DeleteButton onClick={() => handleDeleteUser(user.id)}>Supprimer</DeleteButton>
+                                            <DeleteButton onClick={() => handleDeleteUser(user._id)}>Supprimer</DeleteButton>
                                             {user.role === 'user' ? (
-                                                <PromoteButton onClick={() => handleChangeUserRole(user.id, 'admin')}>
-                                                    Promouvoir Admin
+                                                <PromoteButton onClick={() => {
+                                                    // --- NOUVEAU LOG ICI ---
+                                                    console.log("Clic sur Promouvoir pour user._id:", user._id);
+                                                    handleChangeUserRole(user._id, 'admin');
+                                                }}>
+                                                    Vers Admin {/* Correction : Ajout de l'espace insécable */}
                                                 </PromoteButton>
                                             ) : (
-                                                <DemoteButton onClick={() => handleChangeUserRole(user.id, 'user')}>
-                                                    Rétrograder en User
+                                                <DemoteButton onClick={() => {
+                                                    // --- NOUVEAU LOG ICI ---
+                                                    console.log("Clic sur Rétrograder pour user._id:", user._id);
+                                                    handleChangeUserRole(user._id, 'user');
+                                                }}>
+                                                    Vers User &nbsp;&nbsp;{/* Correction : Ajout de l'espace insécable */}
                                                 </DemoteButton>
                                             )}
                                         </>
