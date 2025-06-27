@@ -1,4 +1,4 @@
-// src/pages/Recettes/Recettes.jsx (MODIFIÉ)
+// src/pages/Recettes/Recettes.jsx
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useAnimation, AnimatePresence } from 'framer-motion'; // Importe AnimatePresence
@@ -197,6 +197,8 @@ const Recettes = () => {
       variants={mainContainerVariants}
       initial="hidden"
       animate={controls}
+      // --- MODIFICATION ICI : Passe la prop $isModalOpen pour le style conditionnel ---
+      $isModalOpen={!!selectedRecipe}
     >
       <PageTitle variants={itemVariants}>Toutes les Recettes</PageTitle>
 

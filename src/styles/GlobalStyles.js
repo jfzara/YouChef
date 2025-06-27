@@ -1,4 +1,4 @@
-// src/styles/GlobalStyles.js (CORRIGÉ)
+// src/styles/GlobalStyles.js
 
 import { createGlobalStyle } from 'styled-components';
 
@@ -209,8 +209,8 @@ const GlobalStyles = createGlobalStyle`
     --font-extrabold: 800;
 
     --navbar-height: 5rem;
-    --dashboard-blur: 0px;
-    --dashboard-opacity: 1;
+    --dashboard-blur: 0px; // Variable toujours présente, mais gérée sur RecettesContainer
+    --dashboard-opacity: 1; // Variable toujours présente, mais gérée sur RecettesContainer
   }
 
   *, *::before, *::after {
@@ -238,8 +238,10 @@ const GlobalStyles = createGlobalStyle`
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
-    filter: blur(var(--dashboard-blur)) brightness(var(--dashboard-opacity));
-    transition: filter 0.5s ease-in-out;
+    /* --- MODIFICATION ICI : Suppression des lignes `filter` et `transition` --- */
+    /* filter: blur(var(--dashboard-blur)) brightness(var(--dashboard-opacity)); */
+    /* transition: filter 0.5s ease-in-out; */
+    /* -------------------------------------------------------------------------- */
   }
 
   h1, h2, h3, h4, h5, h6 {

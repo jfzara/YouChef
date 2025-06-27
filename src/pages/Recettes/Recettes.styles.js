@@ -1,3 +1,5 @@
+// src/pages/Recettes/Recettes.styles.js
+
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
@@ -12,6 +14,12 @@ export const RecettesContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center; /* Centrer horizontalement */
+
+  /* --- MODIFICATION ICI : Application conditionnelle du filtre et des événements de pointeur --- */
+  filter: ${props => props.$isModalOpen ? 'blur(5px) brightness(0.7)' : 'none'};
+  transition: filter 0.5s ease-in-out;
+  pointer-events: ${props => props.$isModalOpen ? 'none' : 'auto'};
+  /* ----------------------------------------------------------------------------------------- */
 `;
 
 export const PageTitle = styled(motion.h1)`
@@ -134,7 +142,7 @@ export const RecipeMiniCard = styled(motion.div)`
   flex-direction: column;
   z-index: 1;
   text-align: center;
-   
+    
 
   /* Conteneur de l'image pour forcer le rapport d'aspect carré */
   .image-container {
@@ -299,10 +307,6 @@ export const ModalContent = styled(motion.div)`
   }
 `;
 
-
-
-
-
 export const CloseButton = styled(motion.button)`
   position: absolute;
   top: var(--space-3);
@@ -326,7 +330,7 @@ export const CloseButton = styled(motion.button)`
 
   &:hover {
     background: var(--color-error-light);
-     
+      
     transform: rotate(90deg)  ;
   }
 
