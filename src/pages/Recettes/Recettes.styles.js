@@ -245,31 +245,53 @@ export const Tag = styled.span`
   white-space: nowrap; /* Empêche le tag de se casser sur plusieurs lignes */
 `;
 
-// NOUVEAU: Styles pour la modale (à placer dans RecipeDetailModal.styles.js idéalement, mais inclus ici pour l'exemple)
 export const ModalOverlay = styled(motion.div)`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6); /* Fond semi-transparent sombre */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Assurez-vous qu'il est au-dessus de tout */
-  backdrop-filter: blur(5px); /* Flou léger de l'arrière-plan */
+  background: rgba(0, 0, 0, 0.6);
+  display: flex; /* Gardez ceci pour centrer l'overlay globalement */
+  justify-content: center; /* Centrage horizontal pour l'overlay */
+  align-items: center; /* Centrage vertical pour l'overlay */
+  z-index: 1000;
+  backdrop-filter: blur(5px);
 `;
 
 export const ModalContent = styled(motion.div)`
   background: white;
   border-radius: var(--radius-3xl);
   padding: var(--space-8);
-  max-width: 800px; /* Largeur maximale de la modale */
+  max-width: 800px;
   width: 90%;
-  max-height: 90vh; /* Limite la hauteur pour le défilement si nécessaire */
-  overflow-y: auto; /* Permet de défiler le contenu de la modale */
-  box-shadow: var(--shadow-xl); /* Ombre prononcée */
-  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  position: relative; /* Changez ceci pour 'relative' si l'overlay gère déjà le centrage, ou 'absolute' avec top/left/transform pour centrage auto */
+
+  /* --- AJOUTS / MODIFICATIONS CLÉS POUR LE CENTRAGE --- */
+  /* Si ModalOverlay a display: flex et align-items/justify-content: center,
+     ModalContent n'a pas besoin de position: fixed/absolute ou de top/left/transform pour le centrage.
+     Il sera centré par son parent flex.
+     Cependant, l'animation vient perturber ce centrage si elle utilise y: "..."
+  */
+
+  /* Si vous voulez que la modale sorte et rentre du centre, ajustez les variantes dans Recettes.jsx */
+  /* Pour un centrage parfait et que l'animation de Framer Motion se fasse DUPUIS le centre,
+     on va ajuster les VARIANTS dans Recettes.jsx et s'assurer que ModalContent est centré de base.
+  */
+  
+  /* Retirons les propriétés de centrage qui peuvent entrer en conflit si le parent est flex */
+  /* Les propriétés suivantes sont souvent utilisées pour centrer un élément ABSOLUTE/FIXED,
+     mais si le parent (ModalOverlay) est un conteneur flex qui centre ses enfants,
+     elles peuvent être redondantes ou causer des conflits avec Framer Motion. */
+  /*
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  */
 
   @media (max-width: 768px) {
     padding: var(--space-6);
