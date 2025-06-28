@@ -49,7 +49,7 @@ const RecipeImage = styled.img`
     margin-bottom: var(--space-3);
     box-shadow: var(--shadow-sm);
     background-color: var(--color-neutral-100);
-    border: 2px solid var(--color-info-300);
+    border: 1px solid var(--color-info-300);
 `;
 
 const RecipeTitle = styled.h3`

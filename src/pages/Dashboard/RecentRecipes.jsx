@@ -4,7 +4,10 @@ import styled, { keyframes } from 'styled-components';
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 
-// --- Styles pour le Rolodex (AUCUN CHANGEMENT DANS LES STYLES) ---
+// Import de l'image par défaut
+import defaultRecipeImage from '../../assets/images/default_recipe_image.jpg'; // Assurez-vous que le chemin est correct
+
+// --- Styles pour le Rolodex ---
 
 const RolodexContainer = styled(motion.div)`
   position: relative;
@@ -100,39 +103,37 @@ const RolodexCard = styled(motion.div)`
   }
 `;
 
+// Styles de l'image pour correspondre à RecipeCard
+const CardImage = styled.img`
+  width: 100%; /* S'étend sur toute la largeur du conteneur */
+  height: 180px; /* Hauteur fixe comme dans RecipeCard */
+  object-fit: cover;
+  border-radius: var(--radius-lg); /* Coins plus arrondis */
+  margin-bottom: var(--space-3); /* Plus d'espace en bas */
+  transition: opacity 0.3s ease-in-out;
+  box-shadow: var(--shadow-sm); /* Ajout d'une ombre */
+  background-color: var(--color-neutral-100); /* Couleur de fond pour le chargement ou si l'image est transparente */
+   border: 1px solid var(--color-info-300); /* Ajout d'une bordure */
+`;
+
+// Styles du placeholder pour correspondre à RecipeCard
 const CardPlaceholderImage = styled.div`
-  width: 120px;
-  height: 120px;
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-2);
-  background: var(--color-neutral-200);
+  width: 100%; /* S'étend sur toute la largeur du conteneur */
+  height: 180px; /* Hauteur fixe comme dans RecipeCard */
+  border-radius: var(--radius-lg); /* Coins plus arrondis */
+  margin-bottom: var(--space-3); /* Plus d'espace en bas */
+  background: var(--color-neutral-100); /* Fond similaire aux images */
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: var(--text-6xl);
-  color: var(--color-primary-600);
-  border: 2px dashed var(--color-primary-300);
+  border: 2px dashed var(--color-primary-300); /* Bordure pointillée pour le placeholder */
+  box-shadow: var(--shadow-sm); /* Ajout d'une ombre */
 
-  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
-  @media (max-width: 880px) {
-    width: 150px; /* Plus grande sur mobile */
-    height: 150px;
-    font-size: var(--text-7xl); /* Emoji plus grand */
-  }
-`;
-
-const CardImage = styled.img`
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-2);
-  transition: opacity 0.3s ease-in-out;
-
-  /* --- MEDIA QUERY POUR LES ÉCRANS EN DESSOUS DE 880PX --- */
-  @media (max-width: 880px) {
-    width: 150px; /* Plus grande sur mobile */
-    height: 150px;
+  img { /* Styles pour l'image par défaut à l'intérieur du placeholder */
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ou 'cover' si vous préférez que l'image remplisse l'espace en coupant */
+    border-radius: var(--radius-lg);
   }
 `;
 
@@ -221,7 +222,7 @@ const RolodexNavigation = styled.div`
   }
 `;
 
-// --- Keyframes et NavButton (AUCUN CHANGEMENT DANS LES STYLES) ---
+// --- Keyframes et NavButton ---
 const bounceAndWiggle = keyframes`
   0%, 100% { transform: translateY(0) rotate(0deg); }
   25% { transform: translateY(-3px) rotate(1deg); }
@@ -383,22 +384,15 @@ const RecentRecipes = () => {
         setLoading(true);
         setError(null);
         try {
-            // DEBUG : Indique que le frontend demande les recettes.
             console.log("DEBUG FRONTEND: Demande des recettes récentes envoyée à /recettes/all."); 
-            // NOTE : Assurez-vous que '/recettes/all' est bien l'endpoint qui renvoie les recettes publiques avec l'owner peuplé.
-            // Si vous avez une route spécifique pour le dashboard comme '/dashboard/recent-recipes', utilisez-la ici.
             const response = await api.get('/recettes/all'); 
             
             setRecipes(response.data);
-            // DEBUG : Affiche toutes les données de recettes reçues par le frontend.
             console.log("DEBUG FRONTEND: Données de recettes reçues :", response.data); 
             
             if (response.data.length > 0) {
-                // DEBUG : Affiche le premier objet recette pour inspecter la structure de 'owner'.
                 console.log("DEBUG FRONTEND: Première recette reçue pour inspection de l'owner :", response.data[0]); 
-                // DEBUG : Affiche spécifiquement l'objet 'owner' de la première recette, s'il existe.
                 console.log("DEBUG FRONTEND: Propriété 'owner' de la première recette :", response.data[0].owner);
-                // DEBUG : Affiche spécifiquement l'identifiant de l'owner.
                 if (response.data[0].owner) {
                     console.log("DEBUG FRONTEND: Identifiant de l'owner de la première recette :", response.data[0].owner.identifiant);
                 } else {
@@ -532,11 +526,10 @@ const RecentRecipes = () => {
                                 <CardImage src={recipes[currentIndex].imageUrl} alt={recipes[currentIndex].nom} />
                             ) : (
                                 <CardPlaceholderImage>
-                                    😋
+                                    <img src={defaultRecipeImage} alt="Image par défaut" />
                                 </CardPlaceholderImage>
                             )}
                             <CardTitle>{recipes[currentIndex].nom}</CardTitle>
-                            {/* MODIFICATION CLÉ ICI : Accès à recipes[currentIndex].owner.identifiant */}
                             <CardAuthor>
                                 par {recipes[currentIndex].owner ? recipes[currentIndex].owner.identifiant : 'Un Chef Inconnu'}
                             </CardAuthor>
