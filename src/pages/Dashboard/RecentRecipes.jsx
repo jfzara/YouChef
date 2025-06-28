@@ -113,7 +113,8 @@ const CardImage = styled.img`
   transition: opacity 0.3s ease-in-out;
   box-shadow: var(--shadow-sm); /* Ajout d'une ombre */
   background-color: var(--color-neutral-100); /* Couleur de fond pour le chargement ou si l'image est transparente */
-   border: 1px solid var(--color-info-300); /* Ajout d'une bordure */
+  // CORRECTION ICI : Utilisation d'un template literal et bordure de 2px pour la cohérence avec RecipeCard
+  border: 2px solid var(--color-info-300); 
 `;
 
 // Styles du placeholder pour correspondre à RecipeCard
@@ -393,11 +394,12 @@ const RecentRecipes = () => {
             if (response.data.length > 0) {
                 console.log("DEBUG FRONTEND: Première recette reçue pour inspection de l'owner :", response.data[0]); 
                 console.log("DEBUG FRONTEND: Propriété 'owner' de la première recette :", response.data[0].owner);
-                if (response.data[0].owner) {
-                    console.log("DEBUG FRONTEND: Identifiant de l'owner de la première recette :", response.data[0].owner.identifiant);
-                } else {
-                    console.log("DEBUG FRONTEND: La propriété 'owner' de la première recette est null ou indéfinie.");
-                }
+                // Le console.log direct de l'objet 'owner' pourrait être la cause de l'erreur
+                // if (response.data[0].owner) {
+                //     console.log("DEBUG FRONTEND: Identifiant de l'owner de la première recette :", response.data[0].owner.identifiant);
+                // } else {
+                //     console.log("DEBUG FRONTEND: La propriété 'owner' de la première recette est null ou indéfinie.");
+                // }
             } else {
                 console.log("DEBUG FRONTEND: Aucune recette reçue.");
             }

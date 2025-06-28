@@ -206,7 +206,8 @@ const AdminDashboard = () => {
                         {recipes.map(recipe => (
                             <li key={recipe._id}>
                                 <ListItemContent>
-                                    {recipe.nom} (Catégorie: {recipe.categorie}, Par: {recipe.owner ? recipe.owner : 'Inconnu'})
+                                    {/* CORRECTION ICI : Accédez à recipe.owner.identifiant */}
+                                    {recipe.nom} (Catégorie: {recipe.categorie}, Par: {recipe.owner ? recipe.owner.identifiant : 'Inconnu'})
                                 </ListItemContent>
                                 <ListButtonsContainer>
                                     {/* Utilise handleEditRecipe avec la recette courante */}
