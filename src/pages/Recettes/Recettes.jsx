@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useAnimation, AnimatePresence } from 'framer-motion'; // Importe AnimatePresence
 import axios from "../../api/axiosInstance";
-
+import DefaultRecipeImage from '../../assets/images/default_recipe_image.jpg';
 import {
   RecettesContainer,
   PageTitle,
@@ -28,7 +28,7 @@ import {
 import {
   categoryColors,
   hoverAnimations,
-  cardBackgroundImages // Utilisé comme fallback si pas d'image spécifique
+  
 } from '../../data/recettesData';
 
 // --- Nouveau Styled Component pour les messages d'état (inchangé) ---
@@ -232,7 +232,7 @@ const Recettes = () => {
             {recipesToDisplay.map((recette) => {
               const randomHoverAnimation = hoverAnimations[Math.floor(Math.random() * hoverAnimations.length)];
               // Utilise une image aléatoire si recette.imageUrl n'existe pas
-              const imageUrl = recette.imageUrl || cardBackgroundImages[Math.floor(Math.random() * cardBackgroundImages.length)];
+             const imageUrl = recette.imageUrl || DefaultRecipeImage;
 
               return (
                 <RecipeMiniCard

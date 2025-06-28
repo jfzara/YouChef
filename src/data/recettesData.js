@@ -1,30 +1,5 @@
 // src/data/recettesData.js
 
-import Carrot from '../assets/images/Carrot.jpg';
-import Dish1 from '../assets/images/Dish1.jpg';
-import EvieSchwartz from '../assets/images/evie-s-aBvM_cKYMxc-unsplash.jpg';
-import FoodItems from '../assets/images/FoodItems.jpg';
-import FruitsVegetables from '../assets/images/FruitsVegetables.jpg';
-import HerbsGarlic from '../assets/images/HerbsGarlic.jpg';
-import NotebookRecipe from '../assets/images/NotebookRecipe.jpg';
-import NotebookSpaghetti from '../assets/images/NotebookSpaghetti.jpg';
-import NotebookTomato from '../assets/images/NotebookTomato.jpg';
-import Pomegranate from '../assets/images/Pomegranate.jpg';
-import SomeDish from '../assets/images/SomeDish.jpg';
-import SomeSalad from '../assets/images/SomeSalad.jpg';
-import Tomato from '../assets/images/Tomato.jpg';
-import TomatoNav from '../assets/images/TomatoNav.jpg';
-import Vegetables from '../assets/images/Vegetables.jpg';
-import WhiteBackground2 from '../assets/images/WhiteBackground2.jpg';
-import WhiteBackground3 from '../assets/images/WhiteBackground3.jpg';
-import WhiteBackground6 from '../assets/images/WhiteBackground6.jpg';
-
-export const cardBackgroundImages = [
-  Carrot, Dish1, EvieSchwartz, FoodItems, FruitsVegetables, HerbsGarlic,
-  NotebookRecipe, NotebookSpaghetti, NotebookTomato, Pomegranate,
-  SomeDish, SomeSalad, Tomato, TomatoNav, Vegetables,
-  WhiteBackground2, WhiteBackground3, WhiteBackground6,
-];
 
 export const categoryColors = {
   'Entrées': 'var(--soft-green-700)',

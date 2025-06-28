@@ -1,11 +1,10 @@
-// src/pages/Dashboard/RecentRecipes.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled, { keyframes } from 'styled-components';
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 
-// --- Styles pour le Rolodex ---
+// --- Styles pour le Rolodex (AUCUN CHANGEMENT DANS LES STYLES) ---
 
 const RolodexContainer = styled(motion.div)`
   position: relative;
@@ -222,7 +221,7 @@ const RolodexNavigation = styled.div`
   }
 `;
 
-// --- Keyframes et NavButton (inchangés ou ajustements mineurs si nécessaires) ---
+// --- Keyframes et NavButton (AUCUN CHANGEMENT DANS LES STYLES) ---
 const bounceAndWiggle = keyframes`
   0%, 100% { transform: translateY(0) rotate(0deg); }
   25% { transform: translateY(-3px) rotate(1deg); }
@@ -374,176 +373,202 @@ const NoRecentRecipesMessage = styled(motion.div)`
 // --- Composant Principal RecentRecipes ---
 
 const RecentRecipes = () => {
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [wiggleClass, setWiggleClass] = useState('');
+    const [recipes, setRecipes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [wiggleClass, setWiggleClass] = useState('');
 
-  const fetchRecentRecipes = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.get('/dashboard/recent-recipes');
-      setRecipes(response.data);
-    } catch (err) {
-      console.error('Erreur lors de la récupération des recettes récentes:', err);
-      setError('Impossible de charger les dernières recettes.');
-      toast.error('Erreur de chargement des recettes récentes.');
-    } finally {
-      setLoading(false);
+    const fetchRecentRecipes = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            // DEBUG : Indique que le frontend demande les recettes.
+            console.log("DEBUG FRONTEND: Demande des recettes récentes envoyée à /recettes/all."); 
+            // NOTE : Assurez-vous que '/recettes/all' est bien l'endpoint qui renvoie les recettes publiques avec l'owner peuplé.
+            // Si vous avez une route spécifique pour le dashboard comme '/dashboard/recent-recipes', utilisez-la ici.
+            const response = await api.get('/recettes/all'); 
+            
+            setRecipes(response.data);
+            // DEBUG : Affiche toutes les données de recettes reçues par le frontend.
+            console.log("DEBUG FRONTEND: Données de recettes reçues :", response.data); 
+            
+            if (response.data.length > 0) {
+                // DEBUG : Affiche le premier objet recette pour inspecter la structure de 'owner'.
+                console.log("DEBUG FRONTEND: Première recette reçue pour inspection de l'owner :", response.data[0]); 
+                // DEBUG : Affiche spécifiquement l'objet 'owner' de la première recette, s'il existe.
+                console.log("DEBUG FRONTEND: Propriété 'owner' de la première recette :", response.data[0].owner);
+                // DEBUG : Affiche spécifiquement l'identifiant de l'owner.
+                if (response.data[0].owner) {
+                    console.log("DEBUG FRONTEND: Identifiant de l'owner de la première recette :", response.data[0].owner.identifiant);
+                } else {
+                    console.log("DEBUG FRONTEND: La propriété 'owner' de la première recette est null ou indéfinie.");
+                }
+            } else {
+                console.log("DEBUG FRONTEND: Aucune recette reçue.");
+            }
+
+        } catch (err) {
+            console.error('DEBUG FRONTEND ERROR: Erreur lors de la récupération des recettes récentes sur le frontend:', err); 
+            setError('Impossible de charger les dernières recettes.');
+            toast.error('Erreur de chargement des recettes récentes.');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchRecentRecipes();
+
+        const startWiggleInterval = () => {
+            setWiggleClass('occasional-wiggle');
+            const wiggleTimeout = setTimeout(() => {
+                setWiggleClass('');
+            }, 2000);
+
+            const nextWiggleTime = 15000 + Math.random() * 5000;
+            return setTimeout(startWiggleInterval, nextWiggleTime);
+        };
+
+        let intervalId = startWiggleInterval();
+
+        return () => {
+            clearTimeout(intervalId);
+        };
+    }, [fetchRecentRecipes]);
+
+    const cardVariants = {
+        enter: (direction) => ({
+            opacity: 0,
+            rotateY: direction > 0 ? 90 : -90,
+            scale: 0.8,
+            x: direction > 0 ? 200 : -200,
+        }),
+        center: {
+            opacity: 1,
+            rotateY: 0,
+            scale: 1,
+            x: 0,
+            transition: {
+                type: "spring",
+                stiffness: 200,
+                damping: 15
+            }
+        },
+        exit: (direction) => ({
+            opacity: 0,
+            rotateY: direction > 0 ? -90 : 90,
+            scale: 0.8,
+            x: direction > 0 ? -200 : 200,
+            transition: {
+                type: "spring",
+                stiffness: 200,
+                damping: 15
+            }
+        })
+    };
+
+    const [direction, setDirection] = useState(0);
+
+    const paginate = (newDirection) => {
+        setDirection(newDirection);
+        setCurrentIndex((prevIndex) => {
+            if (recipes.length === 0) return 0;
+            if (newDirection > 0) {
+                return (prevIndex + 1) % recipes.length;
+            } else {
+                return (prevIndex - 1 + recipes.length) % recipes.length;
+            }
+        });
+    };
+
+    if (loading) {
+        return (
+            <RolodexContainer>
+                <NoRecentRecipesMessage
+                    initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.5 }}
+                >
+                    <p>Feuilletage des créations mondiales...</p>
+                </NoRecentRecipesMessage>
+            </RolodexContainer>
+        );
     }
-  }, []);
 
-  useEffect(() => {
-    fetchRecentRecipes();
+    if (error) {
+        return (
+            <RolodexContainer>
+                <NoRecentRecipesMessage
+                    style={{ color: 'var(--color-error-dark)', background: 'var(--color-error-soft)' }}
+                    initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.5 }}
+                >
+                    <p>{error}</p>
+                </NoRecentRecipesMessage>
+            </RolodexContainer>
+        );
+    }
 
-    const startWiggleInterval = () => {
-      setWiggleClass('occasional-wiggle');
-      const wiggleTimeout = setTimeout(() => {
-        setWiggleClass('');
-      }, 2000);
-
-      const nextWiggleTime = 15000 + Math.random() * 5000;
-      return setTimeout(startWiggleInterval, nextWiggleTime);
-    };
-
-    let intervalId = startWiggleInterval();
-
-    return () => {
-      clearTimeout(intervalId);
-    };
-  }, [fetchRecentRecipes]);
-
-  const cardVariants = {
-    enter: (direction) => ({
-      opacity: 0,
-      rotateY: direction > 0 ? 90 : -90,
-      scale: 0.8,
-      x: direction > 0 ? 200 : -200,
-    }),
-    center: {
-      opacity: 1,
-      rotateY: 0,
-      scale: 1,
-      x: 0,
-      transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 15
-      }
-    },
-    exit: (direction) => ({
-      opacity: 0,
-      rotateY: direction > 0 ? -90 : 90,
-      scale: 0.8,
-      x: direction > 0 ? -200 : 200,
-      transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 15
-      }
-    })
-  };
-
-  const [direction, setDirection] = useState(0);
-
-  const paginate = (newDirection) => {
-    setDirection(newDirection);
-    setCurrentIndex((prevIndex) => {
-      if (recipes.length === 0) return 0;
-      if (newDirection > 0) {
-        return (prevIndex + 1) % recipes.length;
-      } else {
-        return (prevIndex - 1 + recipes.length) % recipes.length;
-      }
-    });
-  };
-
-  if (loading) {
     return (
-      <RolodexContainer>
-        <NoRecentRecipesMessage
-          initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.5 }}
+        <RolodexContainer
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1 }}
         >
-          <p>Feuilletage des créations mondiales...</p>
-        </NoRecentRecipesMessage>
-      </RolodexContainer>
+            <RolodexCardArea>
+                <AnimatePresence initial={false} custom={direction}>
+                    {recipes.length > 0 && (
+                        <RolodexCard
+                            key={currentIndex}
+                            custom={direction}
+                            variants={cardVariants}
+                            initial="enter"
+                            animate="center"
+                            exit="exit"
+                        >
+                            {recipes[currentIndex].imageUrl ? (
+                                <CardImage src={recipes[currentIndex].imageUrl} alt={recipes[currentIndex].nom} />
+                            ) : (
+                                <CardPlaceholderImage>
+                                    😋
+                                </CardPlaceholderImage>
+                            )}
+                            <CardTitle>{recipes[currentIndex].nom}</CardTitle>
+                            {/* MODIFICATION CLÉ ICI : Accès à recipes[currentIndex].owner.identifiant */}
+                            <CardAuthor>
+                                par {recipes[currentIndex].owner ? recipes[currentIndex].owner.identifiant : 'Un Chef Inconnu'}
+                            </CardAuthor>
+                            {/* Si vous voulez afficher la description, décommentez ceci et assurez-vous que `description` est disponible dans `recipes` */}
+                            {/* <CardDescription>{recipes[currentIndex].description}</CardDescription> */}
+                        </RolodexCard>
+                    )}
+                </AnimatePresence>
+
+                {recipes.length === 0 && (
+                    <NoRecentRecipesMessage
+                        initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
+                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.5 }}
+                    >
+                        <p>Pas de nouvelles créations mondiales pour le moment.</p>
+                    </NoRecentRecipesMessage>
+                )}
+            </RolodexCardArea>
+
+            {recipes.length > 1 && (
+                <RolodexNavigation>
+                    <NavButton onClick={() => paginate(-1)} whileTap={{ scale: 0.85 }}>
+                        <span className={wiggleClass}>&larr;</span>
+                    </NavButton>
+                    <NavButton onClick={() => paginate(1)} whileTap={{ scale: 0.85 }}>
+                        <span className={wiggleClass}>&rarr;</span>
+                    </NavButton>
+                </RolodexNavigation>
+            )}
+        </RolodexContainer>
     );
-  }
-
-  if (error) {
-    return (
-      <RolodexContainer>
-        <NoRecentRecipesMessage
-          style={{ color: 'var(--color-error-dark)', background: 'var(--color-error-soft)' }}
-          initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.5 }}
-        >
-          <p>{error}</p>
-        </NoRecentRecipesMessage>
-      </RolodexContainer>
-    );
-  }
-
-  return (
-    <RolodexContainer
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 1 }}
-    >
-      <RolodexCardArea>
-        <AnimatePresence initial={false} custom={direction}>
-          {recipes.length > 0 && (
-            <RolodexCard
-              key={currentIndex}
-              custom={direction}
-              variants={cardVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-            >
-              {recipes[currentIndex].imageUrl ? (
-                <CardImage src={recipes[currentIndex].imageUrl} alt={recipes[currentIndex].nom} />
-              ) : (
-                <CardPlaceholderImage>
-                  😋
-                </CardPlaceholderImage>
-              )}
-              <CardTitle>{recipes[currentIndex].nom}</CardTitle>
-              <CardAuthor>par {recipes[currentIndex].auteur || 'Un Chef Inconnu'}</CardAuthor>
-              {/* Si vous voulez afficher la description, décommentez ceci et assurez-vous que `description` est disponible dans `recipes` */}
-              {/* <CardDescription>{recipes[currentIndex].description}</CardDescription> */}
-            </RolodexCard>
-          )}
-        </AnimatePresence>
-
-        {recipes.length === 0 && (
-          <NoRecentRecipesMessage
-            initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 100, damping: 10, delay: 0.5 }}
-          >
-            <p>Pas de nouvelles créations mondiales pour le moment.</p>
-          </NoRecentRecipesMessage>
-        )}
-      </RolodexCardArea>
-
-      {recipes.length > 1 && (
-        <RolodexNavigation>
-          <NavButton onClick={() => paginate(-1)} whileTap={{ scale: 0.85 }}>
-            <span className={wiggleClass}>&larr;</span>
-          </NavButton>
-          <NavButton onClick={() => paginate(1)} whileTap={{ scale: 0.85 }}>
-            <span className={wiggleClass}>&rarr;</span>
-          </NavButton>
-        </RolodexNavigation>
-      )}
-    </RolodexContainer>
-  );
 };
 
 export default RecentRecipes;
