@@ -181,7 +181,7 @@ const AdminDashboard = () => {
                                                 </PromoteButton>
                                             ) : (
                                                 <DemoteButton onClick={() => {
-                                                    // --- NOUVEAU LOG ICI ---
+                                                    // --- NOUVEAU LOG ICI. ---
                                                     console.log("Clic sur Rétrograder pour user._id:", user._id);
                                                     handleChangeUserRole(user._id, 'user');
                                                 }}>
