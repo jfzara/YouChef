@@ -1,11 +1,15 @@
+Absolument ! Voici le code complet et mis à jour de votre axiosInstance.js, en confirmant l'URL de votre backend Render :
+
+JavaScript
+
 import axios from 'axios';
 
 // Configuration de l'instance axios avec gestion d'erreurs améliorée
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.PROD 
-    ? 'https://recettesreact-backend.onrender.com/api' // 🔄 Remplace par ton URL Render exacte
+  baseURL: import.meta.env.PROD
+    ? 'https://recettesreact-backend.onrender.com/api' // C'est l'URL correcte de votre backend Render
     : 'http://localhost:5000/api',
-  timeout: 30000, // 30 secondes pour Render (plus lent que Railway)
+  timeout: 30000, // 30 secondes
   headers: {
     'Content-Type': 'application/json',
   },
@@ -34,20 +38,20 @@ axiosInstance.interceptors.response.use(
       console.error('❌ Erreur réseau: Vérifiez que le serveur backend est accessible');
       error.message = 'Impossible de contacter le serveur. Le service peut être en cours de réveil.';
     }
-    
+
     // Gestion du timeout (Render peut être plus lent)
     if (error.code === 'ECONNABORTED') {
       console.error('⏱️ Timeout: Le serveur met du temps à répondre');
       error.message = 'Le serveur met du temps à répondre, veuillez patienter...';
     }
-    
+
     // Déconnexion automatique si token expiré
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/connexion';
     }
-    
+
     return Promise.reject(error);
   }
 );
