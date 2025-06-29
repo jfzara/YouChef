@@ -1,4 +1,3 @@
-// src/pages/Accueil.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
@@ -137,6 +136,9 @@ const HowItWorksSection = styled(motion.section)`
     flex-direction: column;
     align-items: center;
     gap: var(--space-5); /* Espacement réduit entre les éléments de la section */
+    
+    // *** MODIFICATION CLÉ ICI : Initialiser l'opacité à 0 par CSS ***
+    opacity: 0; 
 
     @media (max-width: 880px) {
         margin-top: var(--space-5);
@@ -152,7 +154,7 @@ const HowItWorksTitle = styled.h2`
     display: none; /* Cache toujours le titre */
 `;
 
-const StepsGrid = styled.div`
+const StepsGrid = styled(motion.div)` // Ajoutez motion.div ici pour les staggerChildren
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Taille minimale des cartes légèrement réduite */
     gap: var(--space-4); /* Espacement réduit entre les cartes */
@@ -211,18 +213,8 @@ const StepDescription = styled.p`
 const Accueil = () => {
     const { isNavbarHovered } = useHover();
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.2,
-                delayChildren: 0.3
-            }
-        }
-    };
-
-    const itemVariants = {
+    // Variants pour les éléments principaux (titre, CTA)
+    const mainItemVariants = {
         hidden: { y: 50, opacity: 0 },
         visible: {
             y: 0,
@@ -230,14 +222,51 @@ const Accueil = () => {
             transition: {
                 type: "spring",
                 stiffness: 120,
-                damping: 15
+                damping: 15,
+                delay: 0.3 // Démarre un peu après le chargement de la page
             }
         }
     };
 
+    // Variants pour l'apparition individuelle des cartes (fade-in + léger glissement)
+    const cardItemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.4, // Durée courte pour un fade-in rapide
+                ease: "easeOut"
+            }
+        }
+    };
+
+    // Variants pour la grille des cartes (orchestre l'apparition successive)
+    const cardsGridContainerVariants = {
+        hidden: { opacity: 0 }, // La grille est initialement invisible
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.15, // Délai très court entre chaque carte
+                delayChildren: 0.5 // Démarre l'apparition de la première carte après 0.5s
+            }
+        }
+    };
+
+    // Variants pour le conteneur HowItWorksSection (le fond bleu)
+    const howItWorksSectionBackgroundVariants = {
+        visible: {
+            opacity: 1,
+            // Calcul du délai : (délai avant 1ère carte) + (délai entre les 3 cartes) + (durée anim de la dernière carte) + (petit buffer)
+            delay: 0.5 + (0.15 * 2) + 0.4 + 0.1, // environ 0.5 + 0.3 + 0.4 + 0.1 = 1.3 secondes
+            duration: 0.8, // Durée du fondu du fond
+            ease: "easeOut"
+        }
+    };
+
+
     return (
         <AccueilContainer
-            variants={containerVariants}
             initial="hidden"
             animate="visible"
         >
@@ -248,47 +277,51 @@ const Accueil = () => {
             />
 
             <ContentWrapper>
-                <MainTitle variants={itemVariants}>
+                <MainTitle variants={mainItemVariants}>
                     Votre Aventure Culinaire Commence Maintenant !
                 </MainTitle>
-               
-                
             </ContentWrapper>
 
-            {/* Section "Comment ça Marche ?" rendue encore plus discrète et plus petite */}
+            {/* Section "Comment ça Marche ?" (le conteneur avec le fond bleu) */}
             <HowItWorksSection
-                initial="hidden"
-                animate="visible"
-                variants={containerVariants}
+                // La propriété 'initial' n'est plus nécessaire ici car l'opacité est déjà 0 par CSS
+                animate="visible" // Anime directement vers l'état 'visible'
+                variants={howItWorksSectionBackgroundVariants} // Applique l'animation du fond
             >
-                {/* Le titre HowItWorksTitle n'est pas rendu ici */}
-                <StepsGrid>
-                    <StepCard variants={itemVariants}>
+                <HowItWorksTitle />
+                {/* La grille des cartes, avec son propre staggerChildren */}
+                <StepsGrid
+                    variants={cardsGridContainerVariants} // La grille gère l'apparition des cartes enfants
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <StepCard variants={cardItemVariants}> {/* Chaque carte utilise ses variants */}
                         <StepIcon>🍽️</StepIcon>
                         <StepTitle>Découvrez de nouvelles saveurs</StepTitle>
                         <StepDescription>Parcourez notre vaste collection de recettes. Utilisez la barre de recherche et les filtres pour trouver l'inspiration.</StepDescription>
                     </StepCard>
-                    <StepCard variants={itemVariants}>
+                    <StepCard variants={cardItemVariants}>
                         <StepIcon>✍️</StepIcon>
                         <StepTitle>Partagez vos créations</StepTitle>
                         <StepDescription>Connectez-vous pour ajouter facilement vos recettes préférées et les partager avec la communauté.</StepDescription>
                     </StepCard>
-                    <StepCard variants={itemVariants}>
+                    <StepCard variants={cardItemVariants}>
                         <StepIcon>⭐</StepIcon>
                         <StepTitle>Gérez vos favoris</StepTitle>
                         <StepDescription>Créez votre propre carnet de recettes en enregistrant et en organisant vos découvertes culinaires.</StepDescription>
                     </StepCard>
                 </StepsGrid>
             </HowItWorksSection>
-<CallToActionButton
-                    to="/recettes"
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.05, y: -4, boxShadow: "var(--shadow-lg)" }}
-                    whileTap={{ scale: 0.95, y: 0, boxShadow: "var(--shadow-sm)" }}
-                >
-                    Découvrir les Recettes
-                </CallToActionButton>
-            {/* Intégration du Footer */}
+
+            <CallToActionButton
+                to="/recettes"
+                variants={mainItemVariants}
+                whileHover={{ scale: 1.05, y: -4, boxShadow: "var(--shadow-lg)" }}
+                whileTap={{ scale: 0.95, y: 0, boxShadow: "var(--shadow-sm)" }}
+            >
+                Découvrir les Recettes
+            </CallToActionButton>
+
             <Footer />
         </AccueilContainer>
     );
