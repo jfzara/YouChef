@@ -10,7 +10,7 @@ import { useAuth } from '../../contexts/AuthContext';
 // Importe l'icône de fermeture
 import CloseIcon from '../../assets/icons/close.svg';
 
-// --- Définition des catégories principales (DOIT correspondre à l'enum Mongoose) ---
+// --- Définition des catégories principales (DOIT correspondre à l'enum Mongoose). ---
 const CATEGORIES_PRINCIPALES = [
     'Plats Principaux',
     'Entrées & Apéritifs',
