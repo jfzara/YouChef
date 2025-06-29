@@ -1,6 +1,3 @@
-Absolument ! Voici le code complet et mis à jour de votre axiosInstance.js, en confirmant l'URL de votre backend Render :
-
-JavaScript
 
 import axios from 'axios';
 
