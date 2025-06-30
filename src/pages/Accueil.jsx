@@ -11,24 +11,30 @@ import Footer from '../components/Footer/Footer'; // Importe le composant Footer
 // --- Styled Components pour la Page d'Accueil ---
 
 const AccueilContainer = styled(motion.div)`
-    margin-top: 3rem; /* Vérifié : Variable CSS ou déjà correct */
+    margin-top: 3rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: var(--space-8) 0; /* Vérifié : Variable CSS */
+    padding: var(--space-8) 0; /* Garde le padding vertical */
     position: relative;
     overflow: hidden; /* Important pour masquer les débordements des éléments décoratifs */
     color: var(--color-neutral-800);
     background-color: var(--color-cream); /* Fond doux de la section principale */
     text-align: center;
+    min-height: 100vh; /* S'assure que le conteneur prend au moins toute la hauteur de la vue */
+    box-sizing: border-box; /* Inclut le padding dans le calcul de la hauteur */
+
 
     @media (max-width: 880px) {
         /* Ajustement clé pour laisser de la place au footer sur mobile */
-        padding-bottom: 'calc(var(--space-8) + 120px)'; /* CORRECTION : '120px' */
+        /* Nous n'avons plus les cartes, donc moins de contenu, le padding peut être réduit */
+        padding-bottom: 'calc(var(--space-6) + 120px)'; /* Espace pour le footer mobile */
+        justify-content: flex-start; /* Aligne le contenu en haut pour éviter trop d'espace au-dessus du titre */
     }
     @media (max-width: 480px) {
-        padding-bottom: 'calc(var(--space-8) + 100px)'; /* CORRECTION : '100px' */
+        padding-bottom: 'calc(var(--space-5) + 100px)'; /* Ajustement pour les très petits mobiles */
+        justify-content: flex-start;
     }
 `;
 
@@ -49,61 +55,72 @@ const BackgroundImageLayer = styled(motion.div)`
 
 const ContentWrapper = styled.div`
     width: 100%;
-    max-width: 1200px; /* Vérifié : Unité en dur, pas de problème */
-    padding: 0 var(--space-4); /* Vérifié : Variable CSS */
-    box-sizing: border-box; /* S'assure que le padding est inclus dans la largeur */
+    max-width: 1200px;
+    padding: 0 var(--space-4);
+    box-sizing: border-box;
     z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-6); /* Vérifié : Variable CSS */
+    gap: var(--space-6);
 
     @media (max-width: 480px) {
-        padding: 0 var(--space-3); /* Vérifié : Variable CSS */
+        padding: 0 var(--space-3);
     }
 `;
 
 const MainTitle = styled(motion.h1)`
     font-family: var(--font-family-heading);
-    font-size: var(--text-6xl); /* Vérifié : Variable CSS */
-    color: var(--color-bright-pink-crayola); /* Couleur vive pour le titre principal */
-    margin-bottom: var(--space-4); /* Vérifié : Variable CSS */
+    font-size: var(--text-6xl);
+    color: var(--color-bright-pink-crayola);
+    margin-bottom: var(--space-4);
     line-height: 1.1;
 
     @media (max-width: 1024px) {
-        font-size: var(--text-5xl); /* Vérifié : Variable CSS */
+        font-size: var(--text-5xl);
     }
 
     @media (max-width: 880px) {
-        font-size: var(--text-4xl); /* Vérifié : Variable CSS */
+        font-size: var(--text-4xl);
+        margin-top: var(--space-6); /* Ajoute une marge au-dessus du titre pour le mobile */
+    }
+    @media (max-width: 480px) {
+        font-size: var(--text-3xl); /* Rendre le titre plus petit sur les très petits écrans */
+        margin-top: var(--space-5);
     }
 `;
 
+// La Subtitle est désormais optionnelle ou peut être rendue conditionnellement
 const Subtitle = styled(motion.p)`
     font-family: var(--font-family-sans);
-    font-size: var(--text-2xl); /* Vérifié : Variable CSS */
-    color: var(--color-neutral-700); /* Texte légèrement plus doux que le noir pur */
-    margin-bottom: var(--space-8); /* Vérifié : Variable CSS */
-    max-width: 700px; /* Vérifié : Unité en dur, pas de problème */
+    font-size: var(--text-2xl);
+    color: var(--color-neutral-700);
+    margin-bottom: var(--space-8);
+    max-width: 700px;
     line-height: 1.6;
 
     @media (max-width: 880px) {
-        font-size: var(--text-xl); /* Vérifié : Variable CSS */
+        font-size: var(--text-xl);
+        margin-bottom: var(--space-6); /* Réduit la marge pour rapprocher le CTA */
+    }
+    @media (max-width: 480px) {
+        font-size: var(--text-base); /* Texte encore plus petit sur les très petits écrans */
+        margin-bottom: var(--space-5);
     }
 `;
 
 const CallToActionButton = styled(motion(Link))`
-    background-color: var(--color-jasmine); /* Couleur chaude et accueillante */
+    background-color: var(--color-jasmine);
     color: var(--color-neutral-900);
     font-family: var(--font-family-sans);
-    font-size: var(--text-xl); /* Vérifié : Variable CSS */
-    padding: var(--space-4) var(--space-8); /* Vérifié : Variable CSS */
-    margin-top: '6vw'; /* CORRECTION APPORTÉE ICI */
+    font-size: var(--text-xl);
+    padding: var(--space-4) var(--space-8);
+    margin-top: '6vw'; /* Conserve cette unité pour les grands écrans, mais révisée ci-dessous */
     border: none;
-    border-radius: var(--radius-full); /* Vérifié : Variable CSS */
+    border-radius: var(--radius-full);
     cursor: pointer;
-    box-shadow: var(--shadow-md); /* Vérifié : Variable CSS */
-    transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast); /* Vérifié : Variable CSS */
+    box-shadow: var(--shadow-md);
+    transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -111,131 +128,103 @@ const CallToActionButton = styled(motion(Link))`
     z-index: 1;
 
     &:hover {
-        background-color: var(--color-salmon); /* Passage à une couleur plus intense au survol */
+        background-color: var(--color-salmon);
         color: var(--color-neutral-0);
-        transform: translateY(-4px); /* CORRECTION : '-4px' */
-        box-shadow: var(--shadow-lg); /* Vérifié : Variable CSS */
+        transform: translateY('-4px');
+        box-shadow: var(--shadow-lg);
     }
 
     &:active {
         transform: translateY(0);
-        box-shadow: var(--shadow-sm); /* Vérifié : Variable CSS */
+        box-shadow: var(--shadow-sm);
     }
 
     @media (max-width: 880px) {
-        margin-top: var(--space-6); /* Vérifié : Variable CSS */
+        margin-top: var(--space-7); /* Plus d'espace au-dessus du bouton après le titre/sous-titre sur tablette */
     }
 
     @media (max-width: 480px) {
-        font-size: var(--text-lg); /* Vérifié : Variable CSS */
-        padding: var(--space-3) var(--space-6); /* Vérifié : Variable CSS */
-        margin-top: var(--space-5); /* Vérifié : Variable CSS */
+        font-size: var(--text-lg);
+        padding: var(--space-3) var(--space-6);
+        margin-top: var(--space-6); /* Plus d'espace au-dessus du bouton après le titre/sous-titre sur mobile */
     }
 `;
 
-
+// --- Ces Styled Components ne seront plus utilisés pour les mobiles ---
 const HowItWorksSection = styled(motion.section)`
+    /* Conservez ces styles pour les écrans plus grands si nécessaire */
     width: 100%;
-    max-width: 800px; /* Vérifié : Unité en dur, pas de problème */
-    padding: var(--space-5) var(--space-3); /* Vérifié : Variable CSS */
-    margin-top: var(--space-6); /* Vérifié : Variable CSS */
-    background-color: var(--color-light-sky-blue); /* Une couleur de fond pour que le glassmorphism soit visible */
-    border-radius: var(--radius-xl); /* Vérifié : Variable CSS */
-    box-shadow: '0 2px 10px 0 rgba(0, 0, 0, 0.03)'; /* CORRECTION : '0 2px 10px 0 ...' */
+    max-width: 800px;
+    padding: var(--space-5) var(--space-3);
+    margin-top: var(--space-6);
+    background-color: var(--color-light-sky-blue);
+    border-radius: var(--radius-xl);
+    box-shadow: '0 2px 10px 0 rgba(0, 0, 0, 0.03)';
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-5); /* Vérifié : Variable CSS */
-    
-    opacity: 0; 
-
-    @media (max-width: 880px) {
-        margin-top: var(--space-5); /* Vérifié : Variable CSS */
-        padding: var(--space-4) var(--space-3); /* Vérifié : Variable CSS */
-    }
+    gap: var(--space-5);
+    opacity: 0; /* Initialiser à 0 pour l'animation */
 
     @media (max-width: 768px) {
-        max-width: 90%; /* Vérifié : Unité en dur, pas de problème */
-        margin-top: var(--space-4); /* Vérifié : Variable CSS */
-        padding: var(--space-3) var(--space-2); /* Vérifié : Variable CSS */
+        display: none; /* CACHE LA SECTION ENTIÈRE SUR MOBILE */
     }
 `;
 
 const HowItWorksTitle = styled.h2`
-    display: none; /* Cache toujours le titre */
+    display: none;
 `;
 
-const StepsGrid = styled(motion.div)` 
+const StepsGrid = styled(motion.div)`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax('200px', 1fr)); /* CORRECTION : '200px' */
-    gap: var(--space-4); /* Vérifié : Variable CSS */
+    grid-template-columns: repeat(auto-fit, minmax('200px', 1fr));
+    gap: var(--space-4);
     width: 100%;
-    margin-top: var(--space-3); /* Vérifié : Variable CSS */
-
-    @media (max-width: 768px) {
-        grid-template-columns: 1fr; /* Vérifié : Pas d'unité */
-        gap: var(--space-3); /* Vérifié : Variable CSS */
-    }
+    margin-top: var(--space-3);
 `;
 
-// Styles pour le glassmorphism encore plus subtil et intégré
 const StepCard = styled(motion.div)`
-    background-color: rgba(255, 255, 255, 0.25); /* Vérifié : Pas d'unité */
-    backdrop-filter: blur('8px'); /* CORRECTION : '8px' */
-    -webkit-backdrop-filter: blur('8px'); /* CORRECTION : '8px' */
-    border: '1px solid rgba(255, 255, 255, 0.1)'; /* CORRECTION : '1px solid ...' */
-    border-radius: var(--radius-lg); /* Vérifié : Variable CSS */
-    box-shadow: '0 2px 8px 0 rgba(0, 0, 0, 0.03)'; /* CORRECTION : '0 2px 8px 0 ...' */
-    padding: var(--space-4); /* Vérifié : Variable CSS */
+    background-color: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur('8px');
+    -webkit-backdrop-filter: blur('8px');
+    border: '1px solid rgba(255, 255, 255, 0.1)';
+    border-radius: var(--radius-lg);
+    box-shadow: '0 2px 8px 0 rgba(0, 0, 0, 0.03)';
+    padding: var(--space-4);
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-2); /* Vérifié : Variable CSS */
-    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; /* Vérifié : Pas d'unité directement après un nombre */
+    gap: var(--space-2);
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
 
     &:hover {
-        transform: translateY('-2px'); /* CORRECTION : '-2px' */
-        box-shadow: '0 5px 20px 0 rgba(0, 0, 0, 0.07)'; /* CORRECTION : '0 5px 20px 0 ...' */
-    }
-
-    @media (max-width: 768px) {
-        padding: var(--space-3); /* Vérifié : Variable CSS */
-        gap: var(--space-1); /* Vérifié : Variable CSS */
+        transform: translateY('-2px');
+        box-shadow: '0 5px 20px 0 rgba(0, 0, 0, 0.07)';
     }
 `;
 
 const StepIcon = styled.div`
-    font-size: var(--text-4xl); /* Vérifié : Variable CSS */
-    color: var(--color-salmon); /* Conserve une touche de couleur vive pour les icônes */
-    margin-bottom: var(--space-1); /* Vérifié : Variable CSS */
-
-    @media (max-width: 768px) {
-        font-size: var(--text-3xl); /* Vérifié : Variable CSS */
-    }
+    font-size: var(--text-4xl);
+    color: var(--color-salmon);
+    margin-bottom: var(--space-1);
 `;
 
 const StepTitle = styled.h3`
     font-family: var(--font-family-sans);
-    font-size: var(--text-lg); /* Vérifié : Variable CSS */
+    font-size: var(--text-lg);
     color: var(--color-neutral-900);
-    margin-bottom: var(--space-1); /* Vérifié : Variable CSS */
-
-    @media (max-width: 768px) {
-        font-size: var(--text-base); /* Vérifié : Variable CSS */
-    }
+    margin-bottom: var(--space-1);
 `;
 
 const StepDescription = styled.p`
     font-family: var(--font-family-sans);
-    font-size: var(--text-sm); /* Vérifié : Variable CSS */
+    font-size: var(--text-sm);
     color: var(--color-neutral-800);
     line-height: 1.4;
-
-    @media (max-width: 768px) {
-        font-size: var(--text-xs); /* Vérifié : Variable CSS */
-    }
 `;
+
+// --- Composant Page d'Accueil ---
 
 const Accueil = () => {
     const { isNavbarHovered } = useHover();
@@ -250,47 +239,43 @@ const Accueil = () => {
                 type: "spring",
                 stiffness: 120,
                 damping: 15,
-                delay: 0.3 // Démarre un peu après le chargement de la page
+                delay: 0.3
             }
         }
     };
 
-    // Variants pour l'apparition individuelle des cartes (fade-in + léger glissement)
+    // Les variants des cartes ne sont plus utilisés pour l'affichage mobile, mais conservés si la section est affichée sur desktop.
     const cardItemVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
             opacity: 1,
             y: 0,
             transition: {
-                duration: 0.4, // Durée courte pour un fade-in rapide
+                duration: 0.4,
                 ease: "easeOut"
             }
         }
     };
 
-    // Variants pour la grille des cartes (orchestre l'apparition successive)
     const cardsGridContainerVariants = {
-        hidden: { opacity: 0 }, // La grille est initialement invisible
+        hidden: { opacity: 0 },
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.15, // Délai très court entre chaque carte
-                delayChildren: 0.5 // Démarre l'apparition de la première carte après 0.5s
+                staggerChildren: 0.15,
+                delayChildren: 0.5
             }
         }
     };
 
-    // Variants pour le conteneur HowItWorksSection (le fond bleu)
     const howItWorksSectionBackgroundVariants = {
         visible: {
             opacity: 1,
-            // Calcul du délai : (délai avant 1ère carte) + (délai entre les 3 cartes) + (durée anim de la dernière carte) + (petit buffer)
-            delay: 0.5 + (0.15 * 2) + 0.4 + 0.1, // environ 0.5 + 0.3 + 0.4 + 0.1 = 1.3 secondes
-            duration: 0.8, // Durée du fondu du fond
+            delay: 0.5 + (0.15 * 2) + 0.4 + 0.1,
+            duration: 0.8,
             ease: "easeOut"
         }
     };
-
 
     return (
         <AccueilContainer
@@ -307,36 +292,43 @@ const Accueil = () => {
                 <MainTitle variants={mainItemVariants}>
                     Votre Aventure Culinaire Commence Maintenant !
                 </MainTitle>
+
+                {/* Ajout du sous-titre ici pour qu'il apparaisse avant le CTA */}
+                <Subtitle variants={mainItemVariants}>
+                    Découvrez, partagez et savourez des recettes uniques et inspirantes.
+                </Subtitle>
             </ContentWrapper>
 
-            {/* Section "Comment ça Marche ?" (le conteneur avec le fond bleu) */}
-            <HowItWorksSection
-                animate="visible" 
-                variants={howItWorksSectionBackgroundVariants} 
-            >
-                <HowItWorksTitle />
-                <StepsGrid
-                    variants={cardsGridContainerVariants} 
-                    initial="hidden"
+            {/* Section "Comment ça Marche ?" conditionnelle : affichée uniquement sur les écrans plus grands */}
+            {window.innerWidth > 768 && ( // Rendre conditionnellement en fonction de la taille de l'écran
+                <HowItWorksSection
                     animate="visible"
+                    variants={howItWorksSectionBackgroundVariants}
                 >
-                    <StepCard variants={cardItemVariants}> 
-                        <StepIcon>🍽️</StepIcon>
-                        <StepTitle>Découvrez de nouvelles saveurs</StepTitle>
-                        <StepDescription>Parcourez notre vaste collection de recettes. Utilisez la barre de recherche et les filtres pour trouver l'inspiration.</StepDescription>
-                    </StepCard>
-                    <StepCard variants={cardItemVariants}>
-                        <StepIcon>✍️</StepIcon>
-                        <StepTitle>Partagez vos créations</StepTitle>
-                        <StepDescription>Connectez-vous pour ajouter facilement vos recettes préférées et les partager avec la communauté.</StepDescription>
-                    </StepCard>
-                    <StepCard variants={cardItemVariants}>
-                        <StepIcon>⭐</StepIcon>
-                        <StepTitle>Gérez vos favoris</StepTitle>
-                        <StepDescription>Créez votre propre carnet de recettes en enregistrant et en organisant vos découvertes culinaires.</StepDescription>
-                    </StepCard>
-                </StepsGrid>
-            </HowItWorksSection>
+                    <HowItWorksTitle />
+                    <StepsGrid
+                        variants={cardsGridContainerVariants}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        <StepCard variants={cardItemVariants}>
+                            <StepIcon>🍽️</StepIcon>
+                            <StepTitle>Découvrez de nouvelles saveurs</StepTitle>
+                            <StepDescription>Parcourez notre vaste collection de recettes. Utilisez la barre de recherche et les filtres pour trouver l'inspiration.</StepDescription>
+                        </StepCard>
+                        <StepCard variants={cardItemVariants}>
+                            <StepIcon>✍️</StepIcon>
+                            <StepTitle>Partagez vos créations</StepTitle>
+                            <StepDescription>Connectez-vous pour ajouter facilement vos recettes préférées et les partager avec la communauté.</StepDescription>
+                        </StepCard>
+                        <StepCard variants={cardItemVariants}>
+                            <StepIcon>⭐</StepIcon>
+                            <StepTitle>Gérez vos favoris</StepTitle>
+                            <StepDescription>Créez votre propre carnet de recettes en enregistrant et en organisant vos découvertes culinaires.</StepDescription>
+                        </StepCard>
+                    </StepsGrid>
+                </HowItWorksSection>
+            )}
 
             <CallToActionButton
                 to="/recettes"
