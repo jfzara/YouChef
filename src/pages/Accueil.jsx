@@ -10,10 +10,10 @@ import Footer from '../components/Footer/Footer';
 // --- Styled Components pour la Page d'Accueil ---
 
 const AccueilContainer = styled(motion.div)`
-
+margin-top:2rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     padding: var(--space-8) 0;
     position: relative;
