@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import axios from 'axios';
+// MODIFICATION CLÉ ICI : Importer axiosInstance au lieu de axios
+import axiosInstance from '../../api/axiosInstance';
 import toast from 'react-hot-toast';
 
 // Import des composants de style
@@ -15,7 +16,7 @@ import {
 } from './AdminDashboard.styles';
 
 // Import de RecipeFormModal
-import RecipeFormModal from '../../pages/Dashboard/RecipeFormModal'; // Assurez-vous que ce chemin est correct
+import RecipeFormModal from '../../pages/Dashboard/RecipeFormModal';
 
 const AdminDashboard = () => {
     const { token, user: currentUser } = useAuth();
@@ -28,18 +29,20 @@ const AdminDashboard = () => {
 
     // États pour la modale d'ajout/édition de recette
     const [isRecipeFormModalOpen, setIsRecipeFormModalOpen] = useState(false);
-    const [recipeToEdit, setRecipeToEdit] = useState(null); // Pour passer la recette à la modale en mode édition
+    const [recipeToEdit, setRecipeToEdit] = useState(null);
 
-    const API_URL = 'http://localhost:5000/api';
+    // SUPPRIMEZ CETTE LIGNE : const API_URL = 'http://localhost:5000/api';
 
     const fetchAdminData = async () => {
         try {
-            const usersRes = await axios.get(`${API_URL}/users`, {
+            // UTILISEZ axiosInstance au lieu de axios
+            const usersRes = await axiosInstance.get('/users', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(usersRes.data);
 
-            const allRecipesRes = await axios.get(`${API_URL}/recettes/all`, {
+            // UTILISEZ axiosInstance au lieu de axios
+            const allRecipesRes = await axiosInstance.get('/recettes/all', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setRecipes(allRecipesRes.data);
@@ -62,7 +65,6 @@ const AdminDashboard = () => {
     }, [token]);
 
     const handleDeleteUser = async (userId) => {
-        // Correction : Utilisation de currentUser._id pour la comparaison
         if (currentUser && currentUser._id === userId) {
             toast.error('Vous ne pouvez pas supprimer votre propre compte administrateur.');
             return;
@@ -70,10 +72,10 @@ const AdminDashboard = () => {
 
         if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.')) {
             try {
-                await axios.delete(`${API_URL}/users/${userId}`, {
+                // UTILISEZ axiosInstance au lieu de axios
+                await axiosInstance.delete(`/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                // Correction : Filtrage par user._id
                 setUsers(users.filter(user => user._id !== userId));
                 toast.success('Utilisateur supprimé avec succès !');
             } catch (err) {
@@ -84,10 +86,8 @@ const AdminDashboard = () => {
     };
 
     const handleChangeUserRole = async (userId, newRole) => {
-        // --- NOUVEAU LOG ICI ---
         console.log("handleChangeUserRole appelée avec userId:", userId, "et newRole:", newRole);
 
-        // Correction : Utilisation de currentUser._id pour la comparaison
         if (currentUser && currentUser._id === userId) {
             toast.error('Vous ne pouvez pas changer votre propre rôle via cette interface.');
             return;
@@ -98,13 +98,12 @@ const AdminDashboard = () => {
         }
 
         try {
-            // --- NOUVEAU LOG ICI ---
-            console.log("URL de la requête PUT:", `${API_URL}/users/${userId}`);
-            await axios.put(`${API_URL}/users/${userId}`, { role: newRole }, {
+            console.log("URL de la requête PUT:", `/users/${userId}`); // Le /api n'est plus nécessaire ici
+            // UTILISEZ axiosInstance au lieu de axios
+            await axiosInstance.put(`/users/${userId}`, { role: newRole }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(users.map(user =>
-                // Correction : Mise à jour par user._id
                 user._id === userId ? { ...user, role: newRole } : user
             ));
             toast.success(`Rôle de l'utilisateur mis à jour en "${newRole}" !`);
@@ -117,7 +116,8 @@ const AdminDashboard = () => {
     const handleDeleteRecipe = async (recipeId) => {
         if (window.confirm('Êtes-vous sûr de vouloir supprimer cette recette ? Cette action est irréversible.')) {
             try {
-                await axios.delete(`${API_URL}/recettes/${recipeId}`, {
+                // UTILISEZ axiosInstance au lieu de axios
+                await axiosInstance.delete(`/recettes/${recipeId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setRecipes(recipes.filter(recipe => recipe._id !== recipeId));
@@ -129,17 +129,15 @@ const AdminDashboard = () => {
         }
     };
 
-    // Nouvelle fonction pour gérer l'édition de recette via la modale
     const handleEditRecipe = useCallback((recipe) => {
-        setRecipeToEdit(recipe); // Définit la recette à éditer
-        setIsRecipeFormModalOpen(true); // Ouvre la modale
+        setRecipeToEdit(recipe);
+        setIsRecipeFormModalOpen(true);
     }, []);
 
-    // Fonction de rappel pour la fermeture de la modale ou après succès
     const handleRecipeFormSuccessOrClose = () => {
         setIsRecipeFormModalOpen(false);
-        setRecipeToEdit(null); // Réinitialise la recette à éditer
-        fetchAdminData(); // Rafraîchit les données du dashboard après l'ajout/édition
+        setRecipeToEdit(null);
+        fetchAdminData();
     };
 
     if (loading) {
@@ -149,7 +147,6 @@ const AdminDashboard = () => {
         return <p className="error-message">{error}</p>;
     }
 
-    // --- LOG POUR LES UTILISATEURS DANS L'ÉTAT (avant le rendu) ---
     console.log("Utilisateurs dans l'état (avant le rendu):", users);
 
     return (
@@ -161,31 +158,27 @@ const AdminDashboard = () => {
                 {users.length > 0 ? (
                     <ul>
                         {users.map(user => (
-                            // Correction : Utilisation de user._id pour la clé de liste
                             <li key={user._id}>
                                 <ListItemContent>
                                     {user.identifiant} ({user.email}) - Rôle: **{user.role}**
                                 </ListItemContent>
                                 <ListButtonsContainer>
-                                    {/* Correction : Utilisation de currentUser._id et user._id pour la comparaison et les appels */}
                                     {currentUser && currentUser._id !== user._id && (
                                         <>
                                             <DeleteButton onClick={() => handleDeleteUser(user._id)}>Supprimer</DeleteButton>
                                             {user.role === 'user' ? (
                                                 <PromoteButton onClick={() => {
-                                                    // --- NOUVEAU LOG ICI ---
                                                     console.log("Clic sur Promouvoir pour user._id:", user._id);
                                                     handleChangeUserRole(user._id, 'admin');
                                                 }}>
-                                                    Vers Admin {/* Correction : Ajout de l'espace insécable */}
+                                                    Vers Admin
                                                 </PromoteButton>
                                             ) : (
                                                 <DemoteButton onClick={() => {
-                                                    // --- NOUVEAU LOG ICI. ---
                                                     console.log("Clic sur Rétrograder pour user._id:", user._id);
                                                     handleChangeUserRole(user._id, 'user');
                                                 }}>
-                                                    Vers User &nbsp;&nbsp;{/* Correction : Ajout de l'espace insécable */}
+                                                    Vers User &nbsp;&nbsp;
                                                 </DemoteButton>
                                             )}
                                         </>
@@ -206,11 +199,9 @@ const AdminDashboard = () => {
                         {recipes.map(recipe => (
                             <li key={recipe._id}>
                                 <ListItemContent>
-                                    {/* CORRECTION ICI : Accédez à recipe.owner.identifiant */}
                                     {recipe.nom} (Catégorie: {recipe.categorie}, Par: {recipe.owner ? recipe.owner.identifiant : 'Inconnu'})
                                 </ListItemContent>
                                 <ListButtonsContainer>
-                                    {/* Utilise handleEditRecipe avec la recette courante */}
                                     <EditButton as="button" onClick={() => handleEditRecipe(recipe)}>Modifier</EditButton>
                                     <DeleteButton onClick={() => handleDeleteRecipe(recipe._id)}>Supprimer</DeleteButton>
                                 </ListButtonsContainer>
@@ -222,13 +213,12 @@ const AdminDashboard = () => {
                 )}
             </section>
 
-            {/* MODALE D'AJOUT/ÉDITION DE RECETTE */}
             <RecipeFormModal
                 isOpen={isRecipeFormModalOpen}
                 onClose={handleRecipeFormSuccessOrClose}
-                onRecipeAdded={handleRecipeFormSuccessOrClose} // Sera appelé après l'ajout ou la modification
-                onRecipeUpdated={handleRecipeFormSuccessOrClose} // Sera appelé après la modification
-                recipeToEdit={recipeToEdit} // Passe la recette à éditer (sera null en mode ajout)
+                onRecipeAdded={handleRecipeFormSuccessOrClose}
+                onRecipeUpdated={handleRecipeFormSuccessOrClose}
+                recipeToEdit={recipeToEdit}
             />
         </AdminDashboardContainer>
     );
