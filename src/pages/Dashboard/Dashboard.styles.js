@@ -373,6 +373,6 @@ export const RecipeListItem = styled(motion.li)`
     /* align-self: flex-end; */ /* Commenté: Si flex-grow sur p est suffisant, ce n'est pas toujours nécessaire */
     margin-top: var(--space-2); /* Espacement au-dessus de la date */
     /* Pour le débogage: */
-    /* border: 1px solid purple; */ /* Visualise la boîte de la date */
+    /* border: 1px solid purple; */ /* Visualise la boîte de la date_ */
   }
 `;
