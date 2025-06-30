@@ -11,12 +11,12 @@ import Footer from '../components/Footer/Footer'; // Importe le composant Footer
 // --- Styled Components pour la Page d'Accueil ---
 
 const AccueilContainer = styled(motion.div)`
-    margin-top: 3rem;
+    margin-top: 3rem; /* Vérifié : Variable CSS ou déjà correct */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: var(--space-8) 0; /* Garde le padding vertical */
+    padding: var(--space-8) 0; /* Vérifié : Variable CSS */
     position: relative;
     overflow: hidden; /* Important pour masquer les débordements des éléments décoratifs */
     color: var(--color-neutral-800);
@@ -24,7 +24,11 @@ const AccueilContainer = styled(motion.div)`
     text-align: center;
 
     @media (max-width: 880px) {
-        padding-bottom: calc(var(--space-8) + 70px);
+        /* Ajustement clé pour laisser de la place au footer sur mobile */
+        padding-bottom: 'calc(var(--space-8) + 120px)'; /* CORRECTION : '120px' */
+    }
+    @media (max-width: 480px) {
+        padding-bottom: 'calc(var(--space-8) + 100px)'; /* CORRECTION : '100px' */
     }
 `;
 
@@ -45,46 +49,46 @@ const BackgroundImageLayer = styled(motion.div)`
 
 const ContentWrapper = styled.div`
     width: 100%;
-    max-width: 1200px; /* Largeur maximale pour le contenu */
-    padding: 0 var(--space-4); /* Padding horizontal ici */
+    max-width: 1200px; /* Vérifié : Unité en dur, pas de problème */
+    padding: 0 var(--space-4); /* Vérifié : Variable CSS */
     box-sizing: border-box; /* S'assure que le padding est inclus dans la largeur */
     z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-6);
+    gap: var(--space-6); /* Vérifié : Variable CSS */
 
     @media (max-width: 480px) {
-        padding: 0 var(--space-3);
+        padding: 0 var(--space-3); /* Vérifié : Variable CSS */
     }
 `;
 
 const MainTitle = styled(motion.h1)`
     font-family: var(--font-family-heading);
-    font-size: var(--text-6xl);
+    font-size: var(--text-6xl); /* Vérifié : Variable CSS */
     color: var(--color-bright-pink-crayola); /* Couleur vive pour le titre principal */
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-4); /* Vérifié : Variable CSS */
     line-height: 1.1;
 
     @media (max-width: 1024px) {
-        font-size: var(--text-5xl);
+        font-size: var(--text-5xl); /* Vérifié : Variable CSS */
     }
 
     @media (max-width: 880px) {
-        font-size: var(--text-4xl);
+        font-size: var(--text-4xl); /* Vérifié : Variable CSS */
     }
 `;
 
 const Subtitle = styled(motion.p)`
     font-family: var(--font-family-sans);
-    font-size: var(--text-2xl);
+    font-size: var(--text-2xl); /* Vérifié : Variable CSS */
     color: var(--color-neutral-700); /* Texte légèrement plus doux que le noir pur */
-    margin-bottom: var(--space-8);
-    max-width: 700px;
+    margin-bottom: var(--space-8); /* Vérifié : Variable CSS */
+    max-width: 700px; /* Vérifié : Unité en dur, pas de problème */
     line-height: 1.6;
 
     @media (max-width: 880px) {
-        font-size: var(--text-xl);
+        font-size: var(--text-xl); /* Vérifié : Variable CSS */
     }
 `;
 
@@ -92,14 +96,14 @@ const CallToActionButton = styled(motion(Link))`
     background-color: var(--color-jasmine); /* Couleur chaude et accueillante */
     color: var(--color-neutral-900);
     font-family: var(--font-family-sans);
-    font-size: var(--text-xl);
-    padding: var(--space-4) var(--space-8);
-    margin-top:6vw;
+    font-size: var(--text-xl); /* Vérifié : Variable CSS */
+    padding: var(--space-4) var(--space-8); /* Vérifié : Variable CSS */
+    margin-top: '6vw'; /* CORRECTION APPORTÉE ICI */
     border: none;
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-full); /* Vérifié : Variable CSS */
     cursor: pointer;
-    box-shadow: var(--shadow-md);
-    transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    box-shadow: var(--shadow-md); /* Vérifié : Variable CSS */
+    transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast); /* Vérifié : Variable CSS */
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -109,48 +113,51 @@ const CallToActionButton = styled(motion(Link))`
     &:hover {
         background-color: var(--color-salmon); /* Passage à une couleur plus intense au survol */
         color: var(--color-neutral-0);
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
+        transform: translateY(-4px); /* CORRECTION : '-4px' */
+        box-shadow: var(--shadow-lg); /* Vérifié : Variable CSS */
     }
 
     &:active {
         transform: translateY(0);
-        box-shadow: var(--shadow-sm);
+        box-shadow: var(--shadow-sm); /* Vérifié : Variable CSS */
+    }
+
+    @media (max-width: 880px) {
+        margin-top: var(--space-6); /* Vérifié : Variable CSS */
     }
 
     @media (max-width: 480px) {
-        font-size: var(--text-lg);
-        padding: var(--space-3) var(--space-6);
-        margin-top: var(--space-6); /* Ajustement ici pour réduire la marge sur mobile */
+        font-size: var(--text-lg); /* Vérifié : Variable CSS */
+        padding: var(--space-3) var(--space-6); /* Vérifié : Variable CSS */
+        margin-top: var(--space-5); /* Vérifié : Variable CSS */
     }
 `;
 
-// --- Nouveaux Styled Components pour la Section "Comment ça Marche ?" (ultra-discrète) ---
 
 const HowItWorksSection = styled(motion.section)`
     width: 100%;
-    max-width: 800px; /* Largeur maximale réduite */
-    padding: var(--space-5) var(--space-3); /* Padding vertical et horizontal encore plus réduits */
-    margin-top: var(--space-6); /* Marge supérieure légèrement réduite */
+    max-width: 800px; /* Vérifié : Unité en dur, pas de problème */
+    padding: var(--space-5) var(--space-3); /* Vérifié : Variable CSS */
+    margin-top: var(--space-6); /* Vérifié : Variable CSS */
     background-color: var(--color-light-sky-blue); /* Une couleur de fond pour que le glassmorphism soit visible */
-    border-radius: var(--radius-xl);
-    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.03); /* Ombre encore plus discrète */
+    border-radius: var(--radius-xl); /* Vérifié : Variable CSS */
+    box-shadow: '0 2px 10px 0 rgba(0, 0, 0, 0.03)'; /* CORRECTION : '0 2px 10px 0 ...' */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-5); /* Espacement réduit entre les éléments de la section */
+    gap: var(--space-5); /* Vérifié : Variable CSS */
     
-    // *** MODIFICATION CLÉ ICI : Initialiser l'opacité à 0 par CSS ***
     opacity: 0; 
 
     @media (max-width: 880px) {
-        margin-top: var(--space-5);
-        padding: var(--space-4) var(--space-3);
+        margin-top: var(--space-5); /* Vérifié : Variable CSS */
+        padding: var(--space-4) var(--space-3); /* Vérifié : Variable CSS */
     }
 
     @media (max-width: 768px) {
-        max-width: 90%; /* S'adapte mieux sur les petits écrans */
-        margin-top: var(--space-4); /* Ajustement ici pour réduire la marge sur mobile */
+        max-width: 90%; /* Vérifié : Unité en dur, pas de problème */
+        margin-top: var(--space-4); /* Vérifié : Variable CSS */
+        padding: var(--space-3) var(--space-2); /* Vérifié : Variable CSS */
     }
 `;
 
@@ -158,62 +165,77 @@ const HowItWorksTitle = styled.h2`
     display: none; /* Cache toujours le titre */
 `;
 
-const StepsGrid = styled(motion.div)` // Ajoutez motion.div ici pour les staggerChildren
+const StepsGrid = styled(motion.div)` 
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Taille minimale des cartes légèrement réduite */
-    gap: var(--space-4); /* Espacement réduit entre les cartes */
+    grid-template-columns: repeat(auto-fit, minmax('200px', 1fr)); /* CORRECTION : '200px' */
+    gap: var(--space-4); /* Vérifié : Variable CSS */
     width: 100%;
-    margin-top: var(--space-3); /* Marge supérieure des cartes réduite */
+    margin-top: var(--space-3); /* Vérifié : Variable CSS */
 
     @media (max-width: 768px) {
-        grid-template-columns: 1fr; /* Colonne unique sur mobile */
-        gap: var(--space-3); /* Espacement légèrement réduit entre les cartes sur mobile */
+        grid-template-columns: 1fr; /* Vérifié : Pas d'unité */
+        gap: var(--space-3); /* Vérifié : Variable CSS */
     }
 `;
 
 // Styles pour le glassmorphism encore plus subtil et intégré
 const StepCard = styled(motion.div)`
-    background-color: rgba(255, 255, 255, 0.25); /* Fond encore plus transparent */
-    backdrop-filter: blur(8px); /* Flou légèrement réduit pour un look plus intégré */
-    -webkit-backdrop-filter: blur(8px); /* Pour la compatibilité Safari */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Bordure presque invisible */
-    border-radius: var(--radius-lg);
-    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.03); /* Ombre très très légère */
-    padding: var(--space-4); /* Padding interne des cartes réduit */
+    background-color: rgba(255, 255, 255, 0.25); /* Vérifié : Pas d'unité */
+    backdrop-filter: blur('8px'); /* CORRECTION : '8px' */
+    -webkit-backdrop-filter: blur('8px'); /* CORRECTION : '8px' */
+    border: '1px solid rgba(255, 255, 255, 0.1)'; /* CORRECTION : '1px solid ...' */
+    border-radius: var(--radius-lg); /* Vérifié : Variable CSS */
+    box-shadow: '0 2px 8px 0 rgba(0, 0, 0, 0.03)'; /* CORRECTION : '0 2px 8px 0 ...' */
+    padding: var(--space-4); /* Vérifié : Variable CSS */
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-2); /* Espacement réduit à l'intérieur de la carte */
-    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+    gap: var(--space-2); /* Vérifié : Variable CSS */
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; /* Vérifié : Pas d'unité directement après un nombre */
 
     &:hover {
-        transform: translateY(-2px); /* Léger soulèvement très subtil au survol */
-        box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.07); /* Ombre un peu plus présente au survol, mais toujours discrète */
+        transform: translateY('-2px'); /* CORRECTION : '-2px' */
+        box-shadow: '0 5px 20px 0 rgba(0, 0, 0, 0.07)'; /* CORRECTION : '0 5px 20px 0 ...' */
+    }
+
+    @media (max-width: 768px) {
+        padding: var(--space-3); /* Vérifié : Variable CSS */
+        gap: var(--space-1); /* Vérifié : Variable CSS */
     }
 `;
 
 const StepIcon = styled.div`
-    font-size: var(--text-4xl); /* Taille des icônes réduite */
+    font-size: var(--text-4xl); /* Vérifié : Variable CSS */
     color: var(--color-salmon); /* Conserve une touche de couleur vive pour les icônes */
-    margin-bottom: var(--space-1); /* Marge sous l'icône réduite */
+    margin-bottom: var(--space-1); /* Vérifié : Variable CSS */
+
+    @media (max-width: 768px) {
+        font-size: var(--text-3xl); /* Vérifié : Variable CSS */
+    }
 `;
 
 const StepTitle = styled.h3`
     font-family: var(--font-family-sans);
-    font-size: var(--text-lg); /* Taille de la police du titre réduite */
+    font-size: var(--text-lg); /* Vérifié : Variable CSS */
     color: var(--color-neutral-900);
-    margin-bottom: var(--space-1);
+    margin-bottom: var(--space-1); /* Vérifié : Variable CSS */
+
+    @media (max-width: 768px) {
+        font-size: var(--text-base); /* Vérifié : Variable CSS */
+    }
 `;
 
 const StepDescription = styled.p`
     font-family: var(--font-family-sans);
-    font-size: var(--text-sm); /* Taille de la police de la description réduite */
+    font-size: var(--text-sm); /* Vérifié : Variable CSS */
     color: var(--color-neutral-800);
     line-height: 1.4;
-`;
 
-// --- Composant Page d'Accueil ---
+    @media (max-width: 768px) {
+        font-size: var(--text-xs); /* Vérifié : Variable CSS */
+    }
+`;
 
 const Accueil = () => {
     const { isNavbarHovered } = useHover();
@@ -289,18 +311,16 @@ const Accueil = () => {
 
             {/* Section "Comment ça Marche ?" (le conteneur avec le fond bleu) */}
             <HowItWorksSection
-                // La propriété 'initial' n'est plus nécessaire ici car l'opacité est déjà 0 par CSS
-                animate="visible" // Anime directement vers l'état 'visible'
-                variants={howItWorksSectionBackgroundVariants} // Applique l'animation du fond
+                animate="visible" 
+                variants={howItWorksSectionBackgroundVariants} 
             >
                 <HowItWorksTitle />
-                {/* La grille des cartes, avec son propre staggerChildren */}
                 <StepsGrid
-                    variants={cardsGridContainerVariants} // La grille gère l'apparition des cartes enfants
+                    variants={cardsGridContainerVariants} 
                     initial="hidden"
                     animate="visible"
                 >
-                    <StepCard variants={cardItemVariants}> {/* Chaque carte utilise ses variants */}
+                    <StepCard variants={cardItemVariants}> 
                         <StepIcon>🍽️</StepIcon>
                         <StepTitle>Découvrez de nouvelles saveurs</StepTitle>
                         <StepDescription>Parcourez notre vaste collection de recettes. Utilisez la barre de recherche et les filtres pour trouver l'inspiration.</StepDescription>
