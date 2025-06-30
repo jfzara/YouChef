@@ -10,7 +10,7 @@ import Footer from '../components/Footer/Footer';
 // --- Styled Components pour la Page d'Accueil ---
 
 const AccueilContainer = styled(motion.div)`
-    margin-top: 1rem; /* Espace réduit par défaut pour desktop */
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -24,12 +24,10 @@ const AccueilContainer = styled(motion.div)`
     min-height: 100vh;
     box-sizing: border-box;
 
-    @media (max-width: 1024px) { /* Ajustement pour les écrans intermédiaires/petits desktops */
-        margin-top: 4rem; /* Légèrement plus d'espace */
-    }
+   
 
     @media (max-width: 880px) {
-        margin-top: 3rem; /* Retour à 3rem pour mobile/tablette */
+    
         padding-bottom: 'calc(var(--space-6) + 120px)';
         justify-content: flex-start;
     }
