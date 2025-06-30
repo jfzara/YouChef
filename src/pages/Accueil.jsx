@@ -1,12 +1,10 @@
-
-
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 import { useHover } from '../contexts/HoverContext';
-import Footer from '../components/Footer/Footer'; // Importe le composant Footer
+import Footer from '../components/Footer/Footer';
 
 // --- Styled Components pour la Page d'Accueil ---
 
@@ -16,24 +14,21 @@ const AccueilContainer = styled(motion.div)`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: var(--space-8) 0; /* Garde le padding vertical */
+    padding: var(--space-8) 0;
     position: relative;
-    overflow: hidden; /* Important pour masquer les débordements des éléments décoratifs */
+    overflow: hidden;
     color: var(--color-neutral-800);
-    background-color: var(--color-cream); /* Fond doux de la section principale */
+    background-color: var(--color-cream);
     text-align: center;
-    min-height: 100vh; /* S'assure que le conteneur prend au moins toute la hauteur de la vue */
-    box-sizing: border-box; /* Inclut le padding dans le calcul de la hauteur */
-
+    min-height: 100vh;
+    box-sizing: border-box;
 
     @media (max-width: 880px) {
-        /* Ajustement clé pour laisser de la place au footer sur mobile */
-        /* Nous n'avons plus les cartes, donc moins de contenu, le padding peut être réduit */
-        padding-bottom: 'calc(var(--space-6) + 120px)'; /* Espace pour le footer mobile */
-        justify-content: flex-start; /* Aligne le contenu en haut pour éviter trop d'espace au-dessus du titre */
+        padding-bottom: 'calc(var(--space-6) + 120px)';
+        justify-content: flex-start;
     }
     @media (max-width: 480px) {
-        padding-bottom: 'calc(var(--space-5) + 100px)'; /* Ajustement pour les très petits mobiles */
+        padding-bottom: 'calc(var(--space-5) + 100px)';
         justify-content: flex-start;
     }
 `;
@@ -82,15 +77,14 @@ const MainTitle = styled(motion.h1)`
 
     @media (max-width: 880px) {
         font-size: var(--text-4xl);
-        margin-top: var(--space-6); /* Ajoute une marge au-dessus du titre pour le mobile */
+        margin-top: var(--space-6);
     }
     @media (max-width: 480px) {
-        font-size: var(--text-3xl); /* Rendre le titre plus petit sur les très petits écrans */
+        font-size: var(--text-3xl);
         margin-top: var(--space-5);
     }
 `;
 
-// La Subtitle est désormais optionnelle ou peut être rendue conditionnellement
 const Subtitle = styled(motion.p)`
     font-family: var(--font-family-sans);
     font-size: var(--text-2xl);
@@ -101,10 +95,10 @@ const Subtitle = styled(motion.p)`
 
     @media (max-width: 880px) {
         font-size: var(--text-xl);
-        margin-bottom: var(--space-6); /* Réduit la marge pour rapprocher le CTA */
+        margin-bottom: var(--space-6);
     }
     @media (max-width: 480px) {
-        font-size: var(--text-base); /* Texte encore plus petit sur les très petits écrans */
+        font-size: var(--text-base);
         margin-bottom: var(--space-5);
     }
 `;
@@ -115,7 +109,7 @@ const CallToActionButton = styled(motion(Link))`
     font-family: var(--font-family-sans);
     font-size: var(--text-xl);
     padding: var(--space-4) var(--space-8);
-    margin-top: '6vw'; /* Conserve cette unité pour les grands écrans, mais révisée ci-dessous */
+    margin-top: '6vw';
     border: none;
     border-radius: var(--radius-full);
     cursor: pointer;
@@ -140,19 +134,19 @@ const CallToActionButton = styled(motion(Link))`
     }
 
     @media (max-width: 880px) {
-        margin-top: var(--space-7); /* Plus d'espace au-dessus du bouton après le titre/sous-titre sur tablette */
+        margin-top: var(--space-7);
     }
 
     @media (max-width: 480px) {
         font-size: var(--text-lg);
         padding: var(--space-3) var(--space-6);
-        margin-top: var(--space-6); /* Plus d'espace au-dessus du bouton après le titre/sous-titre sur mobile */
+        margin-top: var(--space-6);
     }
 `;
 
-// --- Ces Styled Components ne seront plus utilisés pour les mobiles ---
+// --- Styled Components pour la Section "Comment ça Marche ?" ---
+
 const HowItWorksSection = styled(motion.section)`
-    /* Conservez ces styles pour les écrans plus grands si nécessaire */
     width: 100%;
     max-width: 800px;
     padding: var(--space-5) var(--space-3);
@@ -164,10 +158,14 @@ const HowItWorksSection = styled(motion.section)`
     flex-direction: column;
     align-items: center;
     gap: var(--space-5);
-    opacity: 0; /* Initialiser à 0 pour l'animation */
+    opacity: 0;
 
+    /* REAPPARITION DE LA SECTION SUR DESKTOP */
+    @media (min-width: 769px) { /* Affichée sur les écrans plus larges */
+        display: flex; 
+    }
     @media (max-width: 768px) {
-        display: none; /* CACHE LA SECTION ENTIÈRE SUR MOBILE */
+        display: none; /* Cache la section entière sur mobile */
     }
 `;
 
@@ -177,14 +175,37 @@ const HowItWorksTitle = styled.h2`
 
 const StepsGrid = styled(motion.div)`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax('200px', 1fr));
+    /* ALIGNEMENT EN LIGNE POUR DESKTOP */
+    grid-template-columns: repeat(3, 1fr); /* Trois colonnes égales */
     gap: var(--space-4);
     width: 100%;
     margin-top: var(--space-3);
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr; /* Revenir à une seule colonne sur mobile (au cas où on la réactiverait) */
+        gap: var(--space-3);
+    }
 `;
 
+// Styles pour le glassmorphism encore plus subtil et intégré
 const StepCard = styled(motion.div)`
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: ${({ index }) => {
+        // Applique un dégradé de couleur basé sur l'index
+        const baseColor = [173, 216, 230]; // RGB pour light-sky-blue (approx)
+        let alpha = 0.25; // Transparence de base
+        
+        // Ajuste la teinte pour chaque carte
+        if (index === 0) {
+            return `rgba(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]}, ${alpha})`;
+        } else if (index === 1) {
+            // Légèrement plus clair pour la deuxième carte
+            return `rgba(${Math.min(255, baseColor[0] + 10)}, ${Math.min(255, baseColor[1] + 10)}, ${Math.min(255, baseColor[2] + 10)}, ${alpha})`;
+        } else if (index === 2) {
+            // Encore plus clair pour la troisième carte
+            return `rgba(${Math.min(255, baseColor[0] + 20)}, ${Math.min(255, baseColor[1] + 20)}, ${Math.min(255, baseColor[2] + 20)}, ${alpha})`;
+        }
+        return `rgba(255, 255, 255, ${alpha})`; // Fallback
+    }};
     backdrop-filter: blur('8px');
     -webkit-backdrop-filter: blur('8px');
     border: '1px solid rgba(255, 255, 255, 0.1)';
@@ -202,12 +223,21 @@ const StepCard = styled(motion.div)`
         transform: translateY('-2px');
         box-shadow: '0 5px 20px 0 rgba(0, 0, 0, 0.07)';
     }
+
+    @media (max-width: 768px) {
+        padding: var(--space-3);
+        gap: var(--space-1);
+    }
 `;
 
 const StepIcon = styled.div`
     font-size: var(--text-4xl);
     color: var(--color-salmon);
     margin-bottom: var(--space-1);
+
+    @media (max-width: 768px) {
+        font-size: var(--text-3xl);
+    }
 `;
 
 const StepTitle = styled.h3`
@@ -215,6 +245,10 @@ const StepTitle = styled.h3`
     font-size: var(--text-lg);
     color: var(--color-neutral-900);
     margin-bottom: var(--space-1);
+
+    @media (max-width: 768px) {
+        font-size: var(--text-base);
+    }
 `;
 
 const StepDescription = styled.p`
@@ -222,6 +256,10 @@ const StepDescription = styled.p`
     font-size: var(--text-sm);
     color: var(--color-neutral-800);
     line-height: 1.4;
+
+    @media (max-width: 768px) {
+        font-size: var(--text-xs);
+    }
 `;
 
 // --- Composant Page d'Accueil ---
@@ -244,7 +282,7 @@ const Accueil = () => {
         }
     };
 
-    // Les variants des cartes ne sont plus utilisés pour l'affichage mobile, mais conservés si la section est affichée sur desktop.
+    // Variants pour l'apparition individuelle des cartes (fade-in + léger glissement)
     const cardItemVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
@@ -257,6 +295,7 @@ const Accueil = () => {
         }
     };
 
+    // Variants pour la grille des cartes (orchestre l'apparition successive)
     const cardsGridContainerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -277,6 +316,9 @@ const Accueil = () => {
         }
     };
 
+    // Pour la condition d'affichage desktop vs mobile
+    const isDesktop = window.innerWidth > 768;
+
     return (
         <AccueilContainer
             initial="hidden"
@@ -293,14 +335,13 @@ const Accueil = () => {
                     Votre Aventure Culinaire Commence Maintenant !
                 </MainTitle>
 
-                {/* Ajout du sous-titre ici pour qu'il apparaisse avant le CTA */}
                 <Subtitle variants={mainItemVariants}>
                     Découvrez, partagez et savourez des recettes uniques et inspirantes.
                 </Subtitle>
             </ContentWrapper>
 
             {/* Section "Comment ça Marche ?" conditionnelle : affichée uniquement sur les écrans plus grands */}
-            {window.innerWidth > 768 && ( // Rendre conditionnellement en fonction de la taille de l'écran
+            {isDesktop && (
                 <HowItWorksSection
                     animate="visible"
                     variants={howItWorksSectionBackgroundVariants}
@@ -311,17 +352,18 @@ const Accueil = () => {
                         initial="hidden"
                         animate="visible"
                     >
-                        <StepCard variants={cardItemVariants}>
+                        {/* Chaque carte reçoit un `index` prop pour le dégradé de couleur */}
+                        <StepCard variants={cardItemVariants} index={0}>
                             <StepIcon>🍽️</StepIcon>
                             <StepTitle>Découvrez de nouvelles saveurs</StepTitle>
                             <StepDescription>Parcourez notre vaste collection de recettes. Utilisez la barre de recherche et les filtres pour trouver l'inspiration.</StepDescription>
                         </StepCard>
-                        <StepCard variants={cardItemVariants}>
+                        <StepCard variants={cardItemVariants} index={1}>
                             <StepIcon>✍️</StepIcon>
                             <StepTitle>Partagez vos créations</StepTitle>
                             <StepDescription>Connectez-vous pour ajouter facilement vos recettes préférées et les partager avec la communauté.</StepDescription>
                         </StepCard>
-                        <StepCard variants={cardItemVariants}>
+                        <StepCard variants={cardItemVariants} index={2}>
                             <StepIcon>⭐</StepIcon>
                             <StepTitle>Gérez vos favoris</StepTitle>
                             <StepDescription>Créez votre propre carnet de recettes en enregistrant et en organisant vos découvertes culinaires.</StepDescription>
