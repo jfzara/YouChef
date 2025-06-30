@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
@@ -119,6 +121,7 @@ const CallToActionButton = styled(motion(Link))`
     @media (max-width: 480px) {
         font-size: var(--text-lg);
         padding: var(--space-3) var(--space-6);
+        margin-top: var(--space-6); /* Ajustement ici pour réduire la marge sur mobile */
     }
 `;
 
@@ -147,6 +150,7 @@ const HowItWorksSection = styled(motion.section)`
 
     @media (max-width: 768px) {
         max-width: 90%; /* S'adapte mieux sur les petits écrans */
+        margin-top: var(--space-4); /* Ajustement ici pour réduire la marge sur mobile */
     }
 `;
 
@@ -163,6 +167,7 @@ const StepsGrid = styled(motion.div)` // Ajoutez motion.div ici pour les stagger
 
     @media (max-width: 768px) {
         grid-template-columns: 1fr; /* Colonne unique sur mobile */
+        gap: var(--space-3); /* Espacement légèrement réduit entre les cartes sur mobile */
     }
 `;
 
