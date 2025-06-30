@@ -1,13 +1,3 @@
-Absolument ! Je comprends tout à fait. Cet espace excessif en haut et en bas de la page peut rendre l'expérience utilisateur moins fluide sur desktop. Je vais ajuster le code pour corriger ces problèmes d'espacement.
-
-Voici les modifications que j'ai apportées :
-
-Réduction de l'espace entre la barre de navigation et le titre (MainTitle) sur desktop : L'espace vertical entre la barre de navigation (navbar) et le titre principal est contrôlé par le margin-top de l'AccueilContainer. J'ai réduit cette marge sur les grands écrans.
-
-Ajout d'un espace de 3rem entre la section des cartes et le bouton (CallToActionButton) : Cet espace est géré par la propriété margin-top du bouton CallToActionButton. J'ai ajusté cette valeur pour assurer une meilleure séparation visuelle.
-
-Accueil.js (Mise à jour des espacements sur desktop)
-JavaScript
 
 import React from 'react';
 import styled from 'styled-components';
