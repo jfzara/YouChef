@@ -10,7 +10,7 @@ import Footer from '../components/Footer/Footer';
 // --- Styled Components pour la Page d'Accueil ---
 
 const AccueilContainer = styled(motion.div)`
-    margin-top: 3rem; /* Espace réduit par défaut pour desktop */
+    margin-top: 1rem; /* Espace réduit par défaut pour desktop */
     display: flex;
     flex-direction: column;
     justify-content: center;
