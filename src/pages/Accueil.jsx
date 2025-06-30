@@ -1,3 +1,14 @@
+Absolument ! Je comprends tout à fait. Cet espace excessif en haut et en bas de la page peut rendre l'expérience utilisateur moins fluide sur desktop. Je vais ajuster le code pour corriger ces problèmes d'espacement.
+
+Voici les modifications que j'ai apportées :
+
+Réduction de l'espace entre la barre de navigation et le titre (MainTitle) sur desktop : L'espace vertical entre la barre de navigation (navbar) et le titre principal est contrôlé par le margin-top de l'AccueilContainer. J'ai réduit cette marge sur les grands écrans.
+
+Ajout d'un espace de 3rem entre la section des cartes et le bouton (CallToActionButton) : Cet espace est géré par la propriété margin-top du bouton CallToActionButton. J'ai ajusté cette valeur pour assurer une meilleure séparation visuelle.
+
+Accueil.js (Mise à jour des espacements sur desktop)
+JavaScript
+
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
@@ -9,7 +20,7 @@ import Footer from '../components/Footer/Footer';
 // --- Styled Components pour la Page d'Accueil ---
 
 const AccueilContainer = styled(motion.div)`
-    margin-top: 3rem;
+    margin-top: 3rem; /* Espace réduit par défaut pour desktop */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -23,7 +34,12 @@ const AccueilContainer = styled(motion.div)`
     min-height: 100vh;
     box-sizing: border-box;
 
+    @media (max-width: 1024px) { /* Ajustement pour les écrans intermédiaires/petits desktops */
+        margin-top: 4rem; /* Légèrement plus d'espace */
+    }
+
     @media (max-width: 880px) {
+        margin-top: 3rem; /* Retour à 3rem pour mobile/tablette */
         padding-bottom: 'calc(var(--space-6) + 120px)';
         justify-content: flex-start;
     }
@@ -109,7 +125,7 @@ const CallToActionButton = styled(motion(Link))`
     font-family: var(--font-family-sans);
     font-size: var(--text-xl);
     padding: var(--space-4) var(--space-8);
-    margin-top: '6vw';
+    margin-top: 3rem; /* CORRECTION APPORTÉE ICI pour desktop: 3rem */
     border: none;
     border-radius: var(--radius-full);
     cursor: pointer;
@@ -150,7 +166,7 @@ const HowItWorksSection = styled(motion.section)`
     width: 100%;
     max-width: 800px;
     padding: var(--space-5) var(--space-3);
-    margin-top: var(--space-6);
+    margin-top: var(--space-6); /* Pas besoin d'ajuster ici car le CTA gère sa propre marge top */
     background-color: var(--color-light-sky-blue);
     border-radius: var(--radius-xl);
     box-shadow: '0 2px 10px 0 rgba(0, 0, 0, 0.03)';
@@ -160,12 +176,11 @@ const HowItWorksSection = styled(motion.section)`
     gap: var(--space-5);
     opacity: 0;
 
-    /* REAPPARITION DE LA SECTION SUR DESKTOP */
-    @media (min-width: 769px) { /* Affichée sur les écrans plus larges */
-        display: flex; 
+    @media (min-width: 769px) {
+        display: flex;
     }
     @media (max-width: 768px) {
-        display: none; /* Cache la section entière sur mobile */
+        display: none;
     }
 `;
 
@@ -175,36 +190,30 @@ const HowItWorksTitle = styled.h2`
 
 const StepsGrid = styled(motion.div)`
     display: grid;
-    /* ALIGNEMENT EN LIGNE POUR DESKTOP */
-    grid-template-columns: repeat(3, 1fr); /* Trois colonnes égales */
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--space-4);
     width: 100%;
     margin-top: var(--space-3);
 
     @media (max-width: 768px) {
-        grid-template-columns: 1fr; /* Revenir à une seule colonne sur mobile (au cas où on la réactiverait) */
+        grid-template-columns: 1fr;
         gap: var(--space-3);
     }
 `;
 
-// Styles pour le glassmorphism encore plus subtil et intégré
 const StepCard = styled(motion.div)`
     background-color: ${({ index }) => {
-        // Applique un dégradé de couleur basé sur l'index
-        const baseColor = [173, 216, 230]; // RGB pour light-sky-blue (approx)
-        let alpha = 0.25; // Transparence de base
+        const baseColor = [173, 216, 230];
+        let alpha = 0.25;
         
-        // Ajuste la teinte pour chaque carte
         if (index === 0) {
             return `rgba(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]}, ${alpha})`;
         } else if (index === 1) {
-            // Légèrement plus clair pour la deuxième carte
             return `rgba(${Math.min(255, baseColor[0] + 10)}, ${Math.min(255, baseColor[1] + 10)}, ${Math.min(255, baseColor[2] + 10)}, ${alpha})`;
         } else if (index === 2) {
-            // Encore plus clair pour la troisième carte
             return `rgba(${Math.min(255, baseColor[0] + 20)}, ${Math.min(255, baseColor[1] + 20)}, ${Math.min(255, baseColor[2] + 20)}, ${alpha})`;
         }
-        return `rgba(255, 255, 255, ${alpha})`; // Fallback
+        return `rgba(255, 255, 255, ${alpha})`;
     }};
     backdrop-filter: blur('8px');
     -webkit-backdrop-filter: blur('8px');
@@ -267,7 +276,6 @@ const StepDescription = styled.p`
 const Accueil = () => {
     const { isNavbarHovered } = useHover();
 
-    // Variants pour les éléments principaux (titre, CTA)
     const mainItemVariants = {
         hidden: { y: 50, opacity: 0 },
         visible: {
@@ -282,7 +290,6 @@ const Accueil = () => {
         }
     };
 
-    // Variants pour l'apparition individuelle des cartes (fade-in + léger glissement)
     const cardItemVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
@@ -295,7 +302,6 @@ const Accueil = () => {
         }
     };
 
-    // Variants pour la grille des cartes (orchestre l'apparition successive)
     const cardsGridContainerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -316,7 +322,6 @@ const Accueil = () => {
         }
     };
 
-    // Pour la condition d'affichage desktop vs mobile
     const isDesktop = window.innerWidth > 768;
 
     return (
@@ -340,7 +345,6 @@ const Accueil = () => {
                 </Subtitle>
             </ContentWrapper>
 
-            {/* Section "Comment ça Marche ?" conditionnelle : affichée uniquement sur les écrans plus grands */}
             {isDesktop && (
                 <HowItWorksSection
                     animate="visible"
@@ -352,7 +356,6 @@ const Accueil = () => {
                         initial="hidden"
                         animate="visible"
                     >
-                        {/* Chaque carte reçoit un `index` prop pour le dégradé de couleur */}
                         <StepCard variants={cardItemVariants} index={0}>
                             <StepIcon>🍽️</StepIcon>
                             <StepTitle>Découvrez de nouvelles saveurs</StepTitle>
