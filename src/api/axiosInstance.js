@@ -1,10 +1,9 @@
-
 import axios from 'axios';
 
 // Configuration de l'instance axios avec gestion d'erreurs améliorée
 const axiosInstance = axios.create({
   baseURL: import.meta.env.PROD
-    ? 'https://recettesreact-backend.onrender.com/api' // C'est l'URL correcte de votre backend Render
+    ? 'https://youchef-pefh.onrender.com/api' // <-- MODIFIÉ POUR UTILISER VOTRE NOUVELLE URL RENDER
     : 'http://localhost:5000/api',
   timeout: 30000, // 30 secondes
   headers: {
