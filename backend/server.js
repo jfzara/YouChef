@@ -1,5 +1,3 @@
-// backend/server.js
-
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -17,7 +15,8 @@ const corsOptions = {
     'http://localhost:5173',
     'https://recettesreact.vercel.app',
     'https://recettesreact-git-main-jfzaras-projects.vercel.app',
-    'https://recettesreact-jfzaras-projects.vercel.app'
+    'https://recettesreact-jfzaras-projects.vercel.app',
+    'https://youchefjfzara.vercel.app' // <--- AJOUTEZ CETTE LIGNE ICI
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -33,13 +32,7 @@ app.get('/', (req, res) => {
 
 // Routes API
 app.use('/api/users', userRoutes);
-
-// Routes pour les recettes publiques (toutes les recettes)
-// Ex: GET /api/recipes/all
-app.use('/api/recettes', recetteRoutes); // Cette ligne gère /api/recettes ET /api/recettes/all
-
-// Routes du tableau de bord (statistiques, recettes récentes GLOBALEs)
-// Ex: GET /api/dashboard/stats, GET /api/dashboard/recent-recipes
+app.use('/api/recettes', recetteRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
 // Connexion à MongoDB...
