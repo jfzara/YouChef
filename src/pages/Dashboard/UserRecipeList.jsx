@@ -1,12 +1,15 @@
+
+
 // src/pages/Dashboard/UserRecipeList.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import { toast } from "react-toastify";
-import RecipeFormModal from "./RecipeFormModal"; // Maintenu si vous avez un bouton d'édition ici
-import RecipeCard from "./RecipeCard"; // Assurez-vous que ce composant existe
+import RecipeFormModal from "./RecipeFormModal";
+import RecipeCard from "./RecipeCard";
 import api from '../../api/axiosInstance';
 import { useAuth } from '../../contexts/AuthContext';
+import { useRecipes } from '../../contexts/RecipeContext'; // <-- NOUVEL IMPORT ICI !
 
 // --- Styles internes à UserRecipeList.jsx ---
 const RecipeListContainer = styled(motion.div)`
@@ -74,6 +77,8 @@ const NoRecipesMessage = styled(motion.div)`
 
 const UserRecipeList = () => {
     const { user } = useAuth();
+    const { notifyRecipesChange } = useRecipes(); // <-- OBTENEZ LA FONCTION DU CONTEXTE ICI !
+
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -81,8 +86,7 @@ const UserRecipeList = () => {
     const [currentRecipe, setCurrentRecipe] = useState(null);
 
     const fetchRecipes = useCallback(async () => {
-        // CORRECTION ICI : Utilisation de user.id au lieu de user._id
-        if (!user || !user.id) { // Vérifie la présence de user et de user.id
+        if (!user || !user.id) {
             setError("ID utilisateur manquant. Veuillez vous assurer d'être connecté.");
             setLoading(false);
             return;
@@ -91,9 +95,7 @@ const UserRecipeList = () => {
         setLoading(true);
         setError(null);
         try {
-            // CORRECTION ICI : Appel à la route `/recettes` sans ID dans l'URL
-            // Le backend utilise req.user.id de authMiddleware
-            const response = await api.get(`/recettes`); // Appelle la route GET /recettes (qui filtre par owner)
+            const response = await api.get(`/recettes`);
             setRecipes(response.data);
             console.log("Recettes de l'utilisateur chargées :", response.data);
         } catch (err) {
@@ -103,7 +105,7 @@ const UserRecipeList = () => {
         } finally {
             setLoading(false);
         }
-    }, [user]); // Dépendance à 'user' pour re-fetch si l'utilisateur change
+    }, [user]);
 
     useEffect(() => {
         fetchRecipes();
@@ -119,7 +121,8 @@ const UserRecipeList = () => {
             try {
                 await api.delete(`/recettes/${recipeId}`); // Assurez-vous que cette route est correcte côté backend
                 toast.success("Recette supprimée avec succès !");
-                fetchRecipes(); // Rafraîchit la liste après suppression
+                fetchRecipes(); // Rafraîchit la liste des recettes de l'utilisateur
+                notifyRecipesChange(); // <-- APPEL CRUCIAL POUR NOTIFIER LE ROLODEX !
             } catch (err) {
                 console.error("Erreur lors de la suppression de la recette :", err);
                 toast.error("Échec de la suppression de la recette.");
@@ -130,10 +133,10 @@ const UserRecipeList = () => {
     const handleRecipeFormSuccess = () => {
         setIsModalOpen(false);
         setCurrentRecipe(null);
-        fetchRecipes(); // Rafraîchit la liste après ajout/modification via la modale
+        fetchRecipes(); // Rafraîchit la liste des recettes de l'utilisateur
+        notifyRecipesChange(); // <-- APPEL CRUCIAL POUR NOTIFIER LE ROLODEX !
     };
 
-    // --- Logique d'affichage conditionnelle ---
     if (loading) {
         return (
             <NoRecipesMessage
@@ -179,7 +182,7 @@ const UserRecipeList = () => {
             <AnimatePresence>
                 {recipes.map((recipe, index) => (
                     <RecipeCard
-                        key={recipe._id} // L'ID de la recette dans MongoDB est généralement _id
+                        key={recipe._id}
                         recipe={recipe}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
@@ -192,15 +195,14 @@ const UserRecipeList = () => {
                 ))}
             </AnimatePresence>
 
-            {/* Modale d'édition/ajout de recette, réutilisée ici pour l'édition */}
             <RecipeFormModal
                 isOpen={isModalOpen}
                 onClose={() => {
                     setIsModalOpen(false);
-                    setCurrentRecipe(null); // Réinitialise la recette à éditer
+                    setCurrentRecipe(null);
                 }}
                 recipeToEdit={currentRecipe}
-                onRecipeUpdated={handleRecipeFormSuccess} // Callback pour l'update
+                onRecipeUpdated={handleRecipeFormSuccess}
             />
         </RecipeListContainer>
     );

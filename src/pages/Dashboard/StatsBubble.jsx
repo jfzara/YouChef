@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
+import { useAuth } from '../../contexts/AuthContext'; // Importez le hook useAuth
 
 // Importe les icônes que tu auras placées dans assets/icons
 import BrainIcon from '../../assets/icons/stats.svg';
@@ -73,7 +74,6 @@ const StatsTrigger = styled(motion.div)`
   }
 `;
 
-// Le reste du fichier StatsBubble.jsx reste inchangé
 const StatsOverlay = styled(motion.div)`
   position: fixed; /* L'overlay doit rester fixed pour couvrir tout l'écran */
   top: 0;
@@ -200,6 +200,9 @@ const StatsBubble = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Utilisez le hook useAuth pour obtenir l'état d'authentification
+  const { isAuthenticated } = useAuth(); // Nous n'avons besoin que de 'isAuthenticated' ici
+
   const toggleBubble = useCallback(() => {
     setShowBubble(prev => !prev);
   }, []);
@@ -216,16 +219,20 @@ const StatsBubble = () => {
   }, [showBubble]);
 
   useEffect(() => {
-    if (showBubble && (stats.totalRecipes === 0 && stats.totalCategories === 0 && stats.totalSousCategories === 0) && !loading) {
+    // Ne tente de charger les stats que si la bulle est visible ET l'utilisateur est authentifié
+    // ET les stats ne sont pas déjà chargées (ou sont à zéro) ET pas en cours de chargement.
+    if (showBubble && isAuthenticated && (stats.totalRecipes === 0 && stats.totalCategories === 0 && stats.totalSousCategories === 0) && !loading) {
       const fetchStats = async () => {
         setLoading(true);
         setError(null);
         try {
+          // La requête API n'a pas besoin de l'ID utilisateur ici, car axiosInstance
+          // ajoute automatiquement le token JWT, et le backend utilise ce token.
           const response = await api.get('/dashboard/stats');
           setStats(response.data);
         } catch (err) {
           console.error('Erreur lors de la récupération des statistiques:', err);
-          setError('Impossible de charger les statistiques. 😢');
+          setError('Impossible de charger les statistiques. 😢 Veuillez vous connecter ou réessayer.');
           toast.error('Erreur de chargement des statistiques.');
         } finally {
           setLoading(false);
@@ -233,7 +240,8 @@ const StatsBubble = () => {
       };
       fetchStats();
     }
-  }, [showBubble, stats, loading]);
+    // Ajoutez 'isAuthenticated' aux dépendances pour recharger les stats si l'état de connexion change
+  }, [showBubble, isAuthenticated, stats, loading]);
 
   const bubbleVariants = {
     hidden: { opacity: 0, scale: 0.8, y: 50, rotate: -5, transition: { type: "spring", stiffness: 200, damping: 20 } },
@@ -295,9 +303,15 @@ const StatsBubble = () => {
                     },
                   }}
                 >
-                  <StatCard value={stats.totalRecipes} label="Recettes Créées" icon={recipeBookIcon} />
-                  <StatCard value={stats.totalCategories} label="Catégories Uniques" icon={categoriesIcon} />
-                  <StatCard value={stats.totalSousCategories} label="Sous-Catégories Explorées" icon={subCategoriesIcon} />
+                    {!isAuthenticated ? (
+                        <p>Veuillez vous connecter pour voir vos statistiques. 🗝️</p>
+                    ) : (
+                        <>
+                            <StatCard value={stats.totalRecipes} label="Recettes Créées" icon={recipeBookIcon} />
+                            <StatCard value={stats.totalCategories} label="Catégories Uniques" icon={categoriesIcon} />
+                            <StatCard value={stats.totalSousCategories} label="Sous-Catégories Explorées" icon={subCategoriesIcon} />
+                        </>
+                    )}
                 </StatsGrid>
               )}
             </StatsBubbleContainer>

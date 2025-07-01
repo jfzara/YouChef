@@ -1,11 +1,15 @@
+
+
+// src/pages/Dashboard/RecentRecipes.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled, { keyframes } from 'styled-components';
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
+import { useRecipes } from '../../contexts/RecipeContext';
 
 // Import de l'image par défaut
-import defaultRecipeImage from '../../assets/images/default_recipe_image.jpg'; // Assurez-vous que le chemin est correct
+import defaultRecipeImage from '../../assets/images/default_recipe_image.jpg';
 
 // --- Styles pour le Rolodex ---
 
@@ -381,6 +385,8 @@ const RecentRecipes = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [wiggleClass, setWiggleClass] = useState('');
 
+    const { recipesUpdated } = useRecipes();
+
     const fetchRecentRecipes = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -394,12 +400,6 @@ const RecentRecipes = () => {
             if (response.data.length > 0) {
                 console.log("DEBUG FRONTEND: Première recette reçue pour inspection de l'owner :", response.data[0]); 
                 console.log("DEBUG FRONTEND: Propriété 'owner' de la première recette :", response.data[0].owner);
-                // Le console.log direct de l'objet 'owner' pourrait être la cause de l'erreur
-                // if (response.data[0].owner) {
-                //     console.log("DEBUG FRONTEND: Identifiant de l'owner de la première recette :", response.data[0].owner.identifiant);
-                // } else {
-                //     console.log("DEBUG FRONTEND: La propriété 'owner' de la première recette est null ou indéfinie.");
-                // }
             } else {
                 console.log("DEBUG FRONTEND: Aucune recette reçue.");
             }
@@ -431,7 +431,7 @@ const RecentRecipes = () => {
         return () => {
             clearTimeout(intervalId);
         };
-    }, [fetchRecentRecipes]);
+    }, [fetchRecentRecipes, recipesUpdated]);
 
     const cardVariants = {
         enter: (direction) => ({
