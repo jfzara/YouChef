@@ -2,8 +2,8 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useAnimation, AnimatePresence } from 'framer-motion';
 import axios from "../../api/axiosInstance";
 import DefaultRecipeImage from '../../assets/images/default_recipe_image.jpg';
-import Skeleton from 'react-loading-skeleton'; // <-- Importez Skeleton
-import 'react-loading-skeleton/dist/skeleton.css'; // <-- Importez le CSS des skeletons
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 import {
     RecettesContainer,
@@ -22,15 +22,12 @@ import {
     Tag,
     CategoryFilterContainer,
     CategoryButton,
-    StatusMessage, // <--- Assurez-vous que StatusMessage est importé
+    StatusMessage,
 } from './Recettes.styles';
 
 import {
     hoverAnimations,
 } from '../../data/recettesData';
-
-// Plus besoin d'importer styled ici car StatusMessage est déjà dans Recettes.styles
-// import styled from 'styled-components';
 
 const Recettes = () => {
     const [recettes, setRecettes] = useState({});
@@ -74,40 +71,40 @@ const Recettes = () => {
     };
 
     useEffect(() => {
-        const fetchRecettes = async () => {
+        const fetchRecettes = async () => { // Pas d'accent ici
             try {
                 console.log("🔄 Chargement des recettes...");
                 const res = await axios.get("/recettes/all");
                 const data = res.data;
-                console.log("✅ Données reçues:", data);
+                console.log("✅ Donnees recues:", data); // Pas d'accent ici
 
-                const regroupées = {};
+                const regroupees = {}; // Pas d'accent ici
                 const allRecipesArray = [];
 
                 data.forEach(recette => {
                     const cat = recette.categorie?.trim() || "Autres";
                     const sousCat = recette.sousCategorie?.trim() || "Divers";
 
-                    if (!regroupées.hasOwnProperty(cat)) regroupées[cat] = {};
-                    if (!regroupées[cat].hasOwnProperty(sousCat)) regroupées[cat][sousCat] = [];
-                    regroupées[cat][sousCat].push(recette);
+                    // Utilisation correcte de hasOwnProperty
+                    if (!Object.prototype.hasOwnProperty.call(regroupees, cat)) regroupees[cat] = {};
+                    if (!Object.prototype.hasOwnProperty.call(regroupees[cat], sousCat)) regroupees[cat][sousCat] = [];
+                    regroupees[cat][sousCat].push(recette);
 
                     allRecipesArray.push(recette);
                 });
 
-                setRecettes({ "Toutes": { "Tous": allRecipesArray }, ...regroupées });
+                setRecettes({ "Toutes": { "Tous": allRecipesArray }, ...regroupees }); // Pas d'accent ici
                 setAllRecettesFlat(allRecipesArray);
                 controls.start("visible");
 
             } catch (err) {
-                console.error("❌ Erreur lors du chargement:", err);
+                console.error("❌ Erreur lors du chargement:", err); // Pas d'accent ici
                 if (err.response) {
-                    setError(`Erreur du serveur: ${err.response.status} - ${err.response.data.message || 'Quelque chose s\'est mal passé'}`);
+                    setError(`Erreur du serveur: ${err.response.status} - ${err.response.data.message || 'Quelque chose s\'est mal passe'}`); // Pas d'accent ici
                 } else if (err.request) {
-                    // Ce message sera écrasé par celui d'axiosInstance pour les ERR_NETWORK ou ECONNABORTED
-                    setError('Oups ! Nous n\'arrivons pas à charger les recettes pour le moment. Veuillez vérifier votre connexion internet et réessayer plus tard.');
+                    setError('Oups ! Nous n\'arrivons pas a charger les recettes pour le moment. Veuillez verifier votre connexion internet et reessayer plus tard.'); // Pas d'accent ici
                 } else {
-                    setError(`Erreur inattendue: ${err.message}`);
+                    setError(`Erreur inattendue: ${err.message}`); // Pas d'accent ici
                 }
             } finally {
                 setLoading(false);
@@ -144,30 +141,35 @@ const Recettes = () => {
     }, [activeCategory, recettes, allRecettesFlat]);
 
     const availableCategories = useMemo(() => {
-        return Object.keys(recettes);
-    }, [recettes]);
+        // La cle "Toutes" est ajoutée par le frontend, donc on ne l'inclut pas si elle ne vient pas du backend
+        const keys = Object.keys(recettes);
+        if (keys.includes("Toutes") && recettes["Toutes"]?.Tous?.length === allRecettesFlat.length) {
+            return keys; // "Toutes" est deja presente et complete
+        }
+        return ["Toutes", ...keys.filter(key => key !== "Toutes")]; // Assure que "Toutes" est toujours la premiere option
+    }, [recettes, allRecettesFlat]);
 
-    // Rendu des skeletons pendant le chargement
+
     if (loading) {
         return (
             <RecettesContainer style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
                 <PageTitle><Skeleton width={300} height={40} /></PageTitle>
 
                 <CategoryFilterContainer>
-                    {Array.from({ length: 4 }).map((_, i) => ( // 4 skeletons pour les boutons de catégorie
+                    {Array.from({ length: 4 }).map((_, i) => (
                         <Skeleton key={`cat-btn-skeleton-${i}`} width={120} height={45} style={{ borderRadius: '9999px' }} />
                     ))}
                 </CategoryFilterContainer>
 
                 <RecipeGrid>
-                    {Array.from({ length: 9 }).map((_, i) => ( // 9 skeletons pour les cartes de recettes
+                    {Array.from({ length: 9 }).map((_, i) => (
                         <RecipeMiniCard key={`recipe-skeleton-${i}`} $anyCardHovered={false} $isHovered={false}>
                             <div className="image-container">
-                                <Skeleton height="100%" /> {/* Image skeleton */}
+                                <Skeleton height="100%" />
                             </div>
                             <div className="recipe-info">
-                                <Skeleton width="80%" height={20} style={{ marginBottom: '5px' }} /> {/* Nom de la recette skeleton */}
-                                <Skeleton width="60%" height={15} /> {/* Catégorie/info additionnelle skeleton */}
+                                <Skeleton width="80%" height={20} style={{ marginBottom: '5px' }} />
+                                <Skeleton width="60%" height={15} />
                             </div>
                         </RecipeMiniCard>
                     ))}
@@ -187,10 +189,10 @@ const Recettes = () => {
         );
     }
 
-    if (Object.keys(recettes).length === 0) {
+    if (Object.keys(recettes).length === 0 || allRecettesFlat.length === 0) {
         return (
             <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <StatusMessage>Aucune recette trouvée pour le moment. Revenez bientôt pour de nouvelles inspirations !</StatusMessage>
+                <StatusMessage>Aucune recette trouvee pour le moment. Revenez bientot pour de nouvelles inspirations !</StatusMessage>
             </RecettesContainer>
         );
     }
@@ -223,7 +225,7 @@ const Recettes = () => {
                     : Object.values(sousCategoriesMap).flat();
 
                 if (!recipesToDisplay || recipesToDisplay.length === 0) {
-                    return <StatusMessage key={categorie}>Aucune recette dans cette catégorie.</StatusMessage>;
+                    return <StatusMessage key={categorie}>Aucune recette dans cette categorie.</StatusMessage>; // Pas d'accent ici
                 }
 
                 return (
@@ -290,7 +292,7 @@ const Recettes = () => {
 
                             {selectedRecipe.ingredients && selectedRecipe.ingredients.length > 0 && (
                                 <RecipeDetailsSection>
-                                    <h3>Ingrédients</h3>
+                                    <h3>Ingredients</h3> {/* Pas d'accent ici */}
                                     <ul>
                                         {selectedRecipe.ingredients.map((ing, index) => (
                                             <li key={index}>{ing}</li>
@@ -301,7 +303,7 @@ const Recettes = () => {
 
                             {selectedRecipe.etapes && selectedRecipe.etapes.length > 0 && (
                                 <RecipeDetailsSection>
-                                    <h3>Préparation</h3>
+                                    <h3>Preparation</h3> {/* Pas d'accent ici */}
                                     <ol>
                                         {selectedRecipe.etapes.map((etape, index) => (
                                             <li key={index}>{etape}</li>
