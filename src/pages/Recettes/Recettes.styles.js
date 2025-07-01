@@ -46,11 +46,29 @@ export const PageTitle = styled(motion.h1)`
     }
 `;
 
+// NOUVELLE EXPORTATION POUR STATUSMESSAGE
+export const StatusMessage = styled.p`
+    text-align: center;
+    color: ${props => props.$isError ? 'var(--color-error)' : 'var(--color-neutral-700)'};
+    font-size: var(--text-lg);
+    padding: var(--space-4);
+    max-width: 600px;
+    margin: var(--space-8) auto; /* Ajustez la marge pour qu'elle soit bien centrée et visible */
+
+    @media (max-width: 768px) {
+        font-size: var(--text-base);
+        max-width: 85vw;
+        margin-left: auto;
+        margin-right: auto;
+    }
+`;
+
+
 export const CategoryFilterContainer = styled(motion.div)`
     display: flex;
-    flex-wrap: wrap; /* Permet aux boutons de passer à la ligne sur petits écrans */
+    flex-wrap: wrap;
     justify-content: center;
-    gap: var(--space-3); /* Espacement entre les boutons */
+    gap: var(--space-3);
     margin: var(--space-8) auto;
     padding: 0 var(--space-4);
     max-width: 1200px;
@@ -125,16 +143,13 @@ export const RecipeMiniCard = styled(motion.div)`
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    z-index: 1; /* Assure que la carte est au bon niveau de z-index par défaut */
+    z-index: 1;
     text-align: center;
-    /* Transitions fluides pour transform, box-shadow et opacity */
     transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, opacity 0.3s ease-in-out;
 
-    /* Styles pour l'assombrissement subtil des cartes non survolées */
     ${props => props.$anyCardHovered && !props.$isHovered && `
-        opacity: 0.75; /* Réduit l'opacité des cartes non survolées à 75% */
-        /* Vous pouvez ajouter un filtre de luminosité ici si vous voulez un assombrissement plus prononcé, ex: filter: brightness(0.9); */
-        box-shadow: var(--shadow-xs); /* Réduit l'ombre des cartes non survolées */
+        opacity: 0.75;
+        box-shadow: var(--shadow-xs);
     `}
 
     .image-container {
@@ -164,11 +179,11 @@ export const RecipeMiniCard = styled(motion.div)`
     }
 
     &:hover {
-        transform: translateY(-5px) scale(1.02); /* Légère mise à l'échelle et déplacement vers le haut */
-        box-shadow: var(--shadow-md); /* Augmente l'ombre de la carte survolée */
-        opacity: 1; /* La carte survolée redevient entièrement opaque */
-        filter: none; /* Supprime tout filtre au survol */
-        z-index: 2; /* S'assure que la carte survolée est au-dessus des autres */
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: var(--shadow-md);
+        opacity: 1;
+        filter: none;
+        z-index: 2;
     }
 
     @media (max-width: 768px) {
@@ -276,10 +291,9 @@ export const CloseButton = styled(motion.button)`
     top: var(--space-4);
     right: var(--space-4);
 
-    /* --- STYLE PAR DÉFAUT (POUR MOBILE - SANS HOVER) --- */
-    background-color: var(--color-salmon); /* Couleur "rose clair" par défaut sur mobile */
-    color: var(--color-neutral-0); /* Texte blanc */
-    border: 2px solid var(--color-salmon); /* Bordure assortie */
+    background-color: var(--color-salmon);
+    color: var(--color-neutral-0);
+    border: 2px solid var(--color-salmon);
     border-radius: var(--radius-full);
     width: 40px;
     height: 40px;
@@ -291,28 +305,25 @@ export const CloseButton = styled(motion.button)`
     cursor: pointer;
     z-index: 100;
     box-shadow: var(--shadow-md);
-    transition: all 0.3s ease-in-out; /* Transitions pour les propriétés qui changent au clic */
+    transition: all 0.3s ease-in-out;
 
-    /* Effet au clic (reste le même pour mobile/desktop) */
     &:active {
         transform: scale(0.95) rotate(0deg);
         box-shadow: var(--shadow-sm);
     }
 
-    /* --- MEDIA QUERY POUR LES GRANDS ÉCRANS (DESKTOP) --- */
-    @media (min-width: 769px) { /* Applique ces styles à partir d'une largeur d'écran de 769px et plus */
-        background-color: var(--color-bright-pink-crayola); /* Rose vif par défaut sur desktop */
-        border-color: var(--color-bright-pink-crayola); /* Bordure assortie sur desktop */
+    @media (min-width: 769px) {
+        background-color: var(--color-bright-pink-crayola);
+        border-color: var(--color-bright-pink-crayola);
 
         &:hover {
-            background-color: var(--color-salmon); /* Couleur "rose clair" au survol sur desktop */
+            background-color: var(--color-salmon);
             border-color: var(--color-salmon);
             transform: scale(1.1) rotate(5deg);
             box-shadow: var(--shadow-lg);
         }
     }
 
-    /* Si vous utilisez une image pour le 'X', conservez ces styles */
     img {
         width: 28px;
         height: 28px;

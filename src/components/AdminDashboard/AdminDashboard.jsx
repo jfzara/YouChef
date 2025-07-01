@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-// MODIFICATION CLÉ ICI : Importer axiosInstance au lieu de axios
 import axiosInstance from '../../api/axiosInstance';
 import toast from 'react-hot-toast';
+import Skeleton from 'react-loading-skeleton'; // <-- Importez Skeleton
+import 'react-loading-skeleton/dist/skeleton.css'; // <-- Importez le CSS des skeletons
 
 // Import des composants de style
 import {
@@ -31,17 +32,13 @@ const AdminDashboard = () => {
     const [isRecipeFormModalOpen, setIsRecipeFormModalOpen] = useState(false);
     const [recipeToEdit, setRecipeToEdit] = useState(null);
 
-    // SUPPRIMEZ CETTE LIGNE : const API_URL = 'http://localhost:5000/api';
-
     const fetchAdminData = async () => {
         try {
-            // UTILISEZ axiosInstance au lieu de axios
             const usersRes = await axiosInstance.get('/users', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(usersRes.data);
 
-            // UTILISEZ axiosInstance au lieu de axios
             const allRecipesRes = await axiosInstance.get('/recettes/all', {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -72,7 +69,6 @@ const AdminDashboard = () => {
 
         if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.')) {
             try {
-                // UTILISEZ axiosInstance au lieu de axios
                 await axiosInstance.delete(`/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -98,8 +94,7 @@ const AdminDashboard = () => {
         }
 
         try {
-            console.log("URL de la requête PUT:", `/users/${userId}`); // Le /api n'est plus nécessaire ici
-            // UTILISEZ axiosInstance au lieu de axios
+            console.log("URL de la requête PUT:", `/users/${userId}`);
             await axiosInstance.put(`/users/${userId}`, { role: newRole }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -116,7 +111,6 @@ const AdminDashboard = () => {
     const handleDeleteRecipe = async (recipeId) => {
         if (window.confirm('Êtes-vous sûr de vouloir supprimer cette recette ? Cette action est irréversible.')) {
             try {
-                // UTILISEZ axiosInstance au lieu de axios
                 await axiosInstance.delete(`/recettes/${recipeId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -141,7 +135,45 @@ const AdminDashboard = () => {
     };
 
     if (loading) {
-        return <p>Chargement du tableau de bord admin...</p>;
+        return (
+            <AdminDashboardContainer>
+                <h1><Skeleton width={300} height={35} /></h1> {/* Skeleton pour le titre */}
+
+                <section>
+                    <h2><Skeleton width={250} height={30} /></h2>
+                    <ul>
+                        {Array.from({ length: 3 }).map((_, i) => ( // 3 skeletons pour les utilisateurs
+                            <li key={`user-skeleton-${i}`} style={{ marginBottom: '15px' }}>
+                                <ListItemContent>
+                                    <Skeleton height={25} width="80%" />
+                                </ListItemContent>
+                                <ListButtonsContainer>
+                                    <Skeleton width={80} height={30} style={{ marginRight: '10px' }} />
+                                    <Skeleton width={100} height={30} />
+                                </ListButtonsContainer>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+
+                <section style={{ marginTop: '30px' }}>
+                    <h2><Skeleton width={280} height={30} /></h2>
+                    <ul>
+                        {Array.from({ length: 5 }).map((_, i) => ( // 5 skeletons pour les recettes
+                            <li key={`recipe-skeleton-${i}`} style={{ marginBottom: '15px' }}>
+                                <ListItemContent>
+                                    <Skeleton height={25} width="90%" />
+                                </ListItemContent>
+                                <ListButtonsContainer>
+                                    <Skeleton width={80} height={30} style={{ marginRight: '10px' }} />
+                                    <Skeleton width={80} height={30} />
+                                </ListButtonsContainer>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            </AdminDashboardContainer>
+        );
     }
     if (error) {
         return <p className="error-message">{error}</p>;

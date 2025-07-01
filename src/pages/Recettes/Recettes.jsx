@@ -2,6 +2,9 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useAnimation, AnimatePresence } from 'framer-motion';
 import axios from "../../api/axiosInstance";
 import DefaultRecipeImage from '../../assets/images/default_recipe_image.jpg';
+import Skeleton from 'react-loading-skeleton'; // <-- Importez Skeleton
+import 'react-loading-skeleton/dist/skeleton.css'; // <-- Importez le CSS des skeletons
+
 import {
     RecettesContainer,
     PageTitle,
@@ -19,29 +22,15 @@ import {
     Tag,
     CategoryFilterContainer,
     CategoryButton,
+    StatusMessage, // <--- Assurez-vous que StatusMessage est importé
 } from './Recettes.styles';
 
 import {
     hoverAnimations,
 } from '../../data/recettesData';
 
-import styled from 'styled-components';
-// Message de statut intégré directement pour la clarté
-const StatusMessage = styled.p`
-    text-align: center;
-    color: ${props => props.$isError ? 'var(--color-error)' : 'var(--color-neutral-700)'};
-    font-size: var(--text-lg);
-    padding: var(--space-4);
-    max-width: 600px;
-    margin: auto;
-
-    @media (max-width: 768px) {
-        font-size: var(--text-base);
-        max-width: 85vw;
-        margin-left: auto;
-        margin-right: auto;
-    }
-`;
+// Plus besoin d'importer styled ici car StatusMessage est déjà dans Recettes.styles
+// import styled from 'styled-components';
 
 const Recettes = () => {
     const [recettes, setRecettes] = useState({});
@@ -50,7 +39,7 @@ const Recettes = () => {
     const [error, setError] = useState(null);
     const [activeCategory, setActiveCategory] = useState("Toutes");
     const [selectedRecipe, setSelectedRecipe] = useState(null);
-    const [hoveredRecipeId, setHoveredRecipeId] = useState(null); // État pour suivre la carte survolée
+    const [hoveredRecipeId, setHoveredRecipeId] = useState(null);
 
     const controls = useAnimation();
 
@@ -115,6 +104,7 @@ const Recettes = () => {
                 if (err.response) {
                     setError(`Erreur du serveur: ${err.response.status} - ${err.response.data.message || 'Quelque chose s\'est mal passé'}`);
                 } else if (err.request) {
+                    // Ce message sera écrasé par celui d'axiosInstance pour les ERR_NETWORK ou ECONNABORTED
                     setError('Oups ! Nous n\'arrivons pas à charger les recettes pour le moment. Veuillez vérifier votre connexion internet et réessayer plus tard.');
                 } else {
                     setError(`Erreur inattendue: ${err.message}`);
@@ -138,7 +128,6 @@ const Recettes = () => {
         setSelectedRecipe(null);
     }, []);
 
-    // Fonctions pour gérer le survol des cartes
     const handleMouseEnter = useCallback((id) => {
         setHoveredRecipeId(id);
     }, []);
@@ -158,10 +147,34 @@ const Recettes = () => {
         return Object.keys(recettes);
     }, [recettes]);
 
+    // Rendu des skeletons pendant le chargement
     if (loading) {
         return (
-            <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <StatusMessage>Chargement des recettes...</StatusMessage>
+            <RecettesContainer style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
+                <PageTitle><Skeleton width={300} height={40} /></PageTitle>
+
+                <CategoryFilterContainer>
+                    {Array.from({ length: 4 }).map((_, i) => ( // 4 skeletons pour les boutons de catégorie
+                        <Skeleton key={`cat-btn-skeleton-${i}`} width={120} height={45} style={{ borderRadius: '9999px' }} />
+                    ))}
+                </CategoryFilterContainer>
+
+                <RecipeGrid>
+                    {Array.from({ length: 9 }).map((_, i) => ( // 9 skeletons pour les cartes de recettes
+                        <RecipeMiniCard key={`recipe-skeleton-${i}`} $anyCardHovered={false} $isHovered={false}>
+                            <div className="image-container">
+                                <Skeleton height="100%" /> {/* Image skeleton */}
+                            </div>
+                            <div className="recipe-info">
+                                <Skeleton width="80%" height={20} style={{ marginBottom: '5px' }} /> {/* Nom de la recette skeleton */}
+                                <Skeleton width="60%" height={15} /> {/* Catégorie/info additionnelle skeleton */}
+                            </div>
+                        </RecipeMiniCard>
+                    ))}
+                </RecipeGrid>
+                <StatusMessage>
+                    Nos chefs sont en cuisine... Un instant, les recettes arrivent !
+                </StatusMessage>
             </RecettesContainer>
         );
     }
@@ -177,7 +190,7 @@ const Recettes = () => {
     if (Object.keys(recettes).length === 0) {
         return (
             <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <StatusMessage>Aucune recette trouvée pour le moment.</StatusMessage>
+                <StatusMessage>Aucune recette trouvée pour le moment. Revenez bientôt pour de nouvelles inspirations !</StatusMessage>
             </RecettesContainer>
         );
     }
@@ -218,7 +231,7 @@ const Recettes = () => {
                         {recipesToDisplay.map((recette) => {
                             const randomHoverAnimation = hoverAnimations[Math.floor(Math.random() * hoverAnimations.length)];
                             const imageUrl = recette.imageUrl || DefaultRecipeImage;
-                            const isHovered = hoveredRecipeId === recette._id; // Vérifie si la carte est survolée
+                            const isHovered = hoveredRecipeId === recette._id;
 
                             return (
                                 <RecipeMiniCard
@@ -229,10 +242,10 @@ const Recettes = () => {
                                     whileHover={randomHoverAnimation}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => openRecipeModal(recette)}
-                                    onMouseEnter={() => handleMouseEnter(recette._id)} // Gère l'entrée du survol
-                                    onMouseLeave={handleMouseLeave} // Gère la sortie du survol
-                                    $isHovered={isHovered} // Passe la prop pour le style conditionnel
-                                    $anyCardHovered={hoveredRecipeId !== null} // Passe la prop si une carte est survolée
+                                    onMouseEnter={() => handleMouseEnter(recette._id)}
+                                    onMouseLeave={handleMouseLeave}
+                                    $isHovered={isHovered}
+                                    $anyCardHovered={hoveredRecipeId !== null}
                                 >
                                     <div className="image-container">
                                         <RecipeImage src={imageUrl} alt={recette.nom} />
