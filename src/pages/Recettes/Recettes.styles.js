@@ -273,30 +273,46 @@ export const ModalContent = styled(motion.div)`
 
 export const CloseButton = styled(motion.button)`
     position: absolute;
-    top: var(--space-3);
-    right: var(--space-3);
-    background: none;
-    border: none;
-    font-size: 2rem;
-    font-weight: 600;
-    color: black;
-    cursor: pointer;
-    padding: var(--space-2);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
+    top: var(--space-4);
+    right: var(--space-4);
+
+    /* --- STYLE PAR DÉFAUT (POUR MOBILE - SANS HOVER) --- */
+    background-color: var(--color-salmon); /* Couleur "rose clair" par défaut sur mobile */
+    color: var(--color-neutral-0); /* Texte blanc */
+    border: 2px solid var(--color-salmon); /* Bordure assortie */
+    border-radius: var(--radius-full);
+    width: 40px;
+    height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width:2.5rem;
-    height:2.5rem;
-    margin: 1rem;
-    text-align: center;
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease-in-out; /* Transitions pour les propriétés qui changent au clic */
 
-    &:hover {
-        background: var(--color-error-light);
-        transform: rotate(90deg);
+    /* Effet au clic (reste le même pour mobile/desktop) */
+    &:active {
+        transform: scale(0.95) rotate(0deg);
+        box-shadow: var(--shadow-sm);
     }
 
+    /* --- MEDIA QUERY POUR LES GRANDS ÉCRANS (DESKTOP) --- */
+    @media (min-width: 769px) { /* Applique ces styles à partir d'une largeur d'écran de 769px et plus */
+        background-color: var(--color-bright-pink-crayola); /* Rose vif par défaut sur desktop */
+        border-color: var(--color-bright-pink-crayola); /* Bordure assortie sur desktop */
+
+        &:hover {
+            background-color: var(--color-salmon); /* Couleur "rose clair" au survol sur desktop */
+            border-color: var(--color-salmon);
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: var(--shadow-lg);
+        }
+    }
+
+    /* Si vous utilisez une image pour le 'X', conservez ces styles */
     img {
         width: 28px;
         height: 28px;
