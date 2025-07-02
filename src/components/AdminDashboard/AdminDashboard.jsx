@@ -19,6 +19,8 @@ import {
 // Import de RecipeFormModal
 import RecipeFormModal from '../../pages/Dashboard/RecipeFormModal';
 
+import Footer from '../../components/Footer/Footer'; // <-- Importez le composant Footer
+
 const AdminDashboard = () => {
     const { token, user: currentUser } = useAuth();
 
@@ -136,123 +138,121 @@ const AdminDashboard = () => {
 
     if (loading) {
         return (
-            <AdminDashboardContainer>
-                <h1><Skeleton width={300} height={35} /></h1> {/* Skeleton pour le titre */}
+            <> {/* Fragment pour envelopper tout */}
+                <AdminDashboardContainer>
+                    <h1><Skeleton width={300} height={35} /></h1> {/* Skeleton pour le titre */}
 
-                <section>
-                    <h2><Skeleton width={250} height={30} /></h2>
-                    <ul>
-                        {Array.from({ length: 3 }).map((_, i) => ( // 3 skeletons pour les utilisateurs
-                            <li key={`user-skeleton-${i}`} style={{ marginBottom: '15px' }}>
-                                <ListItemContent>
-                                    <Skeleton height={25} width="80%" />
-                                </ListItemContent>
-                                <ListButtonsContainer>
-                                    <Skeleton width={80} height={30} style={{ marginRight: '10px' }} />
-                                    <Skeleton width={100} height={30} />
-                                </ListButtonsContainer>
-                            </li>
-                        ))}
-                    </ul>
-                </section>
+                    <section>
+                        <h2><Skeleton width={250} height={30} /></h2>
+                        <ul>
+                            {Array.from({ length: 3 }).map((_, i) => ( // 3 skeletons pour les utilisateurs
+                                <li key={`user-skeleton-${i}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                    <Skeleton circle width={40} height={40} style={{ marginRight: '10px' }} />
+                                    <div style={{ flexGrow: 1 }}>
+                                        <Skeleton width="60%" height={20} />
+                                        <Skeleton width="40%" height={15} />
+                                    </div>
+                                    <Skeleton width={80} height={30} style={{ borderRadius: '9999px', marginLeft: '10px' }} />
+                                    <Skeleton width={80} height={30} style={{ borderRadius: '9999px', marginLeft: '5px' }} />
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
 
-                <section style={{ marginTop: '30px' }}>
-                    <h2><Skeleton width={280} height={30} /></h2>
-                    <ul>
-                        {Array.from({ length: 5 }).map((_, i) => ( // 5 skeletons pour les recettes
-                            <li key={`recipe-skeleton-${i}`} style={{ marginBottom: '15px' }}>
-                                <ListItemContent>
-                                    <Skeleton height={25} width="90%" />
-                                </ListItemContent>
-                                <ListButtonsContainer>
-                                    <Skeleton width={80} height={30} style={{ marginRight: '10px' }} />
-                                    <Skeleton width={80} height={30} />
-                                </ListButtonsContainer>
-                            </li>
-                        ))}
-                    </ul>
-                </section>
-            </AdminDashboardContainer>
+                    <section style={{ marginTop: '40px' }}>
+                        <h2><Skeleton width={250} height={30} /></h2>
+                        <ul>
+                            {Array.from({ length: 3 }).map((_, i) => ( // 3 skeletons pour les recettes
+                                <li key={`recipe-skeleton-${i}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                    <Skeleton width={60} height={60} style={{ marginRight: '15px' }} />
+                                    <div style={{ flexGrow: 1 }}>
+                                        <Skeleton width="70%" height={20} />
+                                        <Skeleton width="50%" height={15} />
+                                    </div>
+                                    <Skeleton width={70} height={30} style={{ borderRadius: '9999px', marginLeft: '10px' }} />
+                                    <Skeleton width={70} height={30} style={{ borderRadius: '9999px', marginLeft: '5px' }} />
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                </AdminDashboardContainer>
+                <Footer /> {/* <-- Ajoutez le Footer ici */}
+            </>
         );
     }
+
     if (error) {
-        return <p className="error-message">{error}</p>;
+        return (
+            <> {/* Fragment pour envelopper tout */}
+                <AdminDashboardContainer>
+                    <p style={{ color: 'var(--color-error-dark)', textAlign: 'center', padding: '2rem' }}>
+                        {error}
+                    </p>
+                </AdminDashboardContainer>
+                <Footer /> {/* <-- Ajoutez le Footer ici */}
+            </>
+        );
     }
-
-    console.log("Utilisateurs dans l'état (avant le rendu):", users);
-
+    
     return (
-        <AdminDashboardContainer>
-            <h1>Tableau de Bord Administrateur</h1>
+        <> {/* Fragment pour envelopper tout */}
+            <AdminDashboardContainer>
+                <h1>Tableau de bord Administrateur</h1>
 
-            <section>
-                <h2>Gestion des Utilisateurs</h2>
-                {users.length > 0 ? (
+                <section>
+                    <h2>Gestion des Utilisateurs</h2>
                     <ul>
                         {users.map(user => (
                             <li key={user._id}>
                                 <ListItemContent>
-                                    {user.identifiant} ({user.email}) - Rôle: **{user.role}**
+                                    <strong>{user.identifiant}</strong> ({user.email}) - Rôle: {user.role}
                                 </ListItemContent>
                                 <ListButtonsContainer>
-                                    {currentUser && currentUser._id !== user._id && (
-                                        <>
-                                            <DeleteButton onClick={() => handleDeleteUser(user._id)}>Supprimer</DeleteButton>
-                                            {user.role === 'user' ? (
-                                                <PromoteButton onClick={() => {
-                                                    console.log("Clic sur Promouvoir pour user._id:", user._id);
-                                                    handleChangeUserRole(user._id, 'admin');
-                                                }}>
-                                                    Vers Admin
-                                                </PromoteButton>
-                                            ) : (
-                                                <DemoteButton onClick={() => {
-                                                    console.log("Clic sur Rétrograder pour user._id:", user._id);
-                                                    handleChangeUserRole(user._id, 'user');
-                                                }}>
-                                                    Vers User &nbsp;&nbsp;
-                                                </DemoteButton>
-                                            )}
-                                        </>
+                                    {user.role === 'utilisateur' && (
+                                        <PromoteButton onClick={() => handleChangeUserRole(user._id, 'admin')}>
+                                            Promouvoir Admin
+                                        </PromoteButton>
                                     )}
+                                    {user.role === 'admin' && currentUser && currentUser._id !== user._id && (
+                                        <DemoteButton onClick={() => handleChangeUserRole(user._id, 'utilisateur')}>
+                                            Rétrograder Utilisateur
+                                        </DemoteButton>
+                                    )}
+                                    <DeleteButton onClick={() => handleDeleteUser(user._id)}>Supprimer</DeleteButton>
                                 </ListButtonsContainer>
                             </li>
                         ))}
                     </ul>
-                ) : (
-                    <p>Aucun utilisateur trouvé.</p>
-                )}
-            </section>
+                </section>
 
-            <section>
-                <h2>Gestion de toutes les Recettes</h2>
-                {recipes.length > 0 ? (
+                <section style={{ marginTop: '40px' }}>
+                    <h2>Gestion de Toutes les Recettes</h2>
                     <ul>
                         {recipes.map(recipe => (
                             <li key={recipe._id}>
                                 <ListItemContent>
-                                    {recipe.nom} (Catégorie: {recipe.categorie}, Par: {recipe.owner ? recipe.owner.identifiant : 'Inconnu'})
+                                    <img src={recipe.imageUrl || 'default_recipe_image.jpg'} alt={recipe.nom} style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '15px', borderRadius: 'var(--border-radius-sm)' }} />
+                                    <strong>{recipe.nom}</strong> par {recipe.auteur?.identifiant || 'Inconnu'}
                                 </ListItemContent>
                                 <ListButtonsContainer>
-                                    <EditButton as="button" onClick={() => handleEditRecipe(recipe)}>Modifier</EditButton>
+                                    <EditButton onClick={() => handleEditRecipe(recipe)}>Modifier</EditButton>
                                     <DeleteButton onClick={() => handleDeleteRecipe(recipe._id)}>Supprimer</DeleteButton>
                                 </ListButtonsContainer>
                             </li>
                         ))}
                     </ul>
-                ) : (
-                    <p>Aucune recette trouvée.</p>
-                )}
-            </section>
+                </section>
 
-            <RecipeFormModal
-                isOpen={isRecipeFormModalOpen}
-                onClose={handleRecipeFormSuccessOrClose}
-                onRecipeAdded={handleRecipeFormSuccessOrClose}
-                onRecipeUpdated={handleRecipeFormSuccessOrClose}
-                recipeToEdit={recipeToEdit}
-            />
-        </AdminDashboardContainer>
+                <RecipeFormModal
+                    isOpen={isRecipeFormModalOpen}
+                    onClose={handleRecipeFormSuccessOrClose}
+                    onRecipeAdded={handleRecipeFormSuccessOrClose}
+                    onRecipeUpdated={handleRecipeFormSuccessOrClose}
+                    recipeToEdit={recipeToEdit}
+                />
+            </AdminDashboardContainer>
+            <Footer /> {/* <-- Ajoutez le Footer ici */}
+        </>
     );
 };
 

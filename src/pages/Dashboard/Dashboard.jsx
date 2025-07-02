@@ -30,9 +30,11 @@ import {
     DashboardTitle,
     AddRecipeToggleCard,
     // EmptyStateContainer, // <-- Supprimé
-    // EmptyStateText,      // <-- Supprimé
-    // EmptyStateButton,    // <-- Supprimé
+    // EmptyStateText,       // <-- Supprimé
+    // EmptyStateButton,     // <-- Supprimé
 } from './Dashboard.styles';
+
+import Footer from '../../components/Footer/Footer'; // <-- Importez le composant Footer
 
 const Dashboard = () => {
     const { user } = useAuth();
@@ -113,129 +115,132 @@ const Dashboard = () => {
     }, [fetchUserRecipes]);
 
     return (
-        <DashboardContainer
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-        >
-            <WelcomeSection
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-            >
-                <h1>Bienvenue, Chef {user ? user.identifiant : 'Gourmet'} !</h1>
-                <p>Préparez vos papilles, c'est l'heure de créer de nouvelles saveurs !</p>
-            </WelcomeSection>
-
-            {/* Affiche StatsBubble seulement s'il y a des recettes */}
-            {!loadingUserRecipes && userRecipes.length > 0 && <StatsBubble />}
-
-            <ContentGrid
+        <> {/* Fragment pour envelopper tout */}
+            <DashboardContainer
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
+                transition={{ duration: 0.5 }}
             >
-                <MainContent>
-                    <DashboardTitle>Mes Recettes</DashboardTitle>
-                    {loadingUserRecipes ? (
-                        <p style={{ textAlign: 'center', color: 'var(--color-neutral-600)', padding: '2rem' }}>
-                            Chargement de vos recettes...
-                        </p>
-                    ) : errorUserRecipes ? (
-                        <p style={{ textAlign: 'center', color: 'var(--color-error-dark)', padding: '2rem' }}>
-                            {errorUserRecipes}
-                        </p>
-                    ) : (
-                        <RecipeCarousel
-                            recipes={userRecipes}
-                            onEditRecipe={handleEditRecipe}
-                            onDeleteRecipe={handleDeleteRecipe}
-                            onViewRecipeDetails={handleViewRecipeDetails}
-                        />
-                    )}
-                </MainContent>
+                <WelcomeSection
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                    <h1>Bienvenue, Chef {user ? user.identifiant : 'Gourmet'} !</h1>
+                    <p>Préparez vos papilles, c'est l'heure de créer de nouvelles saveurs !</p>
+                </WelcomeSection>
 
-                <SidebarContent>
-                    <DashboardTitle as="h3">Boîte à Outils Culinaires</DashboardTitle>
+                {/* Affiche StatsBubble seulement s'il y a des recettes */}
+                {!loadingUserRecipes && userRecipes.length > 0 && <StatsBubble />}
 
-                    <AddRecipeToggleCard
-                        onClick={handleOpenRecipeFormModal}
-                        whileTap={{ scale: 0.98, rotate: -1 }}
-                    >
-                        <h3>Ajouter une Nouvelle Recette</h3>
-                        <span className="add-icon">+</span>
-                    </AddRecipeToggleCard>
+                <ContentGrid
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                    <MainContent>
+                        <DashboardTitle>Mes Recettes</DashboardTitle>
+                        {loadingUserRecipes ? (
+                            <p style={{ textAlign: 'center', color: 'var(--color-neutral-600)', padding: '2rem' }}>
+                                Chargement de vos recettes...
+                            </p>
+                        ) : errorUserRecipes ? (
+                            <p style={{ textAlign: 'center', color: 'var(--color-error-dark)', padding: '2rem' }}>
+                                {errorUserRecipes}
+                            </p>
+                        ) : (
+                            <RecipeCarousel
+                                recipes={userRecipes}
+                                onEditRecipe={handleEditRecipe}
+                                onDeleteRecipe={handleDeleteRecipe}
+                                onViewRecipeDetails={handleViewRecipeDetails}
+                            />
+                        )}
+                    </MainContent>
 
-                    <DashboardTitle as="h3">Dernières Créations Mondiales</DashboardTitle>
-                    <RecentRecipes />
+                    <SidebarContent>
+                        <DashboardTitle as="h3">Boîte à Outils Culinaires</DashboardTitle>
 
-                </SidebarContent>
-            </ContentGrid>
-
-            <RecipeFormModal
-                isOpen={isRecipeFormModalOpen}
-                onClose={handleCloseRecipeFormModal}
-                onRecipeAdded={handleRecipeFormSuccess}
-                onRecipeUpdated={handleRecipeFormSuccess}
-                recipeToEdit={recipeToEdit}
-            />
-
-            {/* MODALE DE DÉTAIL DE RECETTE */}
-            <AnimatePresence>
-                {selectedRecipe && (
-                    <ModalOverlay
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={handleCloseDetailsModal}
-                    >
-                        <ModalContent
-                            initial={{ y: "-100vh", opacity: 0 }}
-                            animate={{ y: "0", opacity: 1, transition: { type: "spring", stiffness: 100, damping: 20 } }}
-                            exit={{ y: "100vh", opacity: 0, transition: { duration: 0.2 } }}
-                            onClick={(e) => e.stopPropagation()}
+                        <AddRecipeToggleCard
+                            onClick={handleOpenRecipeFormModal}
+                            whileTap={{ scale: 0.98, rotate: -1 }}
                         >
-                            <CloseButton onClick={handleCloseDetailsModal}>×</CloseButton>
-                            {selectedRecipe.imageUrl && (
-                                <ModalImage src={selectedRecipe.imageUrl} alt={selectedRecipe.nom} />
-                            )}
-                            <RecipeNameDetail>{selectedRecipe.nom}</RecipeNameDetail>
+                            <h3>Ajouter une Nouvelle Recette</h3>
+                            <span className="add-icon">+</span>
+                        </AddRecipeToggleCard>
 
-                            <div style={{ marginBottom: 'var(--space-4)', textAlign: 'center' }}>
-                                {selectedRecipe.categorie && <Tag $isCategory>{selectedRecipe.categorie}</Tag>}
-                                {selectedRecipe.sousCategorie && <Tag>{selectedRecipe.sousCategorie}</Tag>}
-                            </div>
+                        <DashboardTitle as="h3">Dernières Créations Mondiales</DashboardTitle>
+                        <RecentRecipes />
 
-                            {selectedRecipe.description && (
-                                <RecipeDescriptionDetail>{selectedRecipe.description}</RecipeDescriptionDetail>
-                            )}
+                    </SidebarContent>
+                </ContentGrid>
 
-                            {selectedRecipe.ingredients && selectedRecipe.ingredients.length > 0 && (
-                                <RecipeDetailsSection>
-                                    <h3>Ingrédients</h3>
-                                    <ul>
-                                        {selectedRecipe.ingredients.map((ing, index) => (
-                                            <li key={index}>{ing}</li>
-                                        ))}
-                                    </ul>
-                                </RecipeDetailsSection>
-                            )}
+                <RecipeFormModal
+                    isOpen={isRecipeFormModalOpen}
+                    onClose={handleCloseRecipeFormModal}
+                    onRecipeAdded={handleRecipeFormSuccess}
+                    onRecipeUpdated={handleRecipeFormSuccess}
+                    recipeToEdit={recipeToEdit}
+                />
 
-                            {selectedRecipe.etapes && selectedRecipe.etapes.length > 0 && (
-                                <RecipeDetailsSection>
-                                    <h3>Préparation</h3>
-                                    <ol>
-                                        {selectedRecipe.etapes.map((etape, index) => (
-                                            <li key={index}>{etape}</li>
-                                        ))}
-                                    </ol>
-                                </RecipeDetailsSection>
-                            )}
-                        </ModalContent>
-                    </ModalOverlay>
-                )}
-            </AnimatePresence>
-        </DashboardContainer>
+                {/* MODALE DE DÉTAIL DE RECETTE */}
+                <AnimatePresence>
+                    {selectedRecipe && (
+                        <ModalOverlay
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={handleCloseDetailsModal}
+                        >
+                            <ModalContent
+                                initial={{ y: "-100vh", opacity: 0 }}
+                                animate={{ y: "0", opacity: 1, transition: { type: "spring", stiffness: 100, damping: 20 } }}
+                                exit={{ y: "100vh", opacity: 0, transition: { duration: 0.2 } }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <CloseButton onClick={handleCloseDetailsModal}>×</CloseButton>
+                                {selectedRecipe.imageUrl && (
+                                    <ModalImage src={selectedRecipe.imageUrl} alt={selectedRecipe.nom} />
+                                )}
+                                <RecipeNameDetail>{selectedRecipe.nom}</RecipeNameDetail>
+
+                                <div style={{ marginBottom: 'var(--space-4)', textAlign: 'center' }}>
+                                    {selectedRecipe.categorie && <Tag $isCategory>{selectedRecipe.categorie}</Tag>}
+                                    {selectedRecipe.sousCategorie && <Tag>{selectedRecipe.sousCategorie}</Tag>}
+                                </div>
+
+                                {selectedRecipe.description && (
+                                    <RecipeDescriptionDetail>{selectedRecipe.description}</RecipeDescriptionDetail>
+                                )}
+
+                                {selectedRecipe.ingredients && selectedRecipe.ingredients.length > 0 && (
+                                    <RecipeDetailsSection>
+                                        <h3>Ingrédients</h3>
+                                        <ul>
+                                            {selectedRecipe.ingredients.map((ing, index) => (
+                                                <li key={index}>{ing}</li>
+                                            ))}
+                                        </ul>
+                                    </RecipeDetailsSection>
+                                )}
+
+                                {selectedRecipe.etapes && selectedRecipe.etapes.length > 0 && (
+                                    <RecipeDetailsSection>
+                                        <h3>Préparation</h3>
+                                        <ol>
+                                            {selectedRecipe.etapes.map((etape, index) => (
+                                                <li key={index}>{etape}</li>
+                                            ))}
+                                        </ol>
+                                    </RecipeDetailsSection>
+                                )}
+                            </ModalContent>
+                        </ModalOverlay>
+                    )}
+                </AnimatePresence>
+            </DashboardContainer>
+            <Footer /> {/* <-- Ajoutez le Footer ici */}
+        </>
     );
 };
 

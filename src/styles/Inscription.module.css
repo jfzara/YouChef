@@ -1,5 +1,6 @@
 /* Inscription.module.css */
 
+/* --- Mise à jour du Conteneur --- */
 .container {
     display: flex;
     flex-direction: column;
@@ -7,11 +8,16 @@
     justify-content: center;
     min-height: calc(100vh - var(--navbar-height, 60px)); /* Ajustez si votre Navbar a une hauteur fixe */
     padding: var(--space-8);
-    background: linear-gradient(135deg, var(--soft-green-50) 0%, var(--soft-blue-50) 100%); /* Arrière-plan doux et dégradé */
-    background-size: 200% 200%; /* Important pour l'animation de fond */
-    animation: fadeIn 0.8s ease-out, backgroundPan 15s linear infinite alternate; /* Ajout de backgroundPan */
+    /* Modification ici : Changement de la couleur de fond en jaune */
+    background-color: #f2f3c3; /* Utilisation de la couleur jaune pour l'arrière-plan */
+    /* Suppression du dégradé et de l'animation backgroundPan */
+    animation: fadeIn 0.8s ease-out; /* Gardons juste le fadeIn */
+    
+    width: 100%;
+    box-sizing: border-box;
 }
 
+/* --- Mise à jour de la Carte (Formulaire) --- */
 .card {
     background-color: var(--neutral-50);
     padding: var(--space-10) var(--space-8);
@@ -20,10 +26,19 @@
     width: 100%;
     max-width: var(--max-width-sm); /* Largeur max pour le formulaire */
     animation: scaleIn 0.5s ease-out; /* Animation d'apparition du formulaire */
+    /* Ajout pour l'animation de tremblement au survol */
+    transform-origin: center; /* Important pour que le tremblement soit centré */
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* Transition douce pour éviter les saccades */
+}
+
+/* Nouvelle règle pour l'animation au survol */
+.card:hover {
+    animation: wiggle-subtle 0.3s ease-out 1; /* Applique l'animation une seule fois (1) au survol */
+    /* Durée plus courte (0.3s) pour un effet rapide, sans répétition (1) */
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1); /* Ombre légèrement plus prononcée au survol */
 }
 
 .titre {
-   
     font-size: var(--text-3xl); /* Plus grand et plus impactant */
     color: var(--soft-green-500);
     text-align: center;
@@ -172,7 +187,6 @@
     transform: scaleX(1); /* Fait apparaître le soulignement */
 }
 
-
 .networkError {
     margin-bottom: var(--space-6);
     padding: var(--space-4);
@@ -227,5 +241,21 @@
     .bouton {
         font-size: var(--text-base);
         padding: var(--space-3) var(--space-4);
+    }
+}
+
+/* Keyframes pour l'animation "wiggle-subtle" (pour l'inscription) */
+@keyframes wiggle-subtle {
+    0%, 100% {
+        transform: translate(0, 0); /* Position initiale */
+    }
+    25% {
+        transform: translate(1px, -1px); /* Léger décalage */
+    }
+    50% {
+        transform: translate(-1px, 1px); /* Retour et décalage dans l'autre sens */
+    }
+    75% {
+        transform: translate(0.5px, -0.5px); /* Encore un petit décalage */
     }
 }

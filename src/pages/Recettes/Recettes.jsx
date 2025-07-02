@@ -29,6 +29,8 @@ import {
     hoverAnimations,
 } from '../../data/recettesData';
 
+import Footer from '../../components/Footer/Footer'; // <-- Importez le composant Footer
+
 const Recettes = () => {
     const [recettes, setRecettes] = useState({});
     const [allRecettesFlat, setAllRecettesFlat] = useState([]);
@@ -180,174 +182,186 @@ const Recettes = () => {
     if (loading) {
         console.log("FRONTEND DEBUG: Affichage de l'état de chargement (skeletons)."); // Ajouté
         return (
-            <RecettesContainer style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
-                <PageTitle><Skeleton width={300} height={40} /></PageTitle>
+            <> {/* Fragment pour envelopper tout */}
+                <RecettesContainer style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
+                    <PageTitle><Skeleton width={300} height={40} /></PageTitle>
 
-                <CategoryFilterContainer>
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <Skeleton key={`cat-btn-skeleton-${i}`} width={120} height={45} style={{ borderRadius: '9999px' }} />
-                    ))}
-                </CategoryFilterContainer>
+                    <CategoryFilterContainer>
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <Skeleton key={`cat-btn-skeleton-${i}`} width={120} height={45} style={{ borderRadius: '9999px' }} />
+                        ))}
+                    </CategoryFilterContainer>
 
-                <RecipeGrid>
-                    {Array.from({ length: 9 }).map((_, i) => (
-                        <RecipeMiniCard key={`recipe-skeleton-${i}`} $anyCardHovered={false} $isHovered={false}>
-                            <div className="image-container">
-                                <Skeleton height="100%" />
-                            </div>
-                            <div className="recipe-info">
-                                <Skeleton width="80%" height={20} style={{ marginBottom: '5px' }} />
-                                <Skeleton width="60%" height={15} />
-                            </div>
-                        </RecipeMiniCard>
-                    ))}
-                </RecipeGrid>
-                <StatusMessage>
-                    Nos chefs sont en cuisine... Un instant, les recettes arrivent !
-                </StatusMessage>
-            </RecettesContainer>
+                    <RecipeGrid>
+                        {Array.from({ length: 9 }).map((_, i) => (
+                            <RecipeMiniCard key={`recipe-skeleton-${i}`} $anyCardHovered={false} $isHovered={false}>
+                                <div className="image-container">
+                                    <Skeleton height="100%" />
+                                </div>
+                                <div className="recipe-info">
+                                    <Skeleton width="80%" height={20} style={{ marginBottom: '5px' }} />
+                                    <Skeleton width="60%" height={15} />
+                                </div>
+                            </RecipeMiniCard>
+                        ))}
+                    </RecipeGrid>
+                    <StatusMessage>
+                        Nos chefs sont en cuisine... Un instant, les recettes arrivent !
+                    </StatusMessage>
+                </RecettesContainer>
+                <Footer /> {/* <-- Ajoutez le Footer ici */}
+            </>
         );
     }
 
     if (error) {
         console.log("FRONTEND DEBUG: Affichage du message d'erreur:", error); // Ajouté
         return (
-            <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <StatusMessage $isError>{error}</StatusMessage>
-            </RecettesContainer>
+            <> {/* Fragment pour envelopper tout */}
+                <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <StatusMessage $isError>{error}</StatusMessage>
+                </RecettesContainer>
+                <Footer /> {/* <-- Ajoutez le Footer ici */}
+            </>
         );
     }
 
     if (Object.keys(recettes).length === 0 || allRecettesFlat.length === 0) {
         console.log("FRONTEND DEBUG: Aucune recette trouvée (état vide)."); // Ajouté
         return (
-            <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <StatusMessage>Aucune recette trouvee pour le moment. Revenez bientot pour de nouvelles inspirations !</StatusMessage>
-            </RecettesContainer>
+            <> {/* Fragment pour envelopper tout */}
+                <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <StatusMessage>Aucune recette trouvee pour le moment. Revenez bientot pour de nouvelles inspirations !</StatusMessage>
+                </RecettesContainer>
+                <Footer /> {/* <-- Ajoutez le Footer ici */}
+            </>
         );
     }
 
     console.log("FRONTEND DEBUG: Affichage des recettes."); // Ajouté
     return (
-        <RecettesContainer
-            variants={mainContainerVariants}
-            initial="hidden"
-            animate={controls}
-        >
-            <PageTitle variants={itemVariants}>Toutes les Recettes</PageTitle>
+        <> {/* Fragment pour envelopper tout */}
+            <RecettesContainer
+                variants={mainContainerVariants}
+                initial="hidden"
+                animate={controls}
+            >
+                <PageTitle variants={itemVariants}>Toutes les Recettes</PageTitle>
 
-            <CategoryFilterContainer>
-                {availableCategories.map((category) => (
-                    <CategoryButton
-                        key={category}
-                        onClick={() => handleCategoryChange(category)}
-                        $isActive={activeCategory === category}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                    >
-                        {category}
-                    </CategoryButton>
-                ))}
-            </CategoryFilterContainer>
-
-            {Object.entries(filteredRecettes).map(([categorie, sousCategoriesMap]) => {
-                const recipesToDisplay = activeCategory === "Toutes"
-                    ? sousCategoriesMap["Tous"]
-                    : Object.values(sousCategoriesMap).flat();
-
-                if (!recipesToDisplay || recipesToDisplay.length === 0) {
-                    console.log(`FRONTEND DEBUG: Pas de recettes à afficher pour la catégorie "${categorie}".`); // Ajouté
-                    return <StatusMessage key={categorie}>Aucune recette dans cette categorie.</StatusMessage>;
-                }
-
-                return (
-                    <RecipeGrid key={categorie}>
-                        {recipesToDisplay.map((recette) => {
-                            const randomHoverAnimation = hoverAnimations[Math.floor(Math.random() * hoverAnimations.length)];
-                            const imageUrl = recette.imageUrl || DefaultRecipeImage;
-                            const isHovered = hoveredRecipeId === recette._id;
-
-                            return (
-                                <RecipeMiniCard
-                                    key={recette._id}
-                                    variants={cardVariants}
-                                    initial="hidden"
-                                    animate="visible"
-                                    whileHover={randomHoverAnimation}
-                                    whileTap={{ scale: 0.98 }}
-                                    onClick={() => openRecipeModal(recette)}
-                                    onMouseEnter={() => handleMouseEnter(recette._id)}
-                                    onMouseLeave={handleMouseLeave}
-                                    $isHovered={isHovered}
-                                    $anyCardHovered={hoveredRecipeId !== null}
-                                >
-                                    <div className="image-container">
-                                        <RecipeImage src={imageUrl} alt={recette.nom} />
-                                    </div>
-                                    <div className="recipe-info">
-                                        <RecipeMiniName>{recette.nom}</RecipeMiniName>
-                                    </div>
-                                </RecipeMiniCard>
-                            );
-                        })}
-                    </RecipeGrid>
-                );
-            })}
-
-            <AnimatePresence>
-                {selectedRecipe && (
-                    <ModalOverlay
-                        variants={modalOverlayVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        onClick={closeRecipeModal}
-                    >
-                        <ModalContent
-                            variants={modalContentVariants}
-                            onClick={(e) => e.stopPropagation()}
+                <CategoryFilterContainer>
+                    {availableCategories.map((category) => (
+                        <CategoryButton
+                            key={category}
+                            onClick={() => handleCategoryChange(category)}
+                            $isActive={activeCategory === category}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                         >
-                            <CloseButton onClick={closeRecipeModal}>×</CloseButton>
-                            {selectedRecipe.imageUrl && (
-                                <ModalImage src={selectedRecipe.imageUrl} alt={selectedRecipe.nom} />
-                            )}
-                            <RecipeNameDetail>{selectedRecipe.nom}</RecipeNameDetail>
+                            {category}
+                        </CategoryButton>
+                    ))}
+                </CategoryFilterContainer>
 
-                            <div style={{ marginBottom: 'var(--space-4)', textAlign: 'center' }}>
-                                {selectedRecipe.categorie && <Tag $isCategory>{selectedRecipe.categorie}</Tag>}
-                                {selectedRecipe.sousCategorie && <Tag>{selectedRecipe.sousCategorie}</Tag>}
-                            </div>
+                {Object.entries(filteredRecettes).map(([categorie, sousCategoriesMap]) => {
+                    const recipesToDisplay = activeCategory === "Toutes"
+                        ? sousCategoriesMap["Tous"]
+                        : Object.values(sousCategoriesMap).flat();
 
-                            {selectedRecipe.description && (
-                                <RecipeDescriptionDetail>{selectedRecipe.description}</RecipeDescriptionDetail>
-                            )}
+                    if (!recipesToDisplay || recipesToDisplay.length === 0) {
+                        console.log(`FRONTEND DEBUG: Pas de recettes à afficher pour la catégorie "${categorie}".`); // Ajouté
+                        return <StatusMessage key={categorie}>Aucune recette dans cette categorie.</StatusMessage>;
+                    }
 
-                            {selectedRecipe.ingredients && selectedRecipe.ingredients.length > 0 && (
-                                <RecipeDetailsSection>
-                                    <h3>Ingredients</h3>
-                                    <ul>
-                                        {selectedRecipe.ingredients.map((ing, index) => (
-                                            <li key={index}>{ing}</li>
-                                        ))}
-                                    </ul>
-                                </RecipeDetailsSection>
-                            )}
+                    return (
+                        <RecipeGrid key={categorie}>
+                            {recipesToDisplay.map((recette) => {
+                                const randomHoverAnimation = hoverAnimations[Math.floor(Math.random() * hoverAnimations.length)];
+                                const imageUrl = recette.imageUrl || DefaultRecipeImage;
+                                const isHovered = hoveredRecipeId === recette._id;
 
-                            {selectedRecipe.etapes && selectedRecipe.etapes.length > 0 && (
-                                <RecipeDetailsSection>
-                                    <h3>Preparation</h3>
-                                    <ol>
-                                        {selectedRecipe.etapes.map((etape, index) => (
-                                            <li key={index}>{etape}</li>
-                                        ))}
-                                    </ol>
-                                </RecipeDetailsSection>
-                            )}
-                        </ModalContent>
-                    </ModalOverlay>
-                )}
-            </AnimatePresence>
-        </RecettesContainer>
+                                return (
+                                    <RecipeMiniCard
+                                        key={recette._id}
+                                        variants={cardVariants}
+                                        initial="hidden"
+                                        animate="visible"
+                                        whileHover={randomHoverAnimation}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => openRecipeModal(recette)}
+                                        onMouseEnter={() => handleMouseEnter(recette._id)}
+                                        onMouseLeave={handleMouseLeave}
+                                        $isHovered={isHovered}
+                                        $anyCardHovered={hoveredRecipeId !== null}
+                                    >
+                                        <div className="image-container">
+                                            <RecipeImage src={imageUrl} alt={recette.nom} />
+                                        </div>
+                                        <div className="recipe-info">
+                                            <RecipeMiniName>{recette.nom}</RecipeMiniName>
+                                        </div>
+                                    </RecipeMiniCard>
+                                );
+                            })}
+                        </RecipeGrid>
+                    );
+                })}
+
+                <AnimatePresence>
+                    {selectedRecipe && (
+                        <ModalOverlay
+                            variants={modalOverlayVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            onClick={closeRecipeModal}
+                        >
+                            <ModalContent
+                                variants={modalContentVariants}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <CloseButton onClick={closeRecipeModal}>×</CloseButton>
+                                {selectedRecipe.imageUrl && (
+                                    <ModalImage src={selectedRecipe.imageUrl} alt={selectedRecipe.nom} />
+                                )}
+                                <RecipeNameDetail>{selectedRecipe.nom}</RecipeNameDetail>
+
+                                <div style={{ marginBottom: 'var(--space-4)', textAlign: 'center' }}>
+                                    {selectedRecipe.categorie && <Tag $isCategory>{selectedRecipe.categorie}</Tag>}
+                                    {selectedRecipe.sousCategorie && <Tag>{selectedRecipe.sousCategorie}</Tag>}
+                                </div>
+
+                                {selectedRecipe.description && (
+                                    <RecipeDescriptionDetail>{selectedRecipe.description}</RecipeDescriptionDetail>
+                                )}
+
+                                {selectedRecipe.ingredients && selectedRecipe.ingredients.length > 0 && (
+                                    <RecipeDetailsSection>
+                                        <h3>Ingredients</h3>
+                                        <ul>
+                                            {selectedRecipe.ingredients.map((ing, index) => (
+                                                <li key={index}>{ing}</li>
+                                            ))}
+                                        </ul>
+                                    </RecipeDetailsSection>
+                                )}
+
+                                {selectedRecipe.etapes && selectedRecipe.etapes.length > 0 && (
+                                    <RecipeDetailsSection>
+                                        <h3>Preparation</h3>
+                                        <ol>
+                                            {selectedRecipe.etapes.map((etape, index) => (
+                                                <li key={index}>{etape}</li>
+                                            ))}
+                                        </ol>
+                                    </RecipeDetailsSection>
+                                )}
+                            </ModalContent>
+                        </ModalOverlay>
+                    )}
+                </AnimatePresence>
+            </RecettesContainer>
+            <Footer /> {/* <-- Ajoutez le Footer ici */}
+        </>
     );
 };
 

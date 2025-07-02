@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'; // Ajout de useEffect pour le débogage
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axiosInstance from '../api/axiosInstance';
 import { toast } from 'react-toastify'; 
 import styles from '../styles/Connexion.module.css';
+import Footer from '../components/Footer/Footer'; // Importez le composant Footer
 
 const Connexion = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -15,24 +16,20 @@ const Connexion = () => {
 
   // --- Débogage : Vérifier l'état de `networkError` ---
   useEffect(() => {
-      console.log("DEBUG Connexion: networkError state changed to:", networkError);
+    console.log("DEBUG Connexion: networkError state changed to:", networkError);
   }, [networkError]);
 
   // --- Débogage : Vérifier les erreurs de formulaire de React Hook Form ---
   useEffect(() => {
-      if (Object.keys(errors).length > 0) {
-          console.log("DEBUG Connexion: Form validation errors:", errors);
-          // Vous pourriez même toaster les erreurs de validation si vous voulez:
-          // Object.values(errors).forEach(error => {
-          //     toast.error(`Validation: ${error.message}`);
-          // });
-      }
+    if (Object.keys(errors).length > 0) {
+      console.log("DEBUG Connexion: Form validation errors:", errors);
+    }
   }, [errors]);
 
   const onSubmit = async (data) => {
     console.log("DEBUG Connexion: onSubmit called with data:", data);
     setIsLoading(true);
-    setNetworkError(null); // Réinitialise l'erreur réseau à chaque soumission
+    setNetworkError(null); 
 
     try {
       console.log('📤 Tentative de connexion pour:', data.email);
@@ -43,10 +40,9 @@ const Connexion = () => {
       
       login(response.data.token, response.data.user);
       
-      // Message de succès convivial
       toast.success(`Bonjour ${response.data.user.identifiant}, ravi de vous revoir !`);
       console.log("DEBUG Connexion: Succès - toast.success appelé.");
-      navigate('/dashboard'); // Redirige l'utilisateur après une connexion réussie
+      navigate('/dashboard'); 
       
     } catch (error) {
       console.error('❌ Erreur connexion (détails complets):', error);
@@ -112,8 +108,6 @@ const Connexion = () => {
 
   return (
     <div>
-      {/* <Navbar /> // Déjà inclus dans App.jsx */}
-      
       <div className={styles.container}>
         <div className={styles.card}>
           <h2 className={styles.titre}>Connexion</h2>
@@ -121,7 +115,6 @@ const Connexion = () => {
             Accédez à votre espace personnel
           </p>
 
-          {/* Affichage du message d'erreur réseau orienté utilisateur */}
           {networkError && (
             <div className={styles.networkError}>
               <h3>Un souci de connexion...</h3>
@@ -210,6 +203,7 @@ const Connexion = () => {
           </div>
         </div>
       </div>
+      <Footer /> {/* Ajout du composant Footer ici */}
     </div>
   );
 };

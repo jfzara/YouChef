@@ -1,4 +1,3 @@
-
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
@@ -10,7 +9,7 @@ import Footer from '../components/Footer/Footer';
 // --- Styled Components pour la Page d'Accueil ---
 
 const AccueilContainer = styled(motion.div)`
-margin-top:2rem;
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -24,10 +23,7 @@ margin-top:2rem;
     min-height: 100vh;
     box-sizing: border-box;
 
-   
-
     @media (max-width: 880px) {
-    
         padding-bottom: 'calc(var(--space-6) + 120px)';
         justify-content: flex-start;
     }
@@ -329,7 +325,7 @@ const Accueil = () => {
                 </MainTitle>
 
                 <Subtitle variants={mainItemVariants}>
-                    Découvrez, partagez et savourez des recettes uniques et inspirantes.
+                    Connectez-vous pour découvrir, partager et savourer des recettes uniques et inspirantes.
                 </Subtitle>
             </ContentWrapper>
 
@@ -363,14 +359,16 @@ const Accueil = () => {
                 </HowItWorksSection>
             )}
 
+            {/* --- Modifications ici --- */}
             <CallToActionButton
-                to="/recettes"
+                to="/connexion" 
                 variants={mainItemVariants}
                 whileHover={{ scale: 1.05, y: -4, boxShadow: "var(--shadow-lg)" }}
                 whileTap={{ scale: 0.95, y: 0, boxShadow: "var(--shadow-sm)" }}
             >
-                Découvrir les Recettes
+                Connexion{/* Nouveau texte du bouton */}
             </CallToActionButton>
+            {/* --- Fin des modifications --- */}
 
             <Footer />
         </AccueilContainer>

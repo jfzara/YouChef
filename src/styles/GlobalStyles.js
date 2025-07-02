@@ -46,7 +46,7 @@ const GlobalStyles = createGlobalStyle`
 
     :root {
         /* Nouvelle Palette de Couleurs (inchangée) */
-        --color-light-sky-blue: #9ac6e6;
+        --color-light-sky-blue:#b2d3eb;
         --color-cream: #eff1b3;
         --color-jasmine: #fcd180;
         --color-salmon: #fa8c73;
@@ -171,7 +171,7 @@ const GlobalStyles = createGlobalStyle`
         /* Nouveaux dégradés avec votre palette (inchangés) */
         --gradient-quirky-1: linear-gradient(45deg, var(--color-light-sky-blue), var(--color-jasmine));
         --gradient-quirky-2: linear-gradient(135deg, var(--color-salmon), var(--color-bright-pink-crayola));
-        --gradient-quirky-3: linear-gradient(90deg, var(--color-cream), var(--color-light-sky-blue));
+        --gradient-quirky-3: linear-gradient(90deg, #f2f3c3, var(--color-light-sky-blue));
 
         --gradient-primary: var(--gradient-quirky-1);
         --gradient-secondary: var(--gradient-quirky-2);
@@ -219,7 +219,7 @@ const GlobalStyles = createGlobalStyle`
         font-family: var(--font-family-sans); /* Utilise Quicksand pour le corps de texte */
         color: var(--color-neutral-800);
         line-height: 1.6;
-        background-color: var(--color-cream);
+        background-color: #f2f3c3;
         position: relative;
         min-height: 100vh;
         overflow-x: hidden;

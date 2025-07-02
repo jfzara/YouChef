@@ -7,9 +7,11 @@
     justify-content: center;
     min-height: calc(100vh - var(--navbar-height, 60px)); /* Ajustez si votre Navbar a une hauteur fixe */
     padding: var(--space-8);
-    background: linear-gradient(135deg, var(--soft-blue-50) 0%, var(--soft-green-50) 100%); /* Inverser le dégradé pour une légère différence, ou gardez le même */
-    background-size: 200% 200%; /* Important pour l'animation de fond */
-    animation: fadeIn 0.8s ease-out, backgroundPan 15s linear infinite alternate; /* Ajout de backgroundPan */
+    background-color: #f2f3c3; /* Couleur de fond de la page d'accueil */
+    animation: fadeIn 0.8s ease-out; /* Gardons juste le fadeIn si désiré */
+    
+    width: 100%; /* S'assurer qu'il prend toute la largeur */
+    box-sizing: border-box; /* Inclure padding et border dans la largeur/hauteur */
 }
 
 .card {
@@ -20,10 +22,19 @@
     width: 100%;
     max-width: var(--max-width-sm); /* Largeur max pour le formulaire */
     animation: scaleIn 0.5s ease-out; /* Animation d'apparition du formulaire */
+    /* Ajout pour l'animation de tremblement au survol */
+    transform-origin: center; /* Important pour que le tremblement soit centré */
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* Transition douce pour éviter les saccades au démarrage du wiggle */
+}
+
+/* Nouvelle règle pour l'animation au survol */
+.card:hover {
+    animation: wiggle 0.3s ease-out 1 alternate; /* Applique l'animation au survol */
+    /* Vous pouvez ajuster le timing (0.5s), le type (ease-in-out), le nombre de répétitions (infinite) et la direction (alternate) */
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1); /* Peut-être une ombre légèrement plus prononcée au survol */
 }
 
 .titre {
-
     font-size: var(--text-3xl); /* Plus grand et plus impactant */
     color: var(--soft-blue-500); /* Utilisation du bleu pour le titre de connexion */
     text-align: center;
@@ -226,5 +237,18 @@
     .bouton {
         font-size: var(--text-base);
         padding: var(--space-3) var(--space-4);
+    }
+}
+
+/* Keyframes pour l'animation "wiggle" */
+@keyframes wiggle {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-0.5deg); /* Léger tremblement vers la gauche */
+    }
+    75% {
+        transform: rotate(0.5deg); /* Léger tremblement vers la droite */
     }
 }

@@ -11,7 +11,7 @@ export const RecipeImage = styled.img`
 
 export const DashboardContainer = styled(motion.div)`
     padding: var(--space-8);
-    padding-top: calc(var(--navbar-height) + var(--space-8));
+   
     min-height: 100vh;
     position: relative;
     overflow: hidden;
@@ -300,7 +300,7 @@ export const RecipeList = styled.ul`
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-4);
+    
 `;
 
 export const RecipeListItem = styled(motion.li)`
