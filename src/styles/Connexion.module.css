@@ -23,9 +23,9 @@
 }
 
 .titre {
-    font-family: var(--font-display);
-    font-size: var(--text-5xl); /* Plus grand et plus impactant */
-    color: var(--soft-blue-700); /* Utilisation du bleu pour le titre de connexion */
+
+    font-size: var(--text-3xl); /* Plus grand et plus impactant */
+    color: var(--soft-blue-500); /* Utilisation du bleu pour le titre de connexion */
     text-align: center;
     margin-bottom: var(--space-2);
     animation: slideUp 0.6s ease-out;

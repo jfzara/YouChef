@@ -15,9 +15,9 @@ export const RecettesContainer = styled(motion.div)`
 `;
 
 export const PageTitle = styled(motion.h1)`
-    font-family: var(--font-display);
+   
     font-size: var(--text-5xl);
-    font-weight: var(--font-extrabold);
+    font-weight: var(--font-bold);
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

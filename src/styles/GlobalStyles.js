@@ -1,6 +1,9 @@
+
+
 import { createGlobalStyle } from 'styled-components';
 
-// Importations des polices Quicksand uniquement
+// Importations des polices Quicksand (vous pouvez les garder si vous les utilisez ailleurs,
+// ou les retirer si Quicksand n'est plus utilisée du tout)
 import QuicksandLightTTF from '../assets/fonts/Quicksand-Light.ttf';
 import QuicksandRegularTTF from '../assets/fonts/Quicksand-Regular.ttf';
 import QuicksandSemiBoldTTF from '../assets/fonts/Quicksand-SemiBold.ttf';
@@ -36,6 +39,10 @@ const GlobalStyles = createGlobalStyle`
         font-style: normal;
         font-display: swap;
     }
+
+    /* --- Importation de Google Fonts pour Roboto (plus classique) --- */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    /* Vous pouvez ajouter d'autres graisses si nécessaire, par exemple 300, 500, 900 */
 
     :root {
         /* Nouvelle Palette de Couleurs (inchangée) */
@@ -171,10 +178,10 @@ const GlobalStyles = createGlobalStyle`
 
 
         /* --- TYPOGRAPHIE - MISE À JOUR ICI --- */
-        /* La police de titre sera maintenant Quicksand avec une graisse forte */
-        --font-family-heading: 'Quicksand', sans-serif; 
+        /* La police de titre sera maintenant Roboto (plus classique) */
+        --font-family-heading: 'Roboto', sans-serif; 
         /* La police de corps reste Quicksand */
-        --font-family-sans: 'Quicksand', sans-serif;
+        --font-family-sans: 'Quicksand', sans-serif; 
 
         --text-xs: 0.75rem;
         --text-sm: 0.875rem;
@@ -227,9 +234,8 @@ const GlobalStyles = createGlobalStyle`
     }
 
     h1, h2, h3, h4, h5, h6 {
-        font-family: var(--font-family-heading); /* Utilise Quicksand pour les titres */
-        /* Vous pourriez vouloir augmenter la graisse pour les titres si vous utilisiez Cabin Sketch auparavant */
-        font-weight: var(--font-bold); /* Exemple: rendre les titres en gras */
+        font-family: var(--font-family-heading); /* Utilise Roboto pour les titres */
+        font-weight: var(--font-bold); 
         line-height: 1.2;
         margin-top: var(--space-6);
         margin-bottom: var(--space-4);
