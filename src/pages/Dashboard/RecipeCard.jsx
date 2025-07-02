@@ -59,15 +59,12 @@ const RecipeTitle = styled.h3`
     margin: 0;
     text-align: center;
     text-shadow: var(--shadow-text-sm);
-    line-height: 1.2;
-    padding: 0 3rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: nowrap; /* Empêche le texte de passer à la ligne */
+    overflow: hidden; /* Cache le texte qui dépasse */
+    text-overflow: ellipsis; /* Ajoute des points de suspension */
     width: 100%;
     box-sizing: border-box;
+    padding: 0 1rem; /* Réduit le padding pour donner plus d'espace au texte */
 `;
 
 // Conteneur pour les boutons d'action

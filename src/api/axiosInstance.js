@@ -1,3 +1,5 @@
+
+
 import axios from 'axios';
 
 // Configuration de l'instance axios avec gestion d'erreurs améliorée
@@ -29,6 +31,9 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
+        // Débogage pour voir l'erreur avant toute action
+        console.error('DEBUG axiosInstance: Erreur interceptée:', error.response || error);
+
         // Gestion spécifique des erreurs réseau
         if (error.code === 'ERR_NETWORK') {
             console.error('❌ Erreur réseau: Vérifiez que le serveur backend est accessible');
@@ -43,12 +48,23 @@ axiosInstance.interceptors.response.use(
             error.message = 'Le serveur est un peu timide ou très occupé. On réessaye dans un instant !';
         }
 
-        // Déconnexion automatique si token expiré
-        if (error.response?.status === 401) {
+        // --- DÉBUT DE LA MODIFICATION IMPORTANTE POUR LE 401 ---
+        const isLoginAttempt = error.config.url.includes('/users/login'); // Vérifie si l'URL de la requête était '/users/login'
+
+        // Si l'erreur est 401 (Unauthorized) ET que ce n'est PAS une tentative de connexion échouée
+        // OU si un token était déjà présent dans le localStorage (indiquant une déconnexion d'une session active)
+        if (error.response?.status === 401 && (!isLoginAttempt || localStorage.getItem('token'))) {
+            console.log('DEBUG axiosInstance: Déconnexion automatique déclenchée suite à un 401 sur une route protégée.');
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            window.location.href = '/connexion';
+            
+            // Redirige uniquement si l'utilisateur n'est pas déjà sur la page de connexion
+            // pour éviter les rechargements inutiles ou les boucles
+            if (window.location.pathname !== '/connexion') {
+                window.location.href = '/connexion';
+            }
         }
+        // --- FIN DE LA MODIFICATION IMPORTANTE POUR LE 401 ---
 
         return Promise.reject(error);
     }

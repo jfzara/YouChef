@@ -174,7 +174,8 @@ export const RecipeMiniCard = styled(motion.div)`
         padding: var(--space-3) var(--space-2);
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start; /* Aligner en haut */
+        align-items: center; /* Centrer horizontalement */
         flex-grow: 1;
     }
 
@@ -201,11 +202,12 @@ export const RecipeMiniName = styled.h4`
     color: var(--color-neutral-800);
     margin-bottom: 0;
     line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: nowrap; /* Empêche le texte de passer à la ligne */
+    overflow: hidden; /* Cache le texte qui dépasse */
+    text-overflow: ellipsis; /* Ajoute des points de suspension */
+    width: 100%; /* Assure que l'élément prend toute la largeur disponible pour la troncature */
+    text-align: center; /* Centre le texte */
+    box-sizing: border-box; /* Inclut le padding dans la largeur */
 
     @media (max-width: 768px) {
         font-size: var(--text-sm);

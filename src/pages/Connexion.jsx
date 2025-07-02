@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Ajout de useEffect pour le débogage
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Navbar from '../components/Navbar/Navbar';
 import axiosInstance from '../api/axiosInstance';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify'; 
 import styles from '../styles/Connexion.module.css';
 
 const Connexion = () => {
@@ -14,9 +13,26 @@ const Connexion = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  // --- Débogage : Vérifier l'état de `networkError` ---
+  useEffect(() => {
+      console.log("DEBUG Connexion: networkError state changed to:", networkError);
+  }, [networkError]);
+
+  // --- Débogage : Vérifier les erreurs de formulaire de React Hook Form ---
+  useEffect(() => {
+      if (Object.keys(errors).length > 0) {
+          console.log("DEBUG Connexion: Form validation errors:", errors);
+          // Vous pourriez même toaster les erreurs de validation si vous voulez:
+          // Object.values(errors).forEach(error => {
+          //     toast.error(`Validation: ${error.message}`);
+          // });
+      }
+  }, [errors]);
+
   const onSubmit = async (data) => {
+    console.log("DEBUG Connexion: onSubmit called with data:", data);
     setIsLoading(true);
-    setNetworkError(null);
+    setNetworkError(null); // Réinitialise l'erreur réseau à chaque soumission
 
     try {
       console.log('📤 Tentative de connexion pour:', data.email);
@@ -27,54 +43,99 @@ const Connexion = () => {
       
       login(response.data.token, response.data.user);
       
-      toast.success(`Bienvenue ${response.data.user.identifiant} !`);
-      navigate('/dashboard');
+      // Message de succès convivial
+      toast.success(`Bonjour ${response.data.user.identifiant}, ravi de vous revoir !`);
+      console.log("DEBUG Connexion: Succès - toast.success appelé.");
+      navigate('/dashboard'); // Redirige l'utilisateur après une connexion réussie
       
     } catch (error) {
-      console.error('❌ Erreur connexion:', error);
+      console.error('❌ Erreur connexion (détails complets):', error);
       
       if (error.code === 'ERR_NETWORK') {
+        console.log("DEBUG Connexion: Erreur réseau détectée.");
         setNetworkError('Impossible de contacter le serveur. Vérifiez que le backend est démarré sur http://localhost:5000');
-        toast.error('Erreur de connexion au serveur');
-      } else if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
+        toast.error('Un problème de connexion est survenu. Il est impossible de joindre notre serveur. Veuillez vérifier votre connexion internet ou réessayer plus tard.');
+        console.log("DEBUG Connexion: Erreur réseau - toast.error appelé.");
+
+      } else if (error.response) {
+        console.log("DEBUG Connexion: Erreur de réponse serveur détectée.");
+        const { status, data } = error.response;
+        console.log("DEBUG Connexion: Erreur de réponse - Status:", status, "Data:", data);
+
+        let userFriendlyMessage = 'Une erreur inattendue est survenue de notre côté. Veuillez réessayer dans un instant.'; 
+
+        if (status === 400 || status === 401) {
+          console.log("DEBUG Connexion: Status 400 ou 401.");
+          if (data.message) {
+            console.log("DEBUG Connexion: data.message existe:", data.message);
+            
+            if (data.message.includes('Email ou mot de passe incorrect')) { 
+                userFriendlyMessage = 'L\'adresse e-mail ou le mot de passe est incorrect. Veuillez vérifier vos informations et réessayer.';
+                console.log("DEBUG Connexion: Message 'Email ou mot de passe incorrect' détecté.");
+            } 
+            else if (data.message.includes('utilisateur non trouvé')) {
+                userFriendlyMessage = 'Aucun compte n\'est associé à cette adresse e-mail. Peut-être avez-vous fait une faute de frappe, ou n\'êtes-vous pas encore inscrit ?';
+                console.log("DEBUG Connexion: Message 'utilisateur non trouvé' détecté.");
+            } else if (data.message.includes('email invalide') || data.message.includes('format d\'email')) {
+                userFriendlyMessage = 'Le format de l\'adresse e-mail ne semble pas correct. Veuillez la vérifier.';
+                console.log("DEBUG Connexion: Message 'email invalide' ou 'format d'email' détecté.");
+            } else {
+                userFriendlyMessage = `Une difficulté est survenue : ${data.message}. Veuillez vérifier vos informations.`;
+                console.log("DEBUG Connexion: Message générique 400/401 avec message backend.");
+            }
+          } else {
+            userFriendlyMessage = 'Votre adresse e-mail ou votre mot de passe n\'est pas valide. Veuillez réessayer.';
+            console.log("DEBUG Connexion: Message générique 400/401 sans message backend.");
+          }
+        } else if (status === 403) {
+            userFriendlyMessage = 'Vous n\'avez pas les permissions nécessaires pour accéder à cette section. Si c\'est une erreur, contactez le support.';
+            console.log("DEBUG Connexion: Status 403 (Forbidden).");
+        }
+        else if (status >= 500) {
+          userFriendlyMessage = 'Un problème technique est survenu de notre côté. Nos équipes travaillent à le résoudre. Merci de réessayer plus tard.';
+          console.log("DEBUG Connexion: Status 5xx (Server Error).");
+        } 
+        
+        toast.error(`Désolé, ${userFriendlyMessage}`); 
+        console.log("DEBUG Connexion: Erreur serveur - toast.error appelé avec message:", userFriendlyMessage);
+
       } else {
-        toast.error('Erreur lors de la connexion');
+        console.log("DEBUG Connexion: Autre type d'erreur inattendue.");
+        toast.error('Une difficulté inattendue est survenue. Veuillez réessayer ultérieurement.');
+        console.log("DEBUG Connexion: Autre erreur - toast.error appelé.");
       }
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); 
+      console.log("DEBUG Connexion: setIsLoading(false) appelé.");
     }
   };
 
   return (
     <div>
-     
+      {/* <Navbar /> // Déjà inclus dans App.jsx */}
       
       <div className={styles.container}>
-        <div className={styles.card}> {/* Ajout d'une carte pour encadrer le formulaire */}
+        <div className={styles.card}>
           <h2 className={styles.titre}>Connexion</h2>
           <p className={styles.subtitle}>
             Accédez à votre espace personnel
           </p>
 
-          {/* Alerte erreur réseau */}
+          {/* Affichage du message d'erreur réseau orienté utilisateur */}
           {networkError && (
             <div className={styles.networkError}>
-              <h3>Erreur de connexion</h3>
-              <p>{networkError}</p>
-              <div>
-                <p>Solutions possibles :</p>
-                <ul>
-                  <li>Démarrer le serveur backend : <code>npm start</code></li>
-                  <li>Vérifier que le serveur fonctionne sur le port 5000</li>
-                  <li>Vérifier la configuration de l'URL dans axiosInstance.js</li>
-                </ul>
-              </div>
+              <h3>Un souci de connexion...</h3>
+              <p>Il semblerait que nous ayons du mal à joindre notre serveur en ce moment.</p>
+              <p>Voici quelques pistes simples qui pourraient aider :</p>
+              <ul>
+                <li>Vérifiez si vous êtes bien **connecté à internet**.</li>
+                <li>Essayez de **rafraîchir la page** ou de **réessayer dans quelques instants**.</li>
+              </ul>
             </div>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-            {/* Email */}
+            {/* Champ Email */}
             <div className={styles.formGroup}>
               <label className={styles.label}>
                 Adresse e-mail
@@ -82,10 +143,10 @@ const Connexion = () => {
               <input
                 type="email"
                 {...register('email', { 
-                  required: 'L\'email est requis',
+                  required: 'Votre adresse e-mail est requise', 
                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: 'Format d\'email invalide'
+                    message: 'Le format de l\'adresse e-mail n\'est pas valide' 
                   }
                 })}
                 className={`${styles.input} ${errors.email ? styles.error : ''}`}
@@ -98,7 +159,7 @@ const Connexion = () => {
               )}
             </div>
 
-            {/* Mot de passe */}
+            {/* Champ Mot de passe */}
             <div className={styles.formGroup}>
               <label className={styles.label}>
                 Mot de passe
@@ -106,7 +167,7 @@ const Connexion = () => {
               <input
                 type="password"
                 {...register('motDePasse', { 
-                  required: 'Le mot de passe est requis'
+                  required: 'Votre mot de passe est requis' 
                 })}
                 className={`${styles.input} ${errors.motDePasse ? styles.error : ''}`}
                 placeholder="Votre mot de passe"
@@ -147,7 +208,7 @@ const Connexion = () => {
               </Link>
             </p>
           </div>
-        </div> {/* Fin de .card */}
+        </div>
       </div>
     </div>
   );
