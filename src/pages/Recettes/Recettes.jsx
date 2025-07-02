@@ -71,21 +71,28 @@ const Recettes = () => {
     };
 
     useEffect(() => {
-        const fetchRecettes = async () => { // Pas d'accent ici
+        const fetchRecettes = async () => {
+            // --- DÉBOGAGE FRONTEND : Démarrage du fetch ---
+            console.log("FRONTEND DEBUG: Début du fetch des recettes sur /recettes/all.");
+            setError(null); // Réinitialiser l'erreur à chaque nouvel essai
+            setLoading(true); // Remettre à loading true si on re-déclenche
+
             try {
-                console.log("🔄 Chargement des recettes...");
+                // console.log("🔄 Chargement des recettes..."); // Votre log existant
                 const res = await axios.get("/recettes/all");
                 const data = res.data;
-                console.log("✅ Donnees recues:", data); // Pas d'accent ici
+                
+                // --- DÉBOGAGE FRONTEND : Données reçues ---
+                console.log("FRONTEND DEBUG: Données brutes reçues du backend:", data);
+                // console.log("✅ Donnees recues:", data); // Votre log existant
 
-                const regroupees = {}; // Pas d'accent ici
+                const regroupees = {};
                 const allRecipesArray = [];
 
                 data.forEach(recette => {
                     const cat = recette.categorie?.trim() || "Autres";
                     const sousCat = recette.sousCategorie?.trim() || "Divers";
 
-                    // Utilisation correcte de hasOwnProperty
                     if (!Object.prototype.hasOwnProperty.call(regroupees, cat)) regroupees[cat] = {};
                     if (!Object.prototype.hasOwnProperty.call(regroupees[cat], sousCat)) regroupees[cat][sousCat] = [];
                     regroupees[cat][sousCat].push(recette);
@@ -93,35 +100,53 @@ const Recettes = () => {
                     allRecipesArray.push(recette);
                 });
 
-                setRecettes({ "Toutes": { "Tous": allRecipesArray }, ...regroupees }); // Pas d'accent ici
+                setRecettes({ "Toutes": { "Tous": allRecipesArray }, ...regroupees });
                 setAllRecettesFlat(allRecipesArray);
+                
+                // --- DÉBOGAGE FRONTEND : État après traitement ---
+                console.log("FRONTEND DEBUG: Recettes traitées et mises à jour dans l'état du composant.");
+                console.log("FRONTEND DEBUG: Nombre total de recettes (allRecettesFlat):", allRecipesArray.length);
+
                 controls.start("visible");
 
             } catch (err) {
-                console.error("❌ Erreur lors du chargement:", err); // Pas d'accent ici
+                // --- DÉBOGAGE FRONTEND : Erreur lors du fetch ---
+                console.error("FRONTEND DEBUG ERROR: Erreur lors du fetch des recettes:", err);
+                // console.error("❌ Erreur lors du chargement:", err); // Votre log existant
+
+                let errorMessage = 'Une erreur inattendue est survenue.';
                 if (err.response) {
-                    setError(`Erreur du serveur: ${err.response.status} - ${err.response.data.message || 'Quelque chose s\'est mal passe'}`); // Pas d'accent ici
+                    console.error("FRONTEND DEBUG ERROR: Réponse du serveur:", err.response.data);
+                    console.error("FRONTEND DEBUG ERROR: Statut HTTP:", err.response.status);
+                    errorMessage = `Erreur du serveur: ${err.response.status} - ${err.response.data.message || 'Quelque chose s\'est mal passé'}`;
                 } else if (err.request) {
-                    setError('Oups ! Nous n\'arrivons pas a charger les recettes pour le moment. Veuillez verifier votre connexion internet et reessayer plus tard.'); // Pas d'accent ici
+                    console.error("FRONTEND DEBUG ERROR: Pas de réponse du serveur (requête envoyée mais aucune réponse).");
+                    errorMessage = 'Oups ! Nous n\'arrivons pas à charger les recettes pour le moment. Veuillez vérifier votre connexion internet ou le serveur.';
                 } else {
-                    setError(`Erreur inattendue: ${err.message}`); // Pas d'accent ici
+                    console.error("FRONTEND DEBUG ERROR: Erreur de configuration de la requête Axios:", err.message);
+                    errorMessage = `Erreur lors de l'envoi de la requête: ${err.message}`;
                 }
+                setError(errorMessage);
             } finally {
                 setLoading(false);
+                console.log("FRONTEND DEBUG: Fin de l'opération de fetch. Loading = false.");
             }
         };
         fetchRecettes();
     }, [controls]);
 
     const handleCategoryChange = useCallback((category) => {
+        console.log("FRONTEND DEBUG: Changement de catégorie vers:", category); // Ajouté
         setActiveCategory(category);
     }, []);
 
     const openRecipeModal = useCallback((recipe) => {
+        console.log("FRONTEND DEBUG: Ouverture modale pour la recette:", recipe.nom); // Ajouté
         setSelectedRecipe(recipe);
     }, []);
 
     const closeRecipeModal = useCallback(() => {
+        console.log("FRONTEND DEBUG: Fermeture de la modale."); // Ajouté
         setSelectedRecipe(null);
     }, []);
 
@@ -134,23 +159,26 @@ const Recettes = () => {
     }, []);
 
     const filteredRecettes = useMemo(() => {
+        const displayedRecettes = {};
         if (activeCategory === "Toutes") {
-            return { "Toutes": { "Tous": allRecettesFlat } };
+            displayedRecettes["Toutes"] = { "Tous": allRecettesFlat };
+        } else {
+            displayedRecettes[activeCategory] = recettes[activeCategory] || {};
         }
-        return { [activeCategory]: recettes[activeCategory] || {} };
+        console.log("FRONTEND DEBUG: Recettes filtrées (catégorie active:", activeCategory, "):", displayedRecettes); // Ajouté
+        return displayedRecettes;
     }, [activeCategory, recettes, allRecettesFlat]);
 
     const availableCategories = useMemo(() => {
-        // La cle "Toutes" est ajoutée par le frontend, donc on ne l'inclut pas si elle ne vient pas du backend
         const keys = Object.keys(recettes);
-        if (keys.includes("Toutes") && recettes["Toutes"]?.Tous?.length === allRecettesFlat.length) {
-            return keys; // "Toutes" est deja presente et complete
-        }
-        return ["Toutes", ...keys.filter(key => key !== "Toutes")]; // Assure que "Toutes" est toujours la premiere option
+        let categories = ["Toutes", ...keys.filter(key => key !== "Toutes")];
+        console.log("FRONTEND DEBUG: Catégories disponibles:", categories); // Ajouté
+        return categories;
     }, [recettes, allRecettesFlat]);
 
 
     if (loading) {
+        console.log("FRONTEND DEBUG: Affichage de l'état de chargement (skeletons)."); // Ajouté
         return (
             <RecettesContainer style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
                 <PageTitle><Skeleton width={300} height={40} /></PageTitle>
@@ -182,6 +210,7 @@ const Recettes = () => {
     }
 
     if (error) {
+        console.log("FRONTEND DEBUG: Affichage du message d'erreur:", error); // Ajouté
         return (
             <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <StatusMessage $isError>{error}</StatusMessage>
@@ -190,6 +219,7 @@ const Recettes = () => {
     }
 
     if (Object.keys(recettes).length === 0 || allRecettesFlat.length === 0) {
+        console.log("FRONTEND DEBUG: Aucune recette trouvée (état vide)."); // Ajouté
         return (
             <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <StatusMessage>Aucune recette trouvee pour le moment. Revenez bientot pour de nouvelles inspirations !</StatusMessage>
@@ -197,6 +227,7 @@ const Recettes = () => {
         );
     }
 
+    console.log("FRONTEND DEBUG: Affichage des recettes."); // Ajouté
     return (
         <RecettesContainer
             variants={mainContainerVariants}
@@ -225,7 +256,8 @@ const Recettes = () => {
                     : Object.values(sousCategoriesMap).flat();
 
                 if (!recipesToDisplay || recipesToDisplay.length === 0) {
-                    return <StatusMessage key={categorie}>Aucune recette dans cette categorie.</StatusMessage>; // Pas d'accent ici
+                    console.log(`FRONTEND DEBUG: Pas de recettes à afficher pour la catégorie "${categorie}".`); // Ajouté
+                    return <StatusMessage key={categorie}>Aucune recette dans cette categorie.</StatusMessage>;
                 }
 
                 return (
@@ -292,7 +324,7 @@ const Recettes = () => {
 
                             {selectedRecipe.ingredients && selectedRecipe.ingredients.length > 0 && (
                                 <RecipeDetailsSection>
-                                    <h3>Ingredients</h3> {/* Pas d'accent ici */}
+                                    <h3>Ingredients</h3>
                                     <ul>
                                         {selectedRecipe.ingredients.map((ing, index) => (
                                             <li key={index}>{ing}</li>
@@ -303,7 +335,7 @@ const Recettes = () => {
 
                             {selectedRecipe.etapes && selectedRecipe.etapes.length > 0 && (
                                 <RecipeDetailsSection>
-                                    <h3>Preparation</h3> {/* Pas d'accent ici */}
+                                    <h3>Preparation</h3>
                                     <ol>
                                         {selectedRecipe.etapes.map((etape, index) => (
                                             <li key={index}>{etape}</li>
