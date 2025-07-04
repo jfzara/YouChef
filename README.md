@@ -67,31 +67,6 @@ Bash
 npm start
 Le serveur devrait être opérationnel sur [http://localhost:5000] (ou le port que vous avez configuré).
 
-🧪 PEUPLER LA BASE DE DONNÉES
-Un script Python est inclus pour pré-remplir votre base de données avec des recettes fictives et des images.
-
-Installez Python (si ce n'est pas déjà fait).
-
-Installez les dépendances Python :
-
-Bash
-
-pip install requests faker
-Mettez à jour le script peupler_db.py :
-
-BASE_API_URL : Doit correspondre à l'URL de votre backend (ex: [http://localhost:5000/api]).
-
-LOGIN_IDENTIFIANT et LOGIN_PASSWORD : Identifiants d'un utilisateur admin existant.
-
-IMAGES_LOCAL_PATH : Chemin absolu vers votre dossier d'images de test.
-
-Exécutez le script :
-
-Bash
-
-python peupler_db.py
-Le script créera des recettes avec du Lorem Ipsum et uploadera les images sur Cloudinary.
-
 🤝 CONTRIBUTION
 Nous accueillons les contributions ! Pour améliorer YouChef :
 
