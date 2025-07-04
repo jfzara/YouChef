@@ -1,6 +1,6 @@
 
 # YOUCHEF - VOTRE ASSISTANT CULINAIRE NUMÉRIQUE
-# Par Jean Fabrice ZARA: https://www.linkedin.com/in/jfzara-developpeur-react-node-montreal/
+ Par Jean Fabrice ZARA: https://www.linkedin.com/in/jfzara-developpeur-react-node-montreal/
 
 
 Bienvenue sur YouChef ! Ce projet est un serveur backend robuste, conçu pour gérer des recettes de cuisine. Que vous soyez un chef passionné ou un gourmand en quête d'inspiration, YouChef vise à offrir une plateforme flexible et intuitive pour organiser, partager et découvrir des créations culinaires.
