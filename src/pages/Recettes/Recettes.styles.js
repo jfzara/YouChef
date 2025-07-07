@@ -4,18 +4,18 @@ import { motion } from 'framer-motion';
 // --- Styled Components pour la Page de Recettes ---
 
 export const RecettesContainer = styled(motion.div)`
-    min-height: 100vh;
+  
     padding: var(--space-8) 0;
     background: var(--gradient-mesh); /* Votre fond mesh existant */
     position: relative;
-    overflow: hidden;
+    
     display: flex;
     flex-direction: column;
     align-items: center; /* Centrer horizontalement */
 `;
 
 export const PageTitle = styled(motion.h1)`
-   
+    
     font-size: var(--text-5xl);
     font-weight: var(--font-bold);
     background: var(--gradient-primary);

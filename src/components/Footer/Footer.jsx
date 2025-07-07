@@ -1,13 +1,12 @@
-// src/components/Footer/Footer.jsx
 import React from 'react';
 import {
   StyledFooter,
   FooterText,
-  FooterCredits, // N'oublie pas d'importer le nouveau styled component
+  FooterCredits,
   SocialLinks,
   SocialIcon,
-  FooterNavLink,
-  LinksColumn
+  FooterNavLink, // N'est pas utilisé ici, mais je le laisse au cas où vous en auriez besoin
+  LinksColumn // N'est pas utilisé ici, mais je le laisse au cas où vous en auriez besoin
 } from './Footer.styles';
 
 const Footer = () => {

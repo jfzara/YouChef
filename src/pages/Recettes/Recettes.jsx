@@ -1,3 +1,4 @@
+// src/pages/Recettes/Recettes.jsx (Aucune modification requise par rapport à la version précédente)
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useAnimation, AnimatePresence } from 'framer-motion';
 import axios from "../../api/axiosInstance";
@@ -29,7 +30,7 @@ import {
     hoverAnimations,
 } from '../../data/recettesData';
 
-import Footer from '../../components/Footer/Footer'; // <-- Importez le composant Footer
+import Footer from '../../components/Footer/Footer';
 
 const Recettes = () => {
     const [recettes, setRecettes] = useState({});
@@ -138,17 +139,17 @@ const Recettes = () => {
     }, [controls]);
 
     const handleCategoryChange = useCallback((category) => {
-        console.log("FRONTEND DEBUG: Changement de catégorie vers:", category); // Ajouté
+        console.log("FRONTEND DEBUG: Changement de catégorie vers:", category);
         setActiveCategory(category);
     }, []);
 
     const openRecipeModal = useCallback((recipe) => {
-        console.log("FRONTEND DEBUG: Ouverture modale pour la recette:", recipe.nom); // Ajouté
+        console.log("FRONTEND DEBUG: Ouverture modale pour la recette:", recipe.nom);
         setSelectedRecipe(recipe);
     }, []);
 
     const closeRecipeModal = useCallback(() => {
-        console.log("FRONTEND DEBUG: Fermeture de la modale."); // Ajouté
+        console.log("FRONTEND DEBUG: Fermeture de la modale.");
         setSelectedRecipe(null);
     }, []);
 
@@ -167,22 +168,22 @@ const Recettes = () => {
         } else {
             displayedRecettes[activeCategory] = recettes[activeCategory] || {};
         }
-        console.log("FRONTEND DEBUG: Recettes filtrées (catégorie active:", activeCategory, "):", displayedRecettes); // Ajouté
+        console.log("FRONTEND DEBUG: Recettes filtrées (catégorie active:", activeCategory, "):", displayedRecettes);
         return displayedRecettes;
     }, [activeCategory, recettes, allRecettesFlat]);
 
     const availableCategories = useMemo(() => {
         const keys = Object.keys(recettes);
         let categories = ["Toutes", ...keys.filter(key => key !== "Toutes")];
-        console.log("FRONTEND DEBUG: Catégories disponibles:", categories); // Ajouté
+        console.log("FRONTEND DEBUG: Catégories disponibles:", categories);
         return categories;
     }, [recettes, allRecettesFlat]);
 
-
+    // Rendu pour l'état de chargement
     if (loading) {
-        console.log("FRONTEND DEBUG: Affichage de l'état de chargement (skeletons)."); // Ajouté
+        console.log("FRONTEND DEBUG: Affichage de l'état de chargement (skeletons).");
         return (
-            <> {/* Fragment pour envelopper tout */}
+            <>
                 <RecettesContainer style={{ justifyContent: 'flex-start', alignItems: 'center' }}>
                     <PageTitle><Skeleton width={300} height={40} /></PageTitle>
 
@@ -209,38 +210,41 @@ const Recettes = () => {
                         Nos chefs sont en cuisine... Un instant, les recettes arrivent !
                     </StatusMessage>
                 </RecettesContainer>
-                <Footer /> {/* <-- Ajoutez le Footer ici */}
+                <Footer />
             </>
         );
     }
 
+    // Rendu pour l'état d'erreur
     if (error) {
-        console.log("FRONTEND DEBUG: Affichage du message d'erreur:", error); // Ajouté
+        console.log("FRONTEND DEBUG: Affichage du message d'erreur:", error);
         return (
-            <> {/* Fragment pour envelopper tout */}
+            <>
                 <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <StatusMessage $isError>{error}</StatusMessage>
                 </RecettesContainer>
-                <Footer /> {/* <-- Ajoutez le Footer ici */}
+                <Footer />
             </>
         );
     }
 
+    // Rendu si aucune recette n'est trouvée (après chargement sans erreur)
     if (Object.keys(recettes).length === 0 || allRecettesFlat.length === 0) {
-        console.log("FRONTEND DEBUG: Aucune recette trouvée (état vide)."); // Ajouté
+        console.log("FRONTEND DEBUG: Aucune recette trouvée (état vide).");
         return (
-            <> {/* Fragment pour envelopper tout */}
+            <>
                 <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <StatusMessage>Aucune recette trouvee pour le moment. Revenez bientot pour de nouvelles inspirations !</StatusMessage>
+                    <StatusMessage>Aucune recette trouvée pour le moment. Revenez bientôt pour de nouvelles inspirations !</StatusMessage>
                 </RecettesContainer>
-                <Footer /> {/* <-- Ajoutez le Footer ici */}
+                <Footer />
             </>
         );
     }
 
-    console.log("FRONTEND DEBUG: Affichage des recettes."); // Ajouté
+    // Rendu principal des recettes
+    console.log("FRONTEND DEBUG: Affichage des recettes.");
     return (
-        <> {/* Fragment pour envelopper tout */}
+        <>
             <RecettesContainer
                 variants={mainContainerVariants}
                 initial="hidden"
@@ -268,8 +272,8 @@ const Recettes = () => {
                         : Object.values(sousCategoriesMap).flat();
 
                     if (!recipesToDisplay || recipesToDisplay.length === 0) {
-                        console.log(`FRONTEND DEBUG: Pas de recettes à afficher pour la catégorie "${categorie}".`); // Ajouté
-                        return <StatusMessage key={categorie}>Aucune recette dans cette categorie.</StatusMessage>;
+                        console.log(`FRONTEND DEBUG: Pas de recettes à afficher pour la catégorie "${categorie}".`);
+                        return <StatusMessage key={categorie}>Aucune recette dans cette catégorie.</StatusMessage>;
                     }
 
                     return (
@@ -360,7 +364,7 @@ const Recettes = () => {
                     )}
                 </AnimatePresence>
             </RecettesContainer>
-            <Footer /> {/* <-- Ajoutez le Footer ici */}
+            <Footer />
         </>
     );
 };

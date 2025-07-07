@@ -1,8 +1,10 @@
-// src/components/Navbar/Navbar.styles.jsx
+
+
+// src/components/Navbar/Navbar.styles.js
 
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { NavLink } from 'react-router-dom'; // <--- Importez NavLink ici
+import { NavLink } from 'react-router-dom';
 
 export const StyledNavbar = styled(motion.nav)`
   background-color: var(--color-light-sky-blue);
@@ -10,39 +12,36 @@ export const StyledNavbar = styled(motion.nav)`
   justify-content: center;
   align-items: center;
   box-shadow: var(--shadow-sm);
-  position: sticky;
+  position: sticky; /* Garde la navbar en haut lors du défilement */
   top: 0;
-  z-index: var(--z-high);
+  z-index: var(--z-high); /* Assure que la navbar est au-dessus du contenu de la page */
   width: 100%;
 `;
 
 export const NavContainer = styled.div`
   display: flex;
-  justify-content: space-between; /* Espace entre la marque et les navlinks/menu toggle */
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   max-width: 1200px;
   padding: 0 var(--space-4);
-  height: var(--navbar-height); /* Assurer une hauteur constante pour la navbar */
+  height: var(--navbar-height); /* Assure une hauteur constante pour la navbar */
 
   @media (max-width: 978px) {
-    justify-content: space-between; /* La marque à gauche, le burger à droite */
-    padding: var(--space-2) var(--space-4); /* Padding ajusté */
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-4);
   }
 
   @media (max-width: 490px) {
-    flex-direction: row; /* La marque et le toggle restent sur une ligne */
-    justify-content: space-between; /* Espacement optimal */
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    padding: var(--space-2) var(--space-4); /* Padding ajusté */
-    height: var(--navbar-height); /* Hauteur fixe */
+    padding: var(--space-2) var(--space-4);
+    height: var(--navbar-height);
   }
 `;
 
-// ATTENTION ICI : Brand DOIT être un composant Framer Motion si vous lui passez des props motion.
-// Si vous l'utilisez comme NavLink dans Navbar.jsx, il doit aussi être stylisé avec NavLink.
-// Je suppose que vous voulez qu'il soit cliquable et qu'il gère les animations.
-export const Brand = styled(motion(NavLink))` /* <--- MODIFIÉ : styled(motion(NavLink)) */
+export const Brand = styled(motion(NavLink))`
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -90,16 +89,16 @@ export const BrandIcon = styled.span`
 `;
 
 export const MenuToggle = styled.button`
-  display: none;
+  display: none; /* Masqué par défaut sur les grands écrans */
   background: none;
   border: none;
   cursor: pointer;
   padding: var(--space-2);
-  z-index: var(--z-mid);
-  position: relative;
+  z-index: calc(var(--z-high) + 1); /* TRÈS IMPORTANT : Assure qu'il est au-dessus de tout, y compris la navbar */
+  position: relative; /* Nécessaire pour que z-index prenne effet */
 
   @media (max-width: 978px) {
-    display: flex;
+    display: flex; /* Affiché sur les écrans plus petits */
     flex-direction: column;
     justify-content: space-around;
     width: var(--space-9);
@@ -145,19 +144,19 @@ export const NavLinks = styled.ul`
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    position: fixed;
-    top: var(--navbar-height);
+    position: fixed; /* Le menu latéral est en position fixe */
+    top: var(--navbar-height); /* Commence juste en dessous de la navbar */
     left: 0;
-    height: calc(100vh - var(--navbar-height));
+    height: calc(100vh - var(--navbar-height)); /* Prend le reste de la hauteur de l'écran */
     background-color: var(--color-light-sky-blue);
     box-shadow: var(--shadow-lg);
-    transform: translateX(${props => (props.$isOpen ? '0' : '100%')});
+    transform: translateX(${props => (props.$isOpen ? '0' : '100%')}); /* Anime l'ouverture/fermeture */
     transition: transform 0.3s ease-in-out;
-    opacity: ${props => (props.$isOpen ? '1' : '0')};
-    pointer-events: ${props => (props.$isOpen ? 'auto' : 'none')};
+    opacity: ${props => (props.$isOpen ? '1' : '0')}; /* Transition d'opacité pour le contenu */
+    pointer-events: ${props => (props.$isOpen ? 'auto' : 'none')}; /* Permet ou non les interactions */
     padding: var(--space-3) 0;
     gap: var(--space-3);
-    overflow-y: auto;
+    overflow-y: auto; /* Permet le défilement si le contenu dépasse */
   }
 
   @media (max-width: 490px) {
@@ -166,8 +165,7 @@ export const NavLinks = styled.ul`
   }
 `;
 
-// ATTENTION ICI : StyledNavLink DOIT être un composant Framer Motion qui enveloppe NavLink.
-export const StyledNavLink = styled(motion(NavLink))` /* <--- MODIFIÉ : styled(motion(NavLink)) */
+export const StyledNavLink = styled(motion(NavLink))`
   font-family: var(--font-family-sans);
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
@@ -234,7 +232,6 @@ export const NotificationBadge = styled.span`
   }
 `;
 
-// LogoutButton est déjà un composant motion.button
 export const LogoutButton = styled(motion.button)`
   background-color: var(--color-bright-pink-crayola);
   color: var(--color-neutral-0);

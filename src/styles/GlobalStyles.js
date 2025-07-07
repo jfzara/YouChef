@@ -1,5 +1,3 @@
-
-
 import { createGlobalStyle } from 'styled-components';
 
 // Importations des polices Quicksand (vous pouvez les garder si vous les utilisez ailleurs,
@@ -212,6 +210,7 @@ const GlobalStyles = createGlobalStyle`
 
     html {
         scroll-behavior: smooth;
+        height: 100%; /* Important pour que le body puisse prendre 100vh */
     }
 
     body {
@@ -220,13 +219,25 @@ const GlobalStyles = createGlobalStyle`
         color: var(--color-neutral-800);
         line-height: 1.6;
         background-color: #f2f3c3;
-        position: relative;
-        min-height: 100vh;
-        overflow-x: hidden;
+        /* Retiré : position: relative; */ 
+        /* Retiré : overflow-x: hidden; (peut causer des problèmes avec le défilement si le contenu dépasse) */
+        /* Retiré : background-position, background-repeat, background-size, background-attachment (si vous les voulez en global, mettez-les sur #root ou un conteneur principal d'application) */
 
         font-weight: var(--font-normal);
         font-size: var(--text-lg);
 
+        /* --- Ajouts pour Flexbox et le footer en bas du contenu --- */
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh; /* S'assurer que le body occupe au moins toute la hauteur de la fenêtre */
+    }
+
+    /* Ajoutez ceci si votre application React est montée dans une div avec l'ID "root" */
+    #root {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1; /* Permet à #root de prendre l'espace restant pour pousser le footer */
+        /* Si vous avez un fond sur le body, vous pouvez le déplacer ici pour qu'il s'étende avec le contenu */
         background-position: center center;
         background-repeat: no-repeat;
         background-size: cover;

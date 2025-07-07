@@ -1,3 +1,4 @@
+// C:\Users\Jeff\Desktop\PROJETS VS CODE\JAVASCRIPT\REACT\recettesreact\src\pages\Accueil.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
@@ -9,7 +10,7 @@ import Footer from '../components/Footer/Footer';
 // --- Styled Components pour la Page d'Accueil ---
 
 const AccueilContainer = styled(motion.div)`
-    margin-top: 2rem;
+    /* margin-top: 2rem; REMPLACÉ PAR PADDING-TOP */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -20,16 +21,21 @@ const AccueilContainer = styled(motion.div)`
     color: var(--color-neutral-800);
     background-color: var(--color-cream);
     text-align: center;
-    min-height: 100vh;
-    box-sizing: border-box;
+    
+    min-height: calc(100vh - var(--navbar-height)); 
+    box-sizing: border-box; 
+    flex-grow: 1;
+    
+    /* --- AJOUT OU MODIFICATION IMPORTANTE ICI --- */
+    /* Pousse le contenu vers le bas pour ne pas chevaucher la navbar */
+    padding-top: calc(var(--navbar-height) + var(--space-8)); /* Ajustez var(--space-8) si vous voulez plus ou moins d'espace */
 
     @media (max-width: 880px) {
-        padding-bottom: 'calc(var(--space-6) + 120px)';
-        justify-content: flex-start;
+        /* Assurez-vous que le padding-top est bien là pour toutes les tailles d'écran nécessitant la navbar */
+        padding-top: calc(var(--navbar-height) + var(--space-4));
     }
     @media (max-width: 480px) {
-        padding-bottom: 'calc(var(--space-5) + 100px)';
-        justify-content: flex-start;
+        padding-top: calc(var(--navbar-height) + var(--space-4));
     }
 `;
 
@@ -58,6 +64,8 @@ const ContentWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     gap: var(--space-6);
+
+    flex-grow: 1;
 
     @media (max-width: 480px) {
         padding: 0 var(--space-3);
@@ -109,7 +117,7 @@ const CallToActionButton = styled(motion(Link))`
     font-family: var(--font-family-sans);
     font-size: var(--text-xl);
     padding: var(--space-4) var(--space-8);
-    margin-top: 3rem; /* CORRECTION APPORTÉE ICI pour desktop: 3rem */
+    margin-top: 3rem; 
     border: none;
     border-radius: var(--radius-full);
     cursor: pointer;
@@ -150,7 +158,7 @@ const HowItWorksSection = styled(motion.section)`
     width: 100%;
     max-width: 800px;
     padding: var(--space-5) var(--space-3);
-    margin-top: var(--space-6); /* Pas besoin d'ajuster ici car le CTA gère sa propre marge top */
+    margin-top: var(--space-6); 
     background-color: var(--color-light-sky-blue);
     border-radius: var(--radius-xl);
     box-shadow: '0 2px 10px 0 rgba(0, 0, 0, 0.03)';
@@ -327,49 +335,47 @@ const Accueil = () => {
                 <Subtitle variants={mainItemVariants}>
                     Connectez-vous pour découvrir, partager et savourer des recettes uniques et inspirantes.
                 </Subtitle>
-            </ContentWrapper>
-
-            {isDesktop && (
-                <HowItWorksSection
-                    animate="visible"
-                    variants={howItWorksSectionBackgroundVariants}
-                >
-                    <HowItWorksTitle />
-                    <StepsGrid
-                        variants={cardsGridContainerVariants}
-                        initial="hidden"
+                
+                {isDesktop && (
+                    <HowItWorksSection
                         animate="visible"
+                        variants={howItWorksSectionBackgroundVariants}
                     >
-                        <StepCard variants={cardItemVariants} index={0}>
-                            <StepIcon>🍽️</StepIcon>
-                            <StepTitle>Découvrez de nouvelles saveurs</StepTitle>
-                            <StepDescription>Parcourez notre vaste collection de recettes. Utilisez la barre de recherche et les filtres pour trouver l'inspiration.</StepDescription>
-                        </StepCard>
-                        <StepCard variants={cardItemVariants} index={1}>
-                            <StepIcon>✍️</StepIcon>
-                            <StepTitle>Partagez vos créations</StepTitle>
-                            <StepDescription>Connectez-vous pour ajouter facilement vos recettes préférées et les partager avec la communauté.</StepDescription>
-                        </StepCard>
-                        <StepCard variants={cardItemVariants} index={2}>
-                            <StepIcon>⭐</StepIcon>
-                            <StepTitle>Gérez vos favoris</StepTitle>
-                            <StepDescription>Créez votre propre carnet de recettes en enregistrant et en organisant vos découvertes culinaires.</StepDescription>
-                        </StepCard>
-                    </StepsGrid>
-                </HowItWorksSection>
-            )}
+                        <HowItWorksTitle />
+                        <StepsGrid
+                            variants={cardsGridContainerVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <StepCard variants={cardItemVariants} index={0}>
+                                <StepIcon>🍽️</StepIcon>
+                                <StepTitle>Découvrez de nouvelles saveurs</StepTitle>
+                                <StepDescription>Parcourez notre vaste collection de recettes. Utilisez la barre de recherche et les filtres pour trouver l'inspiration.</StepDescription>
+                            </StepCard>
+                            <StepCard variants={cardItemVariants} index={1}>
+                                <StepIcon>✍️</StepIcon>
+                                <StepTitle>Partagez vos créations</StepTitle>
+                                <StepDescription>Connectez-vous pour ajouter facilement vos recettes préférées et les partager avec la communauté.</StepDescription>
+                            </StepCard>
+                            <StepCard variants={cardItemVariants} index={2}>
+                                <StepIcon>⭐</StepIcon>
+                                <StepTitle>Gérez vos favoris</StepTitle>
+                                <StepDescription>Créez votre propre carnet de recettes en enregistrant et en organisant vos découvertes culinaires.</StepDescription>
+                            </StepCard>
+                        </StepsGrid>
+                    </HowItWorksSection>
+                )}
 
-            {/* --- Modifications ici --- */}
-            <CallToActionButton
-                to="/connexion" 
-                variants={mainItemVariants}
-                whileHover={{ scale: 1.05, y: -4, boxShadow: "var(--shadow-lg)" }}
-                whileTap={{ scale: 0.95, y: 0, boxShadow: "var(--shadow-sm)" }}
-            >
-                Connexion{/* Nouveau texte du bouton */}
-            </CallToActionButton>
-            {/* --- Fin des modifications --- */}
-
+                <CallToActionButton
+                    to="/connexion" 
+                    variants={mainItemVariants}
+                    whileHover={{ scale: 1.05, y: -4, boxShadow: "var(--shadow-lg)" }}
+                    whileTap={{ scale: 0.95, y: 0, boxShadow: "var(--shadow-sm)" }}
+                >
+                    Connexion
+                </CallToActionButton>
+            </ContentWrapper>
+            
             <Footer />
         </AccueilContainer>
     );

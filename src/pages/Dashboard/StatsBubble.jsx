@@ -1,3 +1,5 @@
+
+
 // src/pages/Dashboard/StatsBubble.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,9 +21,9 @@ import SpoonIcon from '../../assets/icons/stats.svg';
 const StatsTrigger = styled(motion.div)`
   position: absolute;
   top: calc(var(--navbar-height, 0px) + var(--space-4));
-  right: var(--space-8); /* Cette valeur est pour le desktop/tablette */
-  width: 75px;
-  height: 75px;
+  right: var(--space-8); /* Valeur par défaut pour les grands écrans */
+  width: 5vw; /* Sera surchargé par les media queries ci-dessous */
+  height: 5vw; /* Sera surchargé par les media queries ci-dessous */
   background: var(--color-accent-purple);
   border-radius: var(--radius-full);
   display: flex;
@@ -59,12 +61,32 @@ const StatsTrigger = styled(motion.div)`
     filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
   }
 
-  /* MEDIA QUERIES pour les petits écrans */
-  @media (max-width: 768px) {
-    top: calc(var(--navbar-height-mobile, 0px) + var(--space-4));
-    right: var(--space-1); /* MODIFIÉ : Réduit la marge de droite pour laisser de la place à l'icône hamburger */
-    width: 60px;
-    height: 60px;
+  /* MEDIA QUERY pour les écrans très grands (au-delà de 1840px) */
+  /* Fixe la taille en px pour éviter que le vw ne devienne trop grand */
+  @media (min-width: 1841px) {
+    width: 101.1px; 
+    height: 101.1px;
+    right: var(--space-8); 
+  }
+
+  /* MEDIA QUERY pour les écrans entre 521px et 1840px */
+  @media (min-width: 521px) and (max-width: 1840px) {
+    width: 10vw;
+    height: 10vw;
+    right: var(--space-8); 
+    font-size: var(--text-sm);
+    
+    img {
+      width: 35px; 
+      height: 35px;
+    }
+  }
+
+  /* MEDIA QUERY pour les petits écrans (max-width: 520px) */
+  @media (max-width: 520px) {
+    right: var(--space-1); /* Rapproche de la droite pour ne pas chevaucher l'icône hamburger */
+    width: 19vw;
+    height: 19vw;
     font-size: var(--text-xs);
 
     img {
@@ -83,7 +105,7 @@ const StatsOverlay = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: var(--z-high);
+  z-index: var(--z-high); /* Assurez-vous que c'est au-dessus de tout sauf la bulle elle-même */
 
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(12px);
@@ -100,8 +122,8 @@ const StatsBubbleContainer = styled(motion.div)`
   max-width: 400px;
   position: relative;
   border: 4px solid var(--color-primary-500);
-  z-index: calc(var(--z-high) + 10);
-  transform: translateZ(0);
+  z-index: calc(var(--z-high) + 10); /* Doit être au-dessus de l'overlay */
+  transform: translateZ(0); /* Pour assurer le positionnement correct de la modale */
 
   h2 {
     color: var(--color-primary-800);
@@ -110,6 +132,7 @@ const StatsBubbleContainer = styled(motion.div)`
     text-shadow: var(--shadow-text-sm);
   }
 `;
+
 const CloseButton = styled(motion.button)`
   position: absolute;
   top: var(--space-3);
@@ -126,7 +149,7 @@ const CloseButton = styled(motion.button)`
   &:hover {
     background: var(--color-error-light);
     color: var(--color-error-dark);
-    transform: rotate(90deg) scale(90deg) scale(1.1);
+    transform: rotate(90deg) scale(1.1); /* Correction : scale(90deg) n'est pas valide */
   }
 
   img {
@@ -201,23 +224,26 @@ const StatsBubble = () => {
   const [error, setError] = useState(null);
 
   // Utilisez le hook useAuth pour obtenir l'état d'authentification
-  const { isAuthenticated } = useAuth(); // Nous n'avons besoin que de 'isAuthenticated' ici
+  const { isAuthenticated } = useAuth();
 
   const toggleBubble = useCallback(() => {
     setShowBubble(prev => !prev);
   }, []);
 
+  // Effet pour ajouter/retirer la classe 'body--blurred'
   useEffect(() => {
     if (showBubble) {
       document.body.classList.add('body--blurred');
     } else {
       document.body.classList.remove('body--blurred');
     }
+    // Nettoyage à la désactivation du composant
     return () => {
       document.body.classList.remove('body--blurred');
     };
   }, [showBubble]);
 
+  // Effet pour charger les statistiques
   useEffect(() => {
     // Ne tente de charger les stats que si la bulle est visible ET l'utilisateur est authentifié
     // ET les stats ne sont pas déjà chargées (ou sont à zéro) ET pas en cours de chargement.
@@ -248,6 +274,7 @@ const StatsBubble = () => {
     visible: { opacity: 1, scale: 1, y: 0, rotate: 0, transition: { type: "spring", stiffness: 100, damping: 10 } },
   };
 
+  // Assignation des icônes
   const recipeBookIcon = RecipeBookIcon;
   const categoriesIcon = ToqueIcon;
   const subCategoriesIcon = SpoonIcon;
@@ -309,7 +336,7 @@ const StatsBubble = () => {
                         <>
                             <StatCard value={stats.totalRecipes} label="Recettes Créées" icon={recipeBookIcon} />
                             <StatCard value={stats.totalCategories} label="Catégories Uniques" icon={categoriesIcon} />
-                            <StatCard value={stats.totalSousCategories} label="Sous-Catégories Explorées" icon={subCategoriesIcon} />
+                            <StatCard value={stats.sousCategories} label="Sous-Catégories Explorées" icon={subCategoriesIcon} />
                         </>
                     )}
                 </StatsGrid>

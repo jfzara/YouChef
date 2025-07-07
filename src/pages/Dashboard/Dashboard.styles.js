@@ -1,3 +1,5 @@
+// C:\Users\Jeff\Desktop\PROJETS VS CODE\JAVASCRIPT\REACT\recettesreact\src\components\Dashboard\Dashboard.styles.js
+
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
@@ -11,14 +13,13 @@ export const RecipeImage = styled.img`
 
 export const DashboardContainer = styled(motion.div)`
     padding: var(--space-8);
-   
-    min-height: 100vh;
-    position: relative;
-    overflow: hidden;
+    flex-grow: 1; 
 
     @media (max-width: 768px) {
         padding: var(--space-4);
-        padding-top: calc(var(--navbar-height) + var(--space-4));
+        /* --- AJOUT OU MODIFICATION IMPORTANTE ICI --- */
+        /* Pousse le contenu vers le bas pour ne pas chevaucher la navbar */
+        padding-top: calc(var(--navbar-height) + var(--space-4)); 
     }
 `;
 
@@ -81,7 +82,7 @@ export const Card = styled(motion.div)`
     gap: var(--space-4);
     position: relative;
     overflow: hidden;
-    border: 4px solid var(--color-secondary-500);
+    border: 1px solid var(--color-secondary-500);
     transform: rotate(${(Math.random() - 0.5) * 2}deg);
 `;
 
@@ -96,7 +97,7 @@ export const DashboardTitle = styled.h2`
 export const AddRecipeToggleCard = styled(motion.button)`
     background: var(--color-accent-blue);
     color: var(--color-neutral-0);
-    border: 4px solid var(--color-accent-blue-dark);
+   
     border-radius: var(--radius-2xl);
     padding: var(--space-6) var(--space-6);
     font-size: var(--text-lg);
