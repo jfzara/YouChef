@@ -1,11 +1,8 @@
-
-
-
 // src/components/AdminDashboard/AdminDashboard.styles.js
 
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { NavLink } from 'react-router-dom';
+// import { NavLink } from 'react-router-dom'; // Non utilisé dans ce fichier, peut être supprimé si non pertinent ailleurs.
 
 // Définition et exportation manquante de AdminDashboardContainer
 export const AdminDashboardContainer = styled(motion.div)`
@@ -16,6 +13,17 @@ export const AdminDashboardContainer = styled(motion.div)`
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     font-family: var(--font-family-sans);
+    /* Ajout pour s'assurer que le contenu ne déborde pas horizontalement */
+    overflow-x: hidden; 
+    box-sizing: border-box; /* S'assurer que le padding est inclus dans la largeur */
+
+    @media (max-width: 768px) {
+        padding: var(--space-4); /* Réduire le padding sur les petits écrans */
+    }
+
+    @media (max-width: 480px) {
+        padding: var(--space-3); /* Encore plus de réduction pour les très petits écrans */
+    }
 
     h1 {
         font-family: var(--font-family-heading);
@@ -27,6 +35,9 @@ export const AdminDashboardContainer = styled(motion.div)`
         @media (max-width: 768px) {
             font-size: var(--text-3xl);
         }
+        @media (max-width: 480px) {
+            font-size: var(--text-2xl); /* Ajuster la taille du titre pour les très petits écrans */
+        }
     }
 
     section {
@@ -35,6 +46,13 @@ export const AdminDashboardContainer = styled(motion.div)`
         border-radius: var(--radius-md);
         margin-bottom: var(--space-6);
         box-shadow: var(--shadow-sm);
+
+        @media (max-width: 768px) {
+            padding: var(--space-4);
+        }
+        @media (max-width: 480px) {
+            padding: var(--space-3); /* Réduire le padding de section */
+        }
 
         h2 {
             font-family: var(--font-family-heading);
@@ -46,6 +64,9 @@ export const AdminDashboardContainer = styled(motion.div)`
             @media (max-width: 768px) {
                 font-size: var(--text-xl);
             }
+            @media (max-width: 480px) {
+                font-size: var(--text-lg); /* Ajuster la taille du sous-titre */
+            }
         }
 
         ul {
@@ -56,7 +77,7 @@ export const AdminDashboardContainer = styled(motion.div)`
 
         li {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* Assure que les éléments s'enroulent */
             align-items: center;
             justify-content: space-between;
             padding: var(--space-3) var(--space-4);
@@ -71,6 +92,11 @@ export const AdminDashboardContainer = styled(motion.div)`
                 flex-direction: column;
                 align-items: flex-start;
                 gap: var(--space-2);
+                padding: var(--space-3); /* Ajuster le padding des items de liste */
+            }
+             /* Pour les très petits viewports, s'assurer que le contenu des listes reste à l'intérieur */
+            @media (max-width: 480px) {
+                padding: var(--space-2);
             }
         }
     }
@@ -85,7 +111,7 @@ const BaseButton = styled(motion.button)`
     font-weight: var(--font-bold); // Police en gras
     font-family: var(--font-family-sans); // Assure la même police que le reste de l'app
     transition: all 0.2s ease-in-out;
-    white-space: nowrap;
+    white-space: nowrap; /* Conserver le nowrap par défaut, mais nous allons le gérer spécifiquement pour les petits écrans */
     
     // Assurez-vous que le texte est bien centré dans le bouton
     display: inline-flex; // Utiliser flexbox pour centrer le contenu
@@ -105,6 +131,13 @@ const BaseButton = styled(motion.button)`
     @media (max-width: 768px) {
         width: 100%;
         margin-top: var(--space-2);
+    }
+
+    @media (max-width: 480px) {
+        padding: var(--space-2) var(--space-3); /* Réduire le padding des boutons */
+        font-size: var(--text-sm); /* Réduire la taille de la police des boutons */
+        white-space: normal; /* Permettre au texte de s'enrouler */
+        word-break: break-word; /* Casser les mots longs si nécessaire */
     }
 `;
 
@@ -149,7 +182,6 @@ export const DemoteButton = styled(BaseButton)`
 `;
 
 // Nouveau bouton de modification (bleu ou couleur neutre)
-// Le problème venait probablement de la manière dont les styles de BaseButton étaient appliqués
 export const EditButton = styled(BaseButton)` // <--- Basé directement sur BaseButton
     background-color: var(--color-light-sky-blue);
     color: var(--color-neutral-800);
@@ -169,24 +201,43 @@ export const ListItemContent = styled.span`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-width: 0;
-    padding-right: var(--space-3);
+    min-width: 0; /* Permet à l'élément de rétrécir plus que son contenu */
+    padding-right: var(--space-3); /* Garder un petit espace */
 
     @media (max-width: 768px) {
-        width: 100%;
+        width: 100%; /* Occupe toute la largeur disponible pour le texte */
         padding-right: 0;
         text-align: left;
+        /* Sur les petits écrans, on peut permettre un retour à la ligne si le texte est vraiment long */
+        white-space: normal; 
+        word-break: break-word; /* Assure que les mots longs ne débordent pas */
+    }
+
+    img {
+        /* Assurer que l'image ne cause pas de débordement */
+        flex-shrink: 0; /* Empêche l'image de rétrécir */
+        margin-right: var(--space-3); /* Ajuster la marge pour éviter le chevauchement */
+        @media (max-width: 480px) {
+            width: 40px !important; /* Réduire la taille de l'image sur les très petits écrans */
+            height: 40px !important;
+            margin-right: var(--space-2);
+        }
     }
 `;
 
 export const ListButtonsContainer = styled.div`
     display: flex;
     gap: var(--space-2);
-    flex-shrink: 0;
+    flex-shrink: 0; /* Empêche ce conteneur de rétrécir plus que nécessaire */
 
     @media (max-width: 768px) {
         width: 100%;
         flex-direction: column;
         gap: var(--space-1);
+        align-items: flex-start; /* Aligner les boutons à gauche en mode colonne */
+    }
+    
+    @media (max-width: 480px) {
+        gap: var(--space-1); /* Réduire l'espace entre les boutons */
     }
 `;

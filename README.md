@@ -78,7 +78,7 @@ Cloner le dépôt :
 
 Bash
 
-git clone [[URL_DE_VOTRE_DEPOT](https://github.com/jfzara/YouChef.git)]
+git clone [(https://github.com/jfzara/YouChef.git)]
 cd recettesreact
 Configuration du Backend :
 
