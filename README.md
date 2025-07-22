@@ -60,8 +60,6 @@ Supprimer: Supprimer les recettes que vous avez créées.
 
 UPLOAD D'IMAGES INTÉGRÉ: Téléchargez facilement des images pour vos recettes, gérées et optimisées par Cloudinary.
 
-RECETTES FAVORITES: Les utilisateurs peuvent sauvegarder leurs recettes préférées pour les retrouver facilement.
-
 TABLEAU DE BORD UTILISATEUR: Vue personnalisée pour chaque utilisateur affichant leurs recettes et des statistiques pertinentes.
 
 TABLEAU DE BORD ADMINISTRATEUR: Interface dédiée pour les administrateurs pour gérer l'application et les utilisateurs (accès restreint).
@@ -78,7 +76,8 @@ Cloner le dépôt :
 
 Bash
 
-git clone [(https://github.com/jfzara/YouChef.git)]
+git clone [https://github.com/jfzara/YouChef.git]
+
 cd recettesreact
 Configuration du Backend :
 
