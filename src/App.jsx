@@ -62,7 +62,6 @@ const App = () => {
                 }
               />
 
-              {/* Ajoutez d'autres routes si nécessaire */}
             </Routes>
           </RecipeProvider>
         </HoverProvider>

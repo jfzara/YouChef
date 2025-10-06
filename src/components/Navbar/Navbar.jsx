@@ -40,7 +40,7 @@ const Navbar = () => {
                 {/* MODIFIÉ : Retiré as={NavLink} car Brand est déjà stylisé comme motion(NavLink) */}
                 <Brand to="/">
                     <BrandIcon>🍽️</BrandIcon>
-                    <span>Mon Carnet de Recettes</span>
+                    <span>YouChef</span>
                 </Brand>
 
                 <MenuToggle onClick={toggleMenu} $isOpen={isOpen}>
