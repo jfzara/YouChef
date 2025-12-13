@@ -1,4 +1,4 @@
-// src/pages/Recettes/Recettes.jsx (Aucune modification requise par rapport à la version précédente)
+// src/pages/Recettes/Recettes.jsx
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useAnimation, AnimatePresence } from 'framer-motion';
 import axios from "../../api/axiosInstance";
@@ -73,70 +73,70 @@ const Recettes = () => {
         exit: { y: "100vh", opacity: 0, transition: { duration: 0.2 } }
     };
 
-    useEffect(() => {
-        const fetchRecettes = async () => {
-            // --- DÉBOGAGE FRONTEND : Démarrage du fetch ---
-            console.log("FRONTEND DEBUG: Début du fetch des recettes sur /recettes/all.");
-            setError(null); // Réinitialiser l'erreur à chaque nouvel essai
-            setLoading(true); // Remettre à loading true si on re-déclenche
+    // --- MODIFICATION : Logique de fetch extraite pour être réutilisable ---
+    const fetchRecettes = useCallback(async () => {
+        // --- DÉBOGAGE FRONTEND : Démarrage du fetch ---
+        console.log("FRONTEND DEBUG: Début du fetch des recettes sur /recettes/all.");
+        setError(null); // Réinitialiser l'erreur à chaque nouvel essai
+        setLoading(true); // Remettre à loading true si on re-déclenche
 
-            try {
-                // console.log("🔄 Chargement des recettes..."); // Votre log existant
-                const res = await axios.get("/recettes/all");
-                const data = res.data;
-                
-                // --- DÉBOGAGE FRONTEND : Données reçues ---
-                console.log("FRONTEND DEBUG: Données brutes reçues du backend:", data);
-                // console.log("✅ Donnees recues:", data); // Votre log existant
+        try {
+            const res = await axios.get("/recettes/all");
+            const data = res.data;
+            
+            // --- DÉBOGAGE FRONTEND : Données reçues ---
+            console.log("FRONTEND DEBUG: Données brutes reçues du backend:", data);
 
-                const regroupees = {};
-                const allRecipesArray = [];
+            const regroupees = {};
+            const allRecipesArray = [];
 
-                data.forEach(recette => {
-                    const cat = recette.categorie?.trim() || "Autres";
-                    const sousCat = recette.sousCategorie?.trim() || "Divers";
+            data.forEach(recette => {
+                const cat = recette.categorie?.trim() || "Autres";
+                const sousCat = recette.sousCategorie?.trim() || "Divers";
 
-                    if (!Object.prototype.hasOwnProperty.call(regroupees, cat)) regroupees[cat] = {};
-                    if (!Object.prototype.hasOwnProperty.call(regroupees[cat], sousCat)) regroupees[cat][sousCat] = [];
-                    regroupees[cat][sousCat].push(recette);
+                if (!Object.prototype.hasOwnProperty.call(regroupees, cat)) regroupees[cat] = {};
+                if (!Object.prototype.hasOwnProperty.call(regroupees[cat], sousCat)) regroupees[cat][sousCat] = [];
+                regroupees[cat][sousCat].push(recette);
 
-                    allRecipesArray.push(recette);
-                });
+                allRecipesArray.push(recette);
+            });
 
-                setRecettes({ "Toutes": { "Tous": allRecipesArray }, ...regroupees });
-                setAllRecettesFlat(allRecipesArray);
-                
-                // --- DÉBOGAGE FRONTEND : État après traitement ---
-                console.log("FRONTEND DEBUG: Recettes traitées et mises à jour dans l'état du composant.");
-                console.log("FRONTEND DEBUG: Nombre total de recettes (allRecettesFlat):", allRecipesArray.length);
+            setRecettes({ "Toutes": { "Tous": allRecipesArray }, ...regroupees });
+            setAllRecettesFlat(allRecipesArray);
+            
+            // --- DÉBOGAGE FRONTEND : État après traitement ---
+            console.log("FRONTEND DEBUG: Recettes traitées et mises à jour dans l'état du composant.");
+            console.log("FRONTEND DEBUG: Nombre total de recettes (allRecettesFlat):", allRecipesArray.length);
 
-                controls.start("visible");
+            controls.start("visible");
 
-            } catch (err) {
-                // --- DÉBOGAGE FRONTEND : Erreur lors du fetch ---
-                console.error("FRONTEND DEBUG ERROR: Erreur lors du fetch des recettes:", err);
-                // console.error("❌ Erreur lors du chargement:", err); // Votre log existant
+        } catch (err) {
+            // --- DÉBOGAGE FRONTEND : Erreur lors du fetch ---
+            console.error("FRONTEND DEBUG ERROR: Erreur lors du fetch des recettes:", err);
 
-                let errorMessage = 'Une erreur inattendue est survenue.';
-                if (err.response) {
-                    console.error("FRONTEND DEBUG ERROR: Réponse du serveur:", err.response.data);
-                    console.error("FRONTEND DEBUG ERROR: Statut HTTP:", err.response.status);
-                    errorMessage = `Erreur du serveur: ${err.response.status} - ${err.response.data.message || 'Quelque chose s\'est mal passé'}`;
-                } else if (err.request) {
-                    console.error("FRONTEND DEBUG ERROR: Pas de réponse du serveur (requête envoyée mais aucune réponse).");
-                    errorMessage = 'Oups ! Nous n\'arrivons pas à charger les recettes pour le moment. Veuillez vérifier votre connexion internet ou le serveur.';
-                } else {
-                    console.error("FRONTEND DEBUG ERROR: Erreur de configuration de la requête Axios:", err.message);
-                    errorMessage = `Erreur lors de l'envoi de la requête: ${err.message}`;
-                }
-                setError(errorMessage);
-            } finally {
-                setLoading(false);
-                console.log("FRONTEND DEBUG: Fin de l'opération de fetch. Loading = false.");
+            let errorMessage = 'Une erreur inattendue est survenue.';
+            if (err.response) {
+                console.error("FRONTEND DEBUG ERROR: Réponse du serveur:", err.response.data);
+                console.error("FRONTEND DEBUG ERROR: Statut HTTP:", err.response.status);
+                errorMessage = `Erreur du serveur: ${err.response.status} - ${err.response.data.message || 'Quelque chose s\'est mal passé'}`;
+            } else if (err.request) {
+                console.error("FRONTEND DEBUG ERROR: Pas de réponse du serveur (requête envoyée mais aucune réponse).");
+                errorMessage = 'Oups ! Nous n\'arrivons pas à charger les recettes pour le moment. Veuillez vérifier votre connexion internet ou le serveur.';
+            } else {
+                console.error("FRONTEND DEBUG ERROR: Erreur de configuration de la requête Axios:", err.message);
+                errorMessage = `Erreur lors de l'envoi de la requête: ${err.message}`;
             }
-        };
-        fetchRecettes();
+            setError(errorMessage);
+        } finally {
+            setLoading(false);
+            console.log("FRONTEND DEBUG: Fin de l'opération de fetch. Loading = false.");
+        }
     }, [controls]);
+
+    // --- MODIFICATION : useEffect appelle simplement la fonction fetchRecettes ---
+    useEffect(() => {
+        fetchRecettes();
+    }, [fetchRecettes]);
 
     const handleCategoryChange = useCallback((category) => {
         console.log("FRONTEND DEBUG: Changement de catégorie vers:", category);
@@ -215,13 +215,35 @@ const Recettes = () => {
         );
     }
 
-    // Rendu pour l'état d'erreur
+    // Rendu pour l'état d'erreur avec BOUTON RÉESSAYER
     if (error) {
         console.log("FRONTEND DEBUG: Affichage du message d'erreur:", error);
         return (
             <>
-                <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <RecettesContainer style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: '20px' }}>
                     <StatusMessage $isError>{error}</StatusMessage>
+                    
+                    {/* --- BOUTON AJOUTÉ POUR L'UX --- */}
+                    <button 
+                        onClick={fetchRecettes}
+                        style={{
+                            padding: '12px 24px',
+                            cursor: 'pointer',
+                            backgroundColor: '#ff6b6b', // Couleur qui correspond probablement à ta charte
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontWeight: 'bold',
+                            fontSize: '1rem',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            transition: 'transform 0.2s ease',
+                        }}
+                        onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                        onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                    >
+                        Réessayer le chargement
+                    </button>
+
                 </RecettesContainer>
                 <Footer />
             </>
