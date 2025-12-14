@@ -5,8 +5,8 @@ import {
   FooterCredits,
   SocialLinks,
   SocialIcon,
-  FooterNavLink, // N'est pas utilisé ici, mais je le laisse au cas où vous en auriez besoin
-  LinksColumn // N'est pas utilisé ici, mais je le laisse au cas où vous en auriez besoin
+  FooterNavLink, 
+  LinksColumn 
 } from './Footer.styles';
 
 const Footer = () => {
@@ -19,10 +19,10 @@ const Footer = () => {
       
 
       <FooterText>
-        © {new Date().getFullYear()} Mon Carnet de Recettes. Tous droits réservés.
+        © {new Date().getFullYear()} YouChef. Tous droits réservés.
       </FooterText>
 
-      {/* Ajout de la mention de ton nom */}
+      
       <FooterCredits>
         Créé par Jean Fabrice ZARA
       </FooterCredits>

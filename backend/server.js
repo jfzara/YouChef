@@ -42,19 +42,20 @@ console.log("SERVER DEBUG: Routes /api/users, /api/recettes, /api/dashboard conf
 const mongoUri = process.env.MONGODB_URI;
 
 mongoose.connect(mongoUri, {
-    useNewUrlParser: true,
+    useNewUrlParser: true, // Note: ces options sont dépréciées en Mongoose 6+, mais pas grave pour l'instant
     useUnifiedTopology: true,
 })
 .then(() => {
-    console.log('SERVER DEBUG: ✅ MongoDB connecté avec succès.'); // Ajouté
-    return mongoose.connection.db.listCollections().toArray();
-})
-.then(collections => {
-    console.log('SERVER DEBUG: Collections dans la base :', collections.map(c => c.name)); // Ajouté
+    console.log('SERVER DEBUG: ✅ MongoDB connecté avec succès.');
+    
+    // ON DÉMARRE LE SERVEUR UNIQUEMENT APRÈS LE SUCCÈS DE LA CONNEXION
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`SERVER DEBUG: 🚀 Serveur lancé sur port ${PORT}. Prêt à recevoir des requêtes.`);
+    });
 })
 .catch(err => {
-    console.error('SERVER DEBUG: ❌ Erreur de connexion MongoDB :', err.message); // Ajouté
-    console.error('SERVER DEBUG: Stack trace MongoDB :', err.stack); // Ajouté
+    console.error('SERVER DEBUG: ❌ Erreur critique de connexion MongoDB. Le serveur ne démarrera pas.', err);
 });
 
 const PORT = process.env.PORT || 5000;

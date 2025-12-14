@@ -37,7 +37,7 @@ const Navbar = () => {
             transition={{ type: "spring", stiffness: 120, damping: 10 }}
         >
             <NavContainer $isOpen={isOpen}>
-                {/* MODIFIÉ : Retiré as={NavLink} car Brand est déjà stylisé comme motion(NavLink) */}
+               
                 <Brand to="/">
                     <BrandIcon>🍽️</BrandIcon>
                     <span>YouChef</span>
