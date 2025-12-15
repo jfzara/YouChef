@@ -9,7 +9,7 @@ const router = express.Router();
 
 // Route d'inscription (register) - Pas de rôle admin ici, c'est un user par défaut
 router.post('/register', async (req, res) => {
-  console.log('Requête /register reçue avec body:', req.body);
+ 
   const { identifiant, email, motDePasse } = req.body;
 
   try {
