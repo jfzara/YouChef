@@ -33,7 +33,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Route de connexion (login) - Renvoie le rôle dans le token et l'objet user
+// Route de connexion (login) - Renvoie le rôle dans le token et l'objet user.
 router.post('/login', async (req, res) => {
   const { email, motDePasse } = req.body;
 
