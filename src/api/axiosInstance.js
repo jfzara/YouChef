@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-// Configuration de l'instance axios avec gestion d'erreurs améliorée
+// Configuration de l'instance axios avec gestion d'erreurs améliorée.
 const axiosInstance = axios.create({
     baseURL: import.meta.env.PROD
         ? 'https://youchef-pefh.onrender.com/api'
