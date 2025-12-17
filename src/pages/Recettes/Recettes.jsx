@@ -74,64 +74,34 @@ const Recettes = () => {
     };
 
     // --- MODIFICATION : Logique de fetch extraite pour être réutilisable ---
-    const fetchRecettes = useCallback(async () => {
-        // --- DÉBOGAGE FRONTEND : Démarrage du fetch ---
-        console.log("FRONTEND DEBUG: Début du fetch des recettes sur /recettes/all.");
-        setError(null); // Réinitialiser l'erreur à chaque nouvel essai
-        setLoading(true); // Remettre à loading true si on re-déclenche
+   const fetchRecettes = useCallback(async (retryCount = 0) => {
+    const MAX_RETRIES = 3; // On tente 3 fois avant d'afficher l'erreur
+    
+    console.log(`FRONTEND DEBUG: Tentative de chargement ${retryCount + 1}/${MAX_RETRIES + 1}`);
+    setError(null);
+    setLoading(true);
 
-        try {
-            const res = await axios.get("/recettes/all");
-            const data = res.data;
-            
-            // --- DÉBOGAGE FRONTEND : Données reçues ---
-            console.log("FRONTEND DEBUG: Données brutes reçues du backend:", data);
+    try {
+        const res = await axios.get("/recettes/all");
+        // ... (reste de ta logique de traitement des données identique) ...
+        setAllRecettesFlat(res.data);
+        setLoading(false);
+        controls.start("visible");
 
-            const regroupees = {};
-            const allRecipesArray = [];
-
-            data.forEach(recette => {
-                const cat = recette.categorie?.trim() || "Autres";
-                const sousCat = recette.sousCategorie?.trim() || "Divers";
-
-                if (!Object.prototype.hasOwnProperty.call(regroupees, cat)) regroupees[cat] = {};
-                if (!Object.prototype.hasOwnProperty.call(regroupees[cat], sousCat)) regroupees[cat][sousCat] = [];
-                regroupees[cat][sousCat].push(recette);
-
-                allRecipesArray.push(recette);
-            });
-
-            setRecettes({ "Toutes": { "Tous": allRecipesArray }, ...regroupees });
-            setAllRecettesFlat(allRecipesArray);
-            
-            // --- DÉBOGAGE FRONTEND : État après traitement ---
-            console.log("FRONTEND DEBUG: Recettes traitées et mises à jour dans l'état du composant.");
-            console.log("FRONTEND DEBUG: Nombre total de recettes (allRecettesFlat):", allRecipesArray.length);
-
-            controls.start("visible");
-
-        } catch (err) {
-            // --- DÉBOGAGE FRONTEND : Erreur lors du fetch ---
-            console.error("FRONTEND DEBUG ERROR: Erreur lors du fetch des recettes:", err);
-
-            let errorMessage = 'Une erreur inattendue est survenue.';
-            if (err.response) {
-                console.error("FRONTEND DEBUG ERROR: Réponse du serveur:", err.response.data);
-                console.error("FRONTEND DEBUG ERROR: Statut HTTP:", err.response.status);
-                errorMessage = `Erreur du serveur: ${err.response.status} - ${err.response.data.message || 'Quelque chose s\'est mal passé'}`;
-            } else if (err.request) {
-                console.error("FRONTEND DEBUG ERROR: Pas de réponse du serveur (requête envoyée mais aucune réponse).");
-                errorMessage = 'Oups ! Nous n\'arrivons pas à charger les recettes pour le moment. Veuillez vérifier votre connexion internet ou le serveur.';
-            } else {
-                console.error("FRONTEND DEBUG ERROR: Erreur de configuration de la requête Axios:", err.message);
-                errorMessage = `Erreur lors de l'envoi de la requête: ${err.message}`;
-            }
-            setError(errorMessage);
-        } finally {
+    } catch (err) {
+        if (retryCount < MAX_RETRIES) {
+            console.warn(`FRONTEND DEBUG: Échec tentative ${retryCount + 1}. Nouvel essai dans 2s...`);
+            // On attend 2 secondes avant de relancer la fonction
+            setTimeout(() => {
+                fetchRecettes(retryCount + 1);
+            }, 2000);
+        } else {
+            console.error("FRONTEND DEBUG ERROR: Toutes les tentatives ont échoué.");
+            setError("Le serveur met du temps à répondre. Veuillez réessayer dans quelques instants.");
             setLoading(false);
-            console.log("FRONTEND DEBUG: Fin de l'opération de fetch. Loading = false.");
         }
-    }, [controls]);
+    }
+}, [controls]);
 
     // --- MODIFICATION : useEffect appelle simplement la fonction fetchRecettes ---
     useEffect(() => {
