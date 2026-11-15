@@ -52,14 +52,9 @@ mongoose.connect(mongoUri, {
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, '0.0.0.0', () => {
         console.log(`SERVER DEBUG: 🚀 Serveur lancé sur port ${PORT}. Prêt à recevoir des requêtes.`);
+        console.log(`SERVER DEBUG: 🌍 Environnement: ${process.env.NODE_ENV || 'development'}`);
     });
 })
 .catch(err => {
     console.error('SERVER DEBUG: ❌ Erreur critique de connexion MongoDB. Le serveur ne démarrera pas.', err);
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`SERVER DEBUG: 🚀 Serveur lancé sur port ${PORT}.`); // Ajouté
-    console.log(`SERVER DEBUG: 🌍 Environnement: ${process.env.NODE_ENV || 'development'}`); // Ajouté
 });
